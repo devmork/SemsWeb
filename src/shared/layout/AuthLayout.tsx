@@ -11,7 +11,7 @@ interface AuthCardProps {
   title: string;
   description: React.ReactNode;
   children: React.ReactNode;
-  footer: React.ReactNode;
+  footer?: React.ReactNode;
   className?: string;
 }
 
