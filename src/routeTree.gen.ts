@@ -11,8 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthGoogleCallbackRouteImport } from './routes/_auth/google-callback'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
 import { Route as AuthVerifyRouteImport } from './routes/_auth/verify'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
@@ -26,14 +26,14 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
+  id: '/_auth/google-callback',
+  path: '/google-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/_auth/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthSignupRoute = AuthSignupRouteImport.update({
-  id: '/_auth/signup',
-  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthVerifyRoute = AuthVerifyRouteImport.update({
@@ -55,15 +55,15 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/google-callback': typeof AuthGoogleCallbackRoute
   '/login': typeof AuthLoginRoute
-  '/signup': typeof AuthSignupRoute
   '/verify': typeof AuthVerifyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/google-callback': typeof AuthGoogleCallbackRoute
   '/login': typeof AuthLoginRoute
-  '/signup': typeof AuthSignupRoute
   '/verify': typeof AuthVerifyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
@@ -72,23 +72,24 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_auth/google-callback': typeof AuthGoogleCallbackRoute
   '/_auth/login': typeof AuthLoginRoute
-  '/_auth/signup': typeof AuthSignupRoute
   '/_auth/verify': typeof AuthVerifyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/login' | '/signup' | '/verify' | '/admin/'
+  fullPaths:
+    '/' | '/admin' | '/google-callback' | '/login' | '/verify' | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/verify' | '/admin'
+  to: '/' | '/google-callback' | '/login' | '/verify' | '/admin'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/_authenticated/admin'
+    | '/_auth/google-callback'
     | '/_auth/login'
-    | '/_auth/signup'
     | '/_auth/verify'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -96,8 +97,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
   AuthLoginRoute: typeof AuthLoginRoute
-  AuthSignupRoute: typeof AuthSignupRoute
   AuthVerifyRoute: typeof AuthVerifyRoute
 }
 
@@ -117,18 +118,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/google-callback': {
+      id: '/_auth/google-callback'
+      path: '/google-callback'
+      fullPath: '/google-callback'
+      preLoaderRoute: typeof AuthGoogleCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/login': {
       id: '/_auth/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth/signup': {
-      id: '/_auth/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof AuthSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/verify': {
@@ -183,8 +184,8 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
   AuthLoginRoute: AuthLoginRoute,
-  AuthSignupRoute: AuthSignupRoute,
   AuthVerifyRoute: AuthVerifyRoute,
 }
 export const routeTree = rootRouteImport

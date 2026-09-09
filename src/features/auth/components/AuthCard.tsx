@@ -1,32 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldSeparator } from "@/components/ui/field";
-import { Link } from "@tanstack/react-router";
 import { AuthLayout } from "@/shared/layout";
+import { useGoogleLogin } from "@react-oauth/google";
 import { GoogleIcon } from "./GoogleIcon";
 import { Info } from "lucide-react";
-import { useGoogleLogin } from "@react-oauth/google";
 
-export function SignupCard() {
+export function AuthCard() {
   const login = useGoogleLogin({
     flow: "auth-code",
     ux_mode: "redirect",
-    redirect_uri: `${window.location.origin}/auth/google/callback`,
+    redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT_URI,
   });
 
   return (
     <AuthLayout
-      title="Create account"
-      description="School Evaluation Management System"
-      footer={
-        <p className="text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            className="font-medium text-primary hover:underline">
-            Sign In
-          </Link>
-        </p>
-      }>
+      title="Welcome to SEMS"
+      description="School Evaluation Management System">
       <FieldGroup>
         <Field>
           <div className="flex items-start gap-3 rounded-md border bg-muted/40 p-3">
@@ -36,8 +25,8 @@ export function SignupCard() {
             <div className="text-sm">
               <p className="font-medium">School Account Required</p>
               <p className="text-muted-foreground">
-                When creating an account, you must sign up using your official
-                school-provided email address (@dmc.edu.ph).
+                Continue with your official school-provided email address
+                (@dmc.edu.ph).
               </p>
             </div>
           </div>

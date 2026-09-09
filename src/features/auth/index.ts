@@ -1,4 +1,3 @@
-export { LoginCard } from "./components/LoginCard";
-export { SignupCard } from "./components/SignupCard";
-export type { AuthUser, AuthStatus, UserRole } from "./auth.types";
-export { VerifyEmailCard } from "./components/VerifyEmailCard";
+export { AuthCard } from "./components/AuthCard";
+export { GoogleCallback } from "./components/GoogleCallback";
+export type { AuthUser, AuthStatus, UserRole, SearchParams } from "./types";
