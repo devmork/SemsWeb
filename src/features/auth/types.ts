@@ -27,3 +27,9 @@ export interface VerifyCodeInput {
 export interface VerifyCodeResponse {
   token: string;
 }
+
+export type SearchParams = {
+  code?: string;
+  state?: string;
+  error?: string;
+};
