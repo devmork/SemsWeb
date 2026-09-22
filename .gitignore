@@ -13,7 +13,6 @@ dist-ssr
 *.local
 .env
 repomix-output.xml
-routeTree.gen.ts
 
 # Editor directories and files
 .vscode/*
@@ -25,4 +24,3 @@ routeTree.gen.ts
 *.njsproj
 *.sln
 *.sw?
-src/routeTree.gen.ts
