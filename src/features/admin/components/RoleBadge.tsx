@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
-import type { UserRole } from "@/features/auth";
+import type { UserRole } from "@/types/domain";
 
 const ROLE_STYLES: Record<UserRole, string> = {
-  Admin: "bg-primary/10 text-primary",
-  QA: "bg-secondary text-secondary-foreground",
-  Student: "bg-muted text-muted-foreground",
+  admin: "bg-primary/10 text-primary",
+  qa: "bg-secondary text-secondary-foreground",
+  student: "bg-muted text-muted-foreground",
 };
 
 export function RoleBadge({ role }: { role: UserRole }) {

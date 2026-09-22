@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import type { UserRole } from "@/features/auth";
+import type { UserRole } from "@/types/domain";
 
 interface JwtClaims {
   sub: string;

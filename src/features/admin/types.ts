@@ -1,4 +1,4 @@
-import type { UserRole } from "@/features/auth";
+import type { UserRole } from "@/types/domain";
 
 export interface ManagedUser {
   userId: number;
