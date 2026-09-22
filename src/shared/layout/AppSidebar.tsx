@@ -13,7 +13,7 @@ import { IconCommand } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { AppSidebarNav } from "./AppSidebarNav";
 import { AppSidebarFooter } from "./AppSidebarFooter";
-import { useRoleNavigation } from "@/features/navigation/hooks/useRoleNavigation";
+import { useRoleNavigation } from "@/shared/hooks/useRoleNavigation";
 
 export function AppSidebar() {
   const { items } = useRoleNavigation();
