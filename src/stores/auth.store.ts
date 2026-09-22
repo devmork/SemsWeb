@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AuthUser } from "@/features/auth";
+import type { AuthUser } from "@/types/domain";
 import { decodeToken, isTokenExpired } from "@/lib/jwt";
 
 interface AuthState {

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import type { UserRole } from "@/features/auth";
+import type { UserRole } from "@/types/domain";
 import type { ManagedUser } from "../types";
 import { usersQueryKey } from "./useUsers";
 

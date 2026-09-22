@@ -5,7 +5,7 @@ import {
   ClipboardCheck,
   UserCircle,
 } from "lucide-react";
-import type { NavConfig } from "@/types/nav.types";
+import type { NavConfig } from "@/types/nav";
 
 export const navConfig: NavConfig = {
   admin: [

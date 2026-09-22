@@ -6,11 +6,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ManagedUser } from "../types";
-import type { UserRole } from "@/features/auth";
+import type { UserRole } from "@/types/domain";
 import { RoleBadge } from "./RoleBadge";
 import { useUpdateUserRole } from "../hooks/useUpdateUserRole";
 
-const ROLE_OPTIONS: UserRole[] = ["Student", "QA", "Admin"];
+const ROLE_OPTIONS: UserRole[] = ["student", "qa", "admin"];
 
 export function UserRoleTable({ users }: { users: ManagedUser[] }) {
   const { mutate: updateRole, isPending } = useUpdateUserRole();

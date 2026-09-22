@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import type { UserRole } from "@/features/auth";
+import type { UserRole } from "@/types/domain";
 
 export interface NavItem {
   label: string;
