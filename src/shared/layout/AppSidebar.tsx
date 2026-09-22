@@ -1,33 +1,50 @@
-import { Link, useLocation } from "@tanstack/react-router";
-import { useAuthStore } from "@/stores/auth.store";
-import { navConfig } from "@/config/nav-config";
-import { cn } from "@/lib/utils";
+"use client";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { IconCommand } from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
+import { AppSidebarNav } from "./AppSidebarNav";
+import { AppSidebarFooter } from "./AppSidebarFooter";
+import { useRoleNavigation } from "@/features/navigation/hooks/useRoleNavigation";
 
 export function AppSidebar() {
-  const role = useAuthStore((s) => s.user?.role);
-  const location = useLocation();
-  const items = role ? navConfig[role] : [];
+  const { items } = useRoleNavigation();
 
   return (
-    <aside className="w-64 shrink-0 border-r bg-background h-screen sticky top-0 flex flex-col">
-      <div className="h-14 flex items-center px-4 font-semibold">SEMS</div>
-      <nav className="flex-1 px-2 space-y-1">
-        {items.map((item) => {
-          const active = location.pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm",
-                active ? "bg-muted font-medium" : "hover:bg-muted/50",
-              )}>
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
-    </aside>
+    <Sidebar variant="inset" collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" render={<Link to="/" />}>
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <IconCommand className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">SEMS</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  Evaluation System
+                </span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <AppSidebarNav items={items} />
+      </SidebarContent>
+
+      <SidebarFooter>
+        <AppSidebarFooter />
+      </SidebarFooter>
+    </Sidebar>
   );
 }
