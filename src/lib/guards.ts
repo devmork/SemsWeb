@@ -1,25 +1,30 @@
 import { redirect } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/auth.store";
-import { decodeToken, isTokenExpired } from "@/lib/jwt";
+import { decodeToken, isTokenExpired, type JwtClaims } from "@/lib/jwt";
 import type { UserRole } from "@/types/domain";
 
-export function requireAuth() {
-  const { token } = useAuthStore.getState();
+export function requireAuth(): void {
+  const { token, logout } = useAuthStore.getState();
+
   if (!token) throw redirect({ to: "/login" });
 
+  let claims: JwtClaims;
   try {
-    if (isTokenExpired(decodeToken(token))) {
-      useAuthStore.getState().logout();
-      throw redirect({ to: "/login" });
-    }
+    claims = decodeToken(token);
   } catch {
-    useAuthStore.getState().logout();
+    logout();
+    throw redirect({ to: "/login" });
+  }
+
+  if (isTokenExpired(claims)) {
+    logout();
     throw redirect({ to: "/login" });
   }
 }
 
-export function requireRole(...allowed: UserRole[]) {
+export function requireRole(...allowed: UserRole[]): void {
   requireAuth();
+
   const role = useAuthStore.getState().user?.role;
   if (!role || !allowed.includes(role)) {
     throw redirect({ to: "/forbidden" });
