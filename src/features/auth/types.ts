@@ -14,7 +14,7 @@ export interface VerifyCodeResponse {
 }
 
 export type SearchParams = {
-  code?: string;
-  state?: string;
-  error?: string;
+  code?: string | undefined;
+  state?: string | undefined;
+  error?: string | undefined;
 };
