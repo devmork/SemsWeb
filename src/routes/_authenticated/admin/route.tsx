@@ -1,12 +1,7 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { useAuthStore } from "@/stores/auth.store";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { requireRole } from "@/lib/guards";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  beforeLoad: () => {
-    const { user } = useAuthStore.getState();
-    if (user?.role !== "admin") {
-      throw redirect({ to: "/login" });
-    }
-  },
+  beforeLoad: () => requireRole("admin"),
   component: () => <Outlet />,
 });

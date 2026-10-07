@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth.store";
+import { decodeToken } from "@/lib/jwt";
+import { homePathFor } from "@/lib/home";
 
 export function GoogleCallback() {
   const navigate = useNavigate();
@@ -17,7 +19,6 @@ export function GoogleCallback() {
       return;
     }
 
-    // Missing code – should not happen
     if (!code) {
       navigate({ to: "/login" });
       return;
@@ -29,11 +30,11 @@ export function GoogleCallback() {
         const { data } = await api.post("api/auth/google-callback", { code });
         const { token } = data;
 
-        // Store the JWT in Zustand (persisted)
+        const claims = decodeToken(token);
         setToken(token);
 
         // Navigate to the default authenticated page (or based on role)
-        navigate({ to: "/" });
+        navigate({ to: homePathFor(claims.role) });
       } catch (err) {
         console.error("Login failed:", err);
         navigate({ to: "/login", search: { error: "auth_failed" } });

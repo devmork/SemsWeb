@@ -15,10 +15,6 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
-    rules: {
-      "no-unused-vars": "warn",
-      "no-undef": "warn",
-    },
     languageOptions: {
       globals: globals.browser,
     },

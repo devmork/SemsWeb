@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import type { UserRole } from "@/types/domain";
 
-interface JwtClaims {
+export interface JwtClaims {
   sub: string;
   name: string;
   email: string;

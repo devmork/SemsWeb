@@ -11,10 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthForbiddenRouteImport } from './routes/_auth/forbidden'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/_auth/google-callback'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedQaIndexRouteImport } from './routes/_authenticated/qa/index'
+import { Route as AuthenticatedStudentIndexRouteImport } from './routes/_authenticated/student/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForbiddenRoute = AuthForbiddenRouteImport.update({
+  id: '/_auth/forbidden',
+  path: '/forbidden',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
@@ -45,47 +53,86 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedQaIndexRoute = AuthenticatedQaIndexRouteImport.update({
+  id: '/qa/',
+  path: '/qa/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedStudentIndexRoute =
+  AuthenticatedStudentIndexRouteImport.update({
+    id: '/student/',
+    path: '/student/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/forbidden': typeof AuthForbiddenRoute
   '/google-callback': typeof AuthGoogleCallbackRoute
   '/login': typeof AuthLoginRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/qa/': typeof AuthenticatedQaIndexRoute
+  '/student/': typeof AuthenticatedStudentIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/forbidden': typeof AuthForbiddenRoute
   '/google-callback': typeof AuthGoogleCallbackRoute
   '/login': typeof AuthLoginRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/qa': typeof AuthenticatedQaIndexRoute
+  '/student': typeof AuthenticatedStudentIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_auth/forbidden': typeof AuthForbiddenRoute
   '/_auth/google-callback': typeof AuthGoogleCallbackRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/qa/': typeof AuthenticatedQaIndexRoute
+  '/_authenticated/student/': typeof AuthenticatedStudentIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/google-callback' | '/login' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/forbidden'
+    | '/google-callback'
+    | '/login'
+    | '/admin/'
+    | '/qa/'
+    | '/student/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/google-callback' | '/login' | '/admin'
+  to:
+    | '/'
+    | '/forbidden'
+    | '/google-callback'
+    | '/login'
+    | '/admin'
+    | '/qa'
+    | '/student'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/_authenticated/admin'
+    | '/_auth/forbidden'
     | '/_auth/google-callback'
     | '/_auth/login'
     | '/_authenticated/admin/'
+    | '/_authenticated/qa/'
+    | '/_authenticated/student/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthForbiddenRoute: typeof AuthForbiddenRoute
   AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
   AuthLoginRoute: typeof AuthLoginRoute
 }
@@ -104,6 +151,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/forbidden': {
+      id: '/_auth/forbidden'
+      path: '/forbidden'
+      fullPath: '/forbidden'
+      preLoaderRoute: typeof AuthForbiddenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/google-callback': {
@@ -134,6 +188,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/qa/': {
+      id: '/_authenticated/qa/'
+      path: '/qa'
+      fullPath: '/qa/'
+      preLoaderRoute: typeof AuthenticatedQaIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/student/': {
+      id: '/_authenticated/student/'
+      path: '/student'
+      fullPath: '/student/'
+      preLoaderRoute: typeof AuthenticatedStudentIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -153,10 +221,14 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedQaIndexRoute: typeof AuthenticatedQaIndexRoute
+  AuthenticatedStudentIndexRoute: typeof AuthenticatedStudentIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedQaIndexRoute: AuthenticatedQaIndexRoute,
+  AuthenticatedStudentIndexRoute: AuthenticatedStudentIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -165,6 +237,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthForbiddenRoute: AuthForbiddenRoute,
   AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
   AuthLoginRoute: AuthLoginRoute,
 }
