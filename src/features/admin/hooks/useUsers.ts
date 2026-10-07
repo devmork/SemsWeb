@@ -7,6 +7,9 @@ export const usersQueryKey = ["superadmin", "users"] as const;
 export function useUsers() {
   return useQuery({
     queryKey: usersQueryKey,
-    queryFn: () => api.get<ManagedUser[]>("/admin/users"),
+    queryFn: async () => {
+      const { data } = await api.get<ManagedUser[]>("/admin/users");
+      return data;
+    },
   });
 }
