@@ -10,7 +10,11 @@ export interface JwtClaims {
 }
 
 export function decodeToken(token: string): JwtClaims {
-  return jwtDecode<JwtClaims>(token);
+  const raw = jwtDecode<JwtClaims>(token);
+  return {
+    ...raw,
+    role: raw.role.toLowerCase() as UserRole,
+  };
 }
 
 export function isTokenExpired(claims: JwtClaims): boolean {
