@@ -13,7 +13,7 @@ export function decodeToken(token: string): JwtClaims {
   const raw = jwtDecode<JwtClaims>(token);
   return {
     ...raw,
-    role: raw.role.toLowerCase() as UserRole,
+    role: (raw.role ?? "").toLowerCase() as UserRole,
   };
 }
 
