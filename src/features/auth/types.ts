@@ -1,20 +1,14 @@
-export type AuthStatus = "idle" | "verifying" | "verified" | "denied";
+import type { UserRole } from "@/types/domain";
 
-export interface ContinueWithEmailInput {
+export interface UserResponse {
+  id: number;
   email: string;
+  firstName: string;
+  lastName: string;
+  pictureUrl: string | null;
+  role: UserRole | null;
 }
 
-export interface VerifyCodeInput {
-  email: string;
-  code: string;
-}
-
-export interface VerifyCodeResponse {
-  token: string;
-}
-
-export type SearchParams = {
-  code?: string | undefined;
-  state?: string | undefined;
+export interface LoginSearch {
   error?: string | undefined;
-};
+}
