@@ -3,6 +3,8 @@ import { AppLayout } from "@/shared/layout/AppLayout";
 import { requireAuth } from "@/lib/guards";
 
 export const Route = createFileRoute("/_authenticated")({
-  beforeLoad: requireAuth,
+  beforeLoad: async () => {
+    await requireAuth();
+  },
   component: AppLayout,
 });
