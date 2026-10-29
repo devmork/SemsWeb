@@ -1,6 +1,8 @@
 import type { UserRole } from "@/types/domain";
 
-export function homePathFor(role: UserRole | undefined): string {
+export type HomePath = "/admin" | "/qa" | "/student" | "/forbidden";
+
+export function homePathFor(role: UserRole | null): HomePath {
   switch (role) {
     case "admin":
       return "/admin";
@@ -9,6 +11,7 @@ export function homePathFor(role: UserRole | undefined): string {
     case "student":
       return "/student";
     default:
-      return "/login";
+      // no role means no dashboard, and /forbidden does not redirect, so there is no loop
+      return "/forbidden";
   }
 }
