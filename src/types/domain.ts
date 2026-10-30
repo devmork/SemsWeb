@@ -1,8 +1,9 @@
 export type UserRole = "student" | "qa" | "admin";
 
 export interface AuthUser {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  role: UserRole;
+  role: UserRole | null;
+  pictureUrl: string | null;
 }

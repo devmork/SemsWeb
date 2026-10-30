@@ -1,32 +1,15 @@
 import { create } from "zustand";
 import type { AuthUser } from "@/types/domain";
-import { decodeToken, isTokenExpired } from "@/lib/jwt";
 
 interface AuthState {
+  /** Profile only. The tokens are HttpOnly cookies and are never readable here. */
   user: AuthUser | null;
-  token: string | null;
-  setToken: (token: string) => void;
-  logout: () => void;
+  setUser: (user: AuthUser) => void;
+  clearUser: () => void;
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
   user: null,
-  token: null,
-  setToken: (token) => {
-    const claims = decodeToken(token);
-    if (isTokenExpired(claims)) {
-      set({ user: null, token: null });
-      return;
-    }
-    set({
-      token,
-      user: {
-        id: claims.sub,
-        name: claims.name,
-        email: claims.email,
-        role: claims.role,
-      },
-    });
-  },
-  logout: () => set({ user: null, token: null }),
+  setUser: (user) => set({ user }),
+  clearUser: () => set({ user: null }),
 }));

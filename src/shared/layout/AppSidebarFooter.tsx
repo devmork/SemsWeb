@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { IconSelector, IconLogout, IconUser } from "@tabler/icons-react";
 import { useAuthStore } from "@/stores/auth.store";
+import { logout } from "@/features/auth";
 
 function initials(name: string) {
   return name
@@ -29,9 +30,12 @@ function initials(name: string) {
 
 export function AppSidebarFooter() {
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
   const { isMobile } = useSidebar();
+  const handleLogout = async () => {
+    await logout(); // calls the API and clears the store
+    navigate({ to: "/login" });
+  };
 
   if (!user) return null;
 
@@ -80,11 +84,7 @@ export function AppSidebarFooter() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                logout();
-                navigate({ to: "/login" });
-              }}>
+            <DropdownMenuItem onClick={() => void handleLogout()}>
               <IconLogout />
               Log out
             </DropdownMenuItem>
