@@ -1,9 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
-/* Prefer Inter for Cal.com-like UI. Geist is fine as a close substitute. */
 @import "@fontsource-variable/geist";
-/* optional: @import "@fontsource/inter"; if you install it */
 
 @custom-variant dark (&:is(.dark *));
 
