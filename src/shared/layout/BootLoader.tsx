@@ -1,4 +1,3 @@
-// src/shared/layout/BootLoader.tsx
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 
