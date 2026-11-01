@@ -22,14 +22,24 @@ const queryClient = new QueryClient({
   },
 });
 
-const rootElement = document.getElementById("root")!;
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </StrictMode>,
-  );
+async function enableMocking() {
+  if (import.meta.env.NODE_ENV !== "development") {
+    return;
+  }
+  const { worker } = await import("./mocks/browser");
+  return worker.start();
 }
+
+enableMocking().then(() => {
+  const rootElement = document.getElementById("root")!;
+  if (!rootElement.innerHTML) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      <StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </StrictMode>,
+    );
+  }
+});

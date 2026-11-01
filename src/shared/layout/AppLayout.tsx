@@ -6,8 +6,26 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "./AppSidebar";
+import { useEffect, useState } from "react";
+import BootLoader from "./BootLoader";
 
 export function AppLayout() {
+  const [isSyncing, setIsSyncing] = useState(true);
+
+  useEffect(() => {
+    // Stall for 2.5 seconds while the animation plays out
+    // In production, tie this to your `useQuery` loading state
+    const timer = setTimeout(() => {
+      setIsSyncing(false);
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // If still syncing, show the loading screen
+  if (isSyncing) {
+    return <BootLoader />;
+  }
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -18,7 +36,6 @@ export function AppLayout() {
             orientation="vertical"
             className="mr-2 data-vertical:h-4 data-vertical:self-auto"
           />
-          <h1 className="text-sm font-medium">SEMS Dashboard</h1>
         </header>
         <main className="flex-1 p-6">
           <Outlet />
