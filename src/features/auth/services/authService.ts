@@ -16,6 +16,7 @@ export function toAuthUser(user: UserResponse) {
     name: user.name,
     role: toUserRole(user.role),
     pictureUrl: user.pictureUrl,
+    studentProfile: user.studentProfile ?? null,
   };
 }
 
