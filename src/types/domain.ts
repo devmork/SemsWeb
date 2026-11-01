@@ -16,4 +16,5 @@ export interface UserResponse {
   email: string;
   role: UserRole | null;
   pictureUrl: string | null;
+  studentProfile?: StudentProfile | null;
 }
