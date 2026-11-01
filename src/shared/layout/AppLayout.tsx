@@ -18,7 +18,6 @@ export function AppLayout() {
             orientation="vertical"
             className="mr-2 data-vertical:h-4 data-vertical:self-auto"
           />
-          <h1 className="text-sm font-medium">SEMS Dashboard</h1>
         </header>
         <main className="flex-1 p-6">
           <Outlet />
