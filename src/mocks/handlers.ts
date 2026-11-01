@@ -1,31 +1,8 @@
 import { http, HttpResponse, delay } from "msw";
-import type { StudentProfileData } from "@/features/student/types";
-import type { AuthUser } from "@/types/domain";
 
 // ==========================================
 // IN-MEMORY DATABASE
 // ==========================================
-const mockCurrentUser: AuthUser = {
-  id: 1,
-  name: "Jon Christopher Erasmo",
-  email: "jon_erasmo@dmc.edu.ph",
-  role: "student",
-  pictureUrl: null,
-};
-
-const mockProfile: StudentProfileData = {
-  id: "2023-0444",
-  firstName: "Jon Christopher",
-  lastName: "Erasmo",
-  suffix: null,
-  email: "jon_erasmo@dmc.edu.ph",
-  avatarUrl: null,
-  program: "BSIT",
-  yearLevel: "3",
-  academicYear: "2026-2027",
-  semester: "1",
-  enrollmentStatus: "Enrolled",
-};
 
 const mockEvaluationTypes = [
   { evaluationTypeId: 1, evaluationTypeName: "Teacher Evaluation" },
@@ -106,34 +83,11 @@ export const handlers = [
   // ----------------------------------------
   // AUTH
   // ----------------------------------------
-  // GET /api/auth/me - Used by restoreSession() to check if logged in
-  http.get("/api/auth/me", async () => {
-    await delay(300);
-    // To test the "not logged in" state, change this to:
-    // return new HttpResponse(null, { status: 401 });
-    return HttpResponse.json({
-      id: mockCurrentUser.id,
-      email: mockCurrentUser.email,
-      firstName: mockProfile.firstName,
-      lastName: mockProfile.lastName,
-      pictureUrl: mockCurrentUser.pictureUrl,
-      role: mockCurrentUser.role,
-    });
-  }),
 
   // POST /api/auth/logout
   http.post("/api/auth/logout", async () => {
     await delay(200);
     return new HttpResponse(null, { status: 204 });
-  }),
-
-  // ----------------------------------------
-  // STUDENT PROFILE
-  // ----------------------------------------
-  // GET /api/student/profile
-  http.get("/api/student/profile", async () => {
-    await delay(800); // Simulate latency for skeleton loader
-    return HttpResponse.json(mockProfile);
   }),
 
   // ----------------------------------------
