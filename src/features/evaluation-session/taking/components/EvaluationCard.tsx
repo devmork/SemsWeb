@@ -6,7 +6,6 @@ import {
   Clock,
   GraduationCap,
   HeartPulse,
-  Icon,
   Stethoscope,
   Utensils,
 } from "lucide-react";
@@ -19,7 +18,12 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { EvaluationAssignment, EvaluationStatus } from "../types";
+import type {
+  EvaluationAssignment,
+  EvaluationStatus,
+  EvaluationType,
+} from "../types";
+import type { ElementType } from "react";
 
 const STATUS_CONFIG: Record<
   EvaluationStatus,
@@ -61,7 +65,10 @@ function formatDueDate(iso: string) {
   });
 }
 
-const CATEGORY_CONFIG = {
+const CATEGORY_CONFIG: Record<
+  EvaluationType,
+  { label: string; color: string; icon: ElementType }
+> = {
   guidance: {
     label: "Guidance Evaluation",
     color: "bg-purple-100 text-purple-700",
@@ -90,23 +97,21 @@ interface EvaluationCardProps {
 }
 
 export function EvaluationCard({ evaluation, onStart }: EvaluationCardProps) {
-  const config = CATEGORY_CONFIG[evaluation.category];
+  const config = CATEGORY_CONFIG[evaluation.type];
   const status = STATUS_CONFIG[evaluation.status];
   const isCompleted = evaluation.status === "completed";
 
   return (
     <Card className={cn("gap-4 shadow-sm", status.cardClass)}>
       <CardHeader className="flex flex-row items-center justify-between gap-2">
-        <Badge className={config.color}>
-          <Icon className="mr-1 size-3" /> {config.label}
-        </Badge>
+        <Badge className={config.color}>{config.label}</Badge>
 
         <Badge variant="outline">
           <CalendarIcon className="mr-1 size-3" />
           {evaluation.academicYear} • {evaluation.semester}
         </Badge>
 
-        <Badge status={evaluation.status} />
+        <Badge variant="default" />
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
