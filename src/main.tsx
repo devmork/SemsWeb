@@ -23,11 +23,16 @@ const queryClient = new QueryClient({
 });
 
 async function enableMocking() {
-  if (import.meta.env.NODE_ENV !== "development") {
-    return;
+  if (import.meta.env.DEV) {
+    // 1. Import the virtual module provided by the plugin
+    const { network } = await import("virtual:msw");
+    // 2. Import your handlers
+    const { handlers } = await import("./mocks/handlers");
+
+    // 3. Configure and enable
+    network.configure({ handlers });
+    await network.enable();
   }
-  const { worker } = await import("./mocks/browser");
-  return worker.start();
 }
 
 enableMocking().then(() => {
