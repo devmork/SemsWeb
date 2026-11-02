@@ -76,6 +76,43 @@ let mockUsers = [
   },
 ];
 
+const mockStudentEvaluations = [
+  {
+    id: 1,
+    kind: "teacher",
+    status: "pending",
+    targetName: "Prof. Alan Turing",
+    targetSubtitle: "BSIT 3A — Web Systems & Development (IT 312)",
+    formTitle: "Teacher Evaluation Form",
+    formDescription:
+      "Please evaluate the teaching effectiveness of Prof. Turing.",
+    dueDate: "2026-11-15T23:59:59Z",
+    questionCount: 15,
+  },
+  {
+    id: 2,
+    kind: "facility",
+    status: "due_soon",
+    targetName: "Main Library",
+    targetSubtitle: "Main Campus — Learning Resource Center",
+    formTitle: "Facility Evaluation",
+    formDescription: "Evaluate the cleanliness and resources of the library.",
+    dueDate: "2026-11-05T23:59:59Z",
+    questionCount: 10,
+  },
+  {
+    id: 3,
+    kind: "teacher",
+    status: "completed",
+    targetName: "Prof. Ada Lovelace",
+    targetSubtitle: "BSIT 3A — Data Structures",
+    formTitle: "Teacher Evaluation Form",
+    formDescription: "Evaluate the teaching effectiveness of Prof. Lovelace.",
+    dueDate: "2026-10-30T23:59:59Z",
+    questionCount: 15,
+  },
+];
+
 // ==========================================
 // HANDLERS
 // ==========================================
@@ -113,6 +150,28 @@ export const handlers = [
       return HttpResponse.json({ success: true });
     },
   ),
+
+  // ----------------------------------------
+  // STUDENT EVALUATIONS
+  // ----------------------------------------
+
+  // GET /api/evaluation/my-evaluations
+  http.get("/api/evaluation/evaluations", async () => {
+    await delay(600);
+    return HttpResponse.json(mockStudentEvaluations);
+  }),
+
+  // GET /api/evaluation/my-evaluations/:id
+  http.get("/api/evaluation/my-evaluations/:id", async ({ params }) => {
+    await delay(400);
+    const evaluation = mockStudentEvaluations.find(
+      (e) => e.id === Number(params.id),
+    );
+    if (!evaluation) {
+      return new HttpResponse(null, { status: 404 });
+    }
+    return HttpResponse.json(evaluation);
+  }),
 
   // ----------------------------------------
   // EVALUATION TYPES

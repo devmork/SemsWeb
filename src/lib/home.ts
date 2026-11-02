@@ -11,7 +11,6 @@ export function homePathFor(role: UserRole | null): HomePath {
     case "student":
       return "/student";
     default:
-      // no role means no dashboard, and /forbidden does not redirect, so there is no loop
       return "/forbidden";
   }
 }
