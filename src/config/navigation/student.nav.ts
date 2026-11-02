@@ -1,12 +1,16 @@
-import { ClipboardList, LayoutDashboard, UserCircle } from "lucide-react";
+import { ClipboardList, UserCircle } from "lucide-react";
 import type { NavItem } from "./types";
 
 export const studentNav: NavItem[] = [
-  { label: "Dashboard", href: "/student", icon: LayoutDashboard },
+  { label: "My Profile", href: "/student/profile", icon: UserCircle },
   {
-    label: "My Evaluations",
-    href: "/student/evaluations",
+    label: "Guidance",
+    href: "/student/guidance",
     icon: ClipboardList,
   },
-  { label: "My Profile", href: "/student/profile", icon: UserCircle },
+  {
+    label: "Teacher",
+    href: "/student/teacher",
+    icon: ClipboardList,
+  },
 ];
