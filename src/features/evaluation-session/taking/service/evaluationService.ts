@@ -1,17 +1,21 @@
 import { api } from "@/lib/api";
-import type { EvaluationAssignment } from "../types";
-
-// Adjust the paths to match the backend controller.
-const BASE = "/api/evaluation/my-evaluations";
+import type { EvaluationAssignment, EvaluationType } from "../types";
 
 export const evaluationService = {
-  async getMyEvaluations(): Promise<EvaluationAssignment[]> {
-    const { data } = await api.get<EvaluationAssignment[]>(BASE);
+  async getMyEvaluations(
+    type: EvaluationType,
+  ): Promise<EvaluationAssignment[]> {
+    const { data } = await api.get<EvaluationAssignment[]>(
+      "/api/evaluation/my-evaluations",
+      { params: { type } },
+    );
     return data;
   },
 
   async getMyEvaluation(id: number): Promise<EvaluationAssignment> {
-    const { data } = await api.get<EvaluationAssignment>(`${BASE}/${id}`);
+    const { data } = await api.get<EvaluationAssignment>(
+      `/api/evaluation/my-evaluations/${id}`,
+    );
     return data;
   },
 };
