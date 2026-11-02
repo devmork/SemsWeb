@@ -4,18 +4,18 @@ import type { EvaluationAssignment, EvaluationType } from "../types";
 
 export const myEvaluationsKeys = {
   all: ["student", "evaluations"] as const,
-  list: () => [...myEvaluationsKeys.all, "list"] as const,
+  list: (type: EvaluationType) =>
+    [...myEvaluationsKeys.all, "list", type] as const,
   detail: (id: number) => [...myEvaluationsKeys.all, "detail", id] as const,
 };
 
-export function useMyEvaluations(type: EvaluationType) {
+export function useEvaluations(type: EvaluationType) {
   return useQuery<EvaluationAssignment[]>({
-    queryKey: ["student", "evaluations", type],
+    queryKey: myEvaluationsKeys.list(type), // Use the factory
     queryFn: () => evaluationService.getMyEvaluations(type),
   });
 }
-
-export function useMyEvaluation(id: number) {
+export function useEvaluation(id: number) {
   return useQuery<EvaluationAssignment>({
     queryKey: myEvaluationsKeys.detail(id),
     queryFn: () => evaluationService.getMyEvaluation(id),
