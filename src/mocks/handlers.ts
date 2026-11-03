@@ -76,90 +76,6 @@ let mockUsers = [
   },
 ];
 
-const mockStudentEvaluations = [
-  {
-    id: 1,
-    type: "teacher",
-    status: "pending",
-    targetName: "Prof. Alan Turing",
-    targetSubtitle: "BSIT 3A — Web Systems & Development (IT 312)",
-    formTitle: "Teacher Evaluation Form",
-    formDescription:
-      "Please evaluate the teaching effectiveness of Prof. Turing.",
-    dueDate: "2026-11-15T23:59:59Z",
-    questionCount: 15,
-    academicYear: "AY 2026-2027",
-    semester: "1st Semester",
-  },
-  {
-    id: 2,
-    type: "guidance",
-    status: "pending", // Changed from 'due_soon' to match your types
-    targetName: "Main Clinic",
-    targetSubtitle: "Main Campus — Health Services",
-    formTitle: "Clinic Evaluation",
-    formDescription: "Evaluate the services of the clinic.",
-    dueDate: "2026-11-05T23:59:59Z",
-    questionCount: 10,
-    academicYear: "AY 2026-2027",
-    semester: "1st Semester",
-  },
-  {
-    id: 1,
-    type: "teacher",
-    status: "pending",
-    targetName: "Prof. Alan Turing",
-    targetSubtitle: "BSIT 3A — Web Systems & Development (IT 312)",
-    formTitle: "Teacher Evaluation Form",
-    formDescription:
-      "Please evaluate the teaching effectiveness of Prof. Turing.",
-    dueDate: "2026-11-15T23:59:59Z",
-    questionCount: 15,
-    academicYear: "AY 2026-2027",
-    semester: "1st Semester",
-  },
-  {
-    id: 2,
-    type: "guidance",
-    status: "pending", // Changed from 'due_soon' to match your types
-    targetName: "Main Clinic",
-    targetSubtitle: "Main Campus — Health Services",
-    formTitle: "Clinic Evaluation",
-    formDescription: "Evaluate the services of the clinic.",
-    dueDate: "2026-11-05T23:59:59Z",
-    questionCount: 10,
-    academicYear: "AY 2026-2027",
-    semester: "1st Semester",
-  },
-  {
-    id: 1,
-    type: "teacher",
-    status: "pending",
-    targetName: "Prof. Alan Turing",
-    targetSubtitle: "BSIT 3A — Web Systems & Development (IT 312)",
-    formTitle: "Teacher Evaluation Form",
-    formDescription:
-      "Please evaluate the teaching effectiveness of Prof. Turing.",
-    dueDate: "2026-11-15T23:59:59Z",
-    questionCount: 15,
-    academicYear: "AY 2026-2027",
-    semester: "1st Semester",
-  },
-  {
-    id: 2,
-    type: "guidance",
-    status: "pending", // Changed from 'due_soon' to match your types
-    targetName: "Main Clinic",
-    targetSubtitle: "Main Campus — Health Services",
-    formTitle: "Clinic Evaluation",
-    formDescription: "Evaluate the services of the clinic.",
-    dueDate: "2026-11-05T23:59:59Z",
-    questionCount: 10,
-    academicYear: "AY 2026-2027",
-    semester: "1st Semester",
-  },
-];
-
 // ==========================================
 // HANDLERS
 // ==========================================
@@ -203,29 +119,75 @@ export const handlers = [
   // ----------------------------------------
 
   // GET /api/evaluation/my-evaluations
-  http.get("/api/evaluation/my-evaluations", async ({ request }) => {
-    const url = new URL(request.url);
-    const type = url.searchParams.get("type");
+  http.get("/api/evaluation/my-evaluations/teachers", async () => {
     await delay(600);
-
-    if (type) {
-      return HttpResponse.json(
-        mockStudentEvaluations.filter((e) => e.type === type),
-      );
-    }
-    return HttpResponse.json(mockStudentEvaluations);
+    const teachers = [
+      {
+        id: 1,
+        type: "teacher",
+        status: "pending",
+        teacherName: "Prof. Alan Turing",
+        subjectCode: "IT 312",
+        section: "BSIT 3A",
+        formTitle: "Teacher Evaluation Form",
+        formDescription: "Evaluate teaching effectiveness.",
+        dueDate: "2026-11-15T23:59:59Z",
+        questionCount: 15,
+        academicYear: "AY 2026-2027",
+        semester: "1st Semester",
+      },
+      {
+        id: 3,
+        type: "teacher",
+        status: "overdue",
+        teacherName: "Dr. Alejandro Cruz",
+        subjectCode: "IT 314",
+        section: "BSIT 3A",
+        formTitle: "Teacher Evaluation Form",
+        formDescription: "Evaluate teaching effectiveness.",
+        dueDate: "2026-10-20T23:59:59Z",
+        questionCount: 15,
+        academicYear: "AY 2026-2027",
+        semester: "1st Semester",
+      },
+    ];
+    return HttpResponse.json(teachers);
   }),
 
-  // GET /api/evaluation/my-evaluations/:id
-  http.get("/api/evaluation/my-evaluations/:id", async ({ params }) => {
-    await delay(400);
-    const evaluation = mockStudentEvaluations.find(
-      (e) => e.id === Number(params.id),
-    );
-    if (!evaluation) {
-      return new HttpResponse(null, { status: 404 });
-    }
-    return HttpResponse.json(evaluation);
+  // GET /api/evaluation/my-evaluations/facilities
+  http.get("/api/evaluation/my-evaluations/facilities", async () => {
+    await delay(600);
+    const facilities = [
+      {
+        id: 2,
+        type: "facility",
+        status: "pending",
+        facilityName: "Guidance & Counseling Office",
+        location: "Student Affairs — Academic & Career Advising",
+        category: "guidance",
+        formTitle: "Guidance Evaluation",
+        formDescription: "Evaluate the services of the guidance office.",
+        dueDate: "2026-11-10T23:59:59Z",
+        questionCount: 6,
+        academicYear: "AY 2026-2027",
+        semester: "1st Semester",
+      },
+      {
+        id: 4,
+        type: "facility",
+        status: "completed",
+        facilityName: "University Medical & Dental Clinic",
+        location: "Campus Health — Medical & Dental Services",
+        category: "clinic",
+        formTitle: "Clinic Evaluation",
+        formDescription: "Evaluate the services of the clinic.",
+        dueDate: "2026-10-30T23:59:59Z",
+        questionCount: 8,
+        academicYear: "AY 2025-2026",
+        semester: "2nd Semester",
+      },
+    ];
+    return HttpResponse.json(facilities);
   }),
 
   // ----------------------------------------
