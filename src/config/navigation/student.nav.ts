@@ -1,12 +1,15 @@
-import { ClipboardList, LayoutDashboard, UserCircle } from "lucide-react";
+import { BuildingComplex, UserGroup } from "lucide-react";
 import type { NavItem } from "./types";
 
 export const studentNav: NavItem[] = [
-  { label: "Dashboard", href: "/student", icon: LayoutDashboard },
   {
-    label: "My Evaluations",
-    href: "/student/evaluations",
-    icon: ClipboardList,
+    label: "Teachers",
+    href: "/student/teachers",
+    icon: UserGroup,
   },
-  { label: "My Profile", href: "/student/profile", icon: UserCircle },
+  {
+    label: "Facilities",
+    href: "/student/facilities",
+    icon: BuildingComplex,
+  },
 ];

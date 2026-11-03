@@ -115,6 +115,82 @@ export const handlers = [
   ),
 
   // ----------------------------------------
+  // STUDENT EVALUATIONS
+  // ----------------------------------------
+
+  // GET /api/evaluation/my-evaluations
+  http.get("/api/evaluation/my-evaluations/teachers", async () => {
+    await delay(600);
+    const teachers = [
+      {
+        id: 1,
+        type: "teacher",
+        status: "pending",
+        teacherName: "Prof. Alan Turing",
+        subjectCode: "IT 312",
+        section: "BSIT 3A",
+        formTitle: "Teacher Evaluation Form",
+        formDescription: "Evaluate teaching effectiveness.",
+        dueDate: "2026-11-15T23:59:59Z",
+        questionCount: 15,
+        academicYear: "AY 2026-2027",
+        semester: "1st Semester",
+      },
+      {
+        id: 3,
+        type: "teacher",
+        status: "overdue",
+        teacherName: "Dr. Alejandro Cruz",
+        subjectCode: "IT 314",
+        section: "BSIT 3A",
+        formTitle: "Teacher Evaluation Form",
+        formDescription: "Evaluate teaching effectiveness.",
+        dueDate: "2026-10-20T23:59:59Z",
+        questionCount: 15,
+        academicYear: "AY 2026-2027",
+        semester: "1st Semester",
+      },
+    ];
+    return HttpResponse.json(teachers);
+  }),
+
+  // GET /api/evaluation/my-evaluations/facilities
+  http.get("/api/evaluation/my-evaluations/facilities", async () => {
+    await delay(600);
+    const facilities = [
+      {
+        id: 2,
+        type: "facility",
+        status: "pending",
+        facilityName: "Guidance & Counseling Office",
+        location: "Student Affairs — Academic & Career Advising",
+        category: "guidance",
+        formTitle: "Guidance Evaluation",
+        formDescription: "Evaluate the services of the guidance office.",
+        dueDate: "2026-11-10T23:59:59Z",
+        questionCount: 6,
+        academicYear: "AY 2026-2027",
+        semester: "1st Semester",
+      },
+      {
+        id: 4,
+        type: "facility",
+        status: "completed",
+        facilityName: "University Medical & Dental Clinic",
+        location: "Campus Health — Medical & Dental Services",
+        category: "clinic",
+        formTitle: "Clinic Evaluation",
+        formDescription: "Evaluate the services of the clinic.",
+        dueDate: "2026-10-30T23:59:59Z",
+        questionCount: 8,
+        academicYear: "AY 2025-2026",
+        semester: "2nd Semester",
+      },
+    ];
+    return HttpResponse.json(facilities);
+  }),
+
+  // ----------------------------------------
   // EVALUATION TYPES
   // ----------------------------------------
   // GET /api/evaluation/types

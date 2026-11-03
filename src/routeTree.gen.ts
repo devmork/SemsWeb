@@ -14,10 +14,12 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthForbiddenRouteImport } from './routes/_auth/forbidden'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedQaRouteRouteImport } from './routes/_authenticated/qa/route'
+import { Route as AuthenticatedStudentRouteRouteImport } from './routes/_authenticated/student/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
-import { Route as AuthenticatedQaIndexRouteImport } from './routes/_authenticated/qa/index'
-import { Route as AuthenticatedStudentIndexRouteImport } from './routes/_authenticated/student/index'
+import { Route as AuthenticatedStudentFacilitiesRouteImport } from './routes/_authenticated/student/facilities'
 import { Route as AuthenticatedStudentProfileRouteImport } from './routes/_authenticated/student/profile'
+import { Route as AuthenticatedStudentTeachersRouteImport } from './routes/_authenticated/student/teachers'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -43,91 +45,115 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedQaRouteRoute = AuthenticatedQaRouteRouteImport.update({
+  id: '/qa',
+  path: '/qa',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedStudentRouteRoute =
+  AuthenticatedStudentRouteRouteImport.update({
+    id: '/student',
+    path: '/student',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
-const AuthenticatedQaIndexRoute = AuthenticatedQaIndexRouteImport.update({
-  id: '/qa/',
-  path: '/qa/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedStudentIndexRoute =
-  AuthenticatedStudentIndexRouteImport.update({
-    id: '/student/',
-    path: '/student/',
-    getParentRoute: () => AuthenticatedRouteRoute,
+const AuthenticatedStudentFacilitiesRoute =
+  AuthenticatedStudentFacilitiesRouteImport.update({
+    id: '/facilities',
+    path: '/facilities',
+    getParentRoute: () => AuthenticatedStudentRouteRoute,
   } as any)
 const AuthenticatedStudentProfileRoute =
   AuthenticatedStudentProfileRouteImport.update({
-    id: '/student/profile',
-    path: '/student/profile',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedStudentRouteRoute,
+  } as any)
+const AuthenticatedStudentTeachersRoute =
+  AuthenticatedStudentTeachersRouteImport.update({
+    id: '/teachers',
+    path: '/teachers',
+    getParentRoute: () => AuthenticatedStudentRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/qa': typeof AuthenticatedQaRouteRoute
+  '/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
+  '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
+  '/student/teachers': typeof AuthenticatedStudentTeachersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
-  '/qa/': typeof AuthenticatedQaIndexRoute
-  '/student/': typeof AuthenticatedStudentIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/qa': typeof AuthenticatedQaRouteRoute
+  '/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
+  '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
+  '/student/teachers': typeof AuthenticatedStudentTeachersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
-  '/qa': typeof AuthenticatedQaIndexRoute
-  '/student': typeof AuthenticatedStudentIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_authenticated/qa': typeof AuthenticatedQaRouteRoute
+  '/_authenticated/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/_auth/forbidden': typeof AuthForbiddenRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_authenticated/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/_authenticated/student/profile': typeof AuthenticatedStudentProfileRoute
+  '/_authenticated/student/teachers': typeof AuthenticatedStudentTeachersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/_authenticated/qa/': typeof AuthenticatedQaIndexRoute
-  '/_authenticated/student/': typeof AuthenticatedStudentIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/admin'
+    | '/qa'
+    | '/student'
     | '/forbidden'
     | '/login'
+    | '/student/facilities'
     | '/student/profile'
+    | '/student/teachers'
     | '/admin/'
-    | '/qa/'
-    | '/student/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/forbidden'
-    | '/login'
-    | '/student/profile'
-    | '/admin'
     | '/qa'
     | '/student'
+    | '/forbidden'
+    | '/login'
+    | '/student/facilities'
+    | '/student/profile'
+    | '/student/teachers'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/_authenticated/admin'
+    | '/_authenticated/qa'
+    | '/_authenticated/student'
     | '/_auth/forbidden'
     | '/_auth/login'
+    | '/_authenticated/student/facilities'
     | '/_authenticated/student/profile'
+    | '/_authenticated/student/teachers'
     | '/_authenticated/admin/'
-    | '/_authenticated/qa/'
-    | '/_authenticated/student/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,6 +200,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/qa': {
+      id: '/_authenticated/qa'
+      path: '/qa'
+      fullPath: '/qa'
+      preLoaderRoute: typeof AuthenticatedQaRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/student': {
+      id: '/_authenticated/student'
+      path: '/student'
+      fullPath: '/student'
+      preLoaderRoute: typeof AuthenticatedStudentRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -181,26 +221,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/qa/': {
-      id: '/_authenticated/qa/'
-      path: '/qa'
-      fullPath: '/qa/'
-      preLoaderRoute: typeof AuthenticatedQaIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/student/': {
-      id: '/_authenticated/student/'
-      path: '/student'
-      fullPath: '/student/'
-      preLoaderRoute: typeof AuthenticatedStudentIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/_authenticated/student/facilities': {
+      id: '/_authenticated/student/facilities'
+      path: '/facilities'
+      fullPath: '/student/facilities'
+      preLoaderRoute: typeof AuthenticatedStudentFacilitiesRouteImport
+      parentRoute: typeof AuthenticatedStudentRouteRoute
     }
     '/_authenticated/student/profile': {
       id: '/_authenticated/student/profile'
-      path: '/student/profile'
+      path: '/profile'
       fullPath: '/student/profile'
       preLoaderRoute: typeof AuthenticatedStudentProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedStudentRouteRoute
+    }
+    '/_authenticated/student/teachers': {
+      id: '/_authenticated/student/teachers'
+      path: '/teachers'
+      fullPath: '/student/teachers'
+      preLoaderRoute: typeof AuthenticatedStudentTeachersRouteImport
+      parentRoute: typeof AuthenticatedStudentRouteRoute
     }
   }
 }
@@ -219,18 +259,34 @@ const AuthenticatedAdminRouteRouteWithChildren =
     AuthenticatedAdminRouteRouteChildren,
   )
 
+interface AuthenticatedStudentRouteRouteChildren {
+  AuthenticatedStudentFacilitiesRoute: typeof AuthenticatedStudentFacilitiesRoute
+  AuthenticatedStudentProfileRoute: typeof AuthenticatedStudentProfileRoute
+  AuthenticatedStudentTeachersRoute: typeof AuthenticatedStudentTeachersRoute
+}
+
+const AuthenticatedStudentRouteRouteChildren: AuthenticatedStudentRouteRouteChildren =
+  {
+    AuthenticatedStudentFacilitiesRoute: AuthenticatedStudentFacilitiesRoute,
+    AuthenticatedStudentProfileRoute: AuthenticatedStudentProfileRoute,
+    AuthenticatedStudentTeachersRoute: AuthenticatedStudentTeachersRoute,
+  }
+
+const AuthenticatedStudentRouteRouteWithChildren =
+  AuthenticatedStudentRouteRoute._addFileChildren(
+    AuthenticatedStudentRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
-  AuthenticatedStudentProfileRoute: typeof AuthenticatedStudentProfileRoute
-  AuthenticatedQaIndexRoute: typeof AuthenticatedQaIndexRoute
-  AuthenticatedStudentIndexRoute: typeof AuthenticatedStudentIndexRoute
+  AuthenticatedQaRouteRoute: typeof AuthenticatedQaRouteRoute
+  AuthenticatedStudentRouteRoute: typeof AuthenticatedStudentRouteRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
-  AuthenticatedStudentProfileRoute: AuthenticatedStudentProfileRoute,
-  AuthenticatedQaIndexRoute: AuthenticatedQaIndexRoute,
-  AuthenticatedStudentIndexRoute: AuthenticatedStudentIndexRoute,
+  AuthenticatedQaRouteRoute: AuthenticatedQaRouteRoute,
+  AuthenticatedStudentRouteRoute: AuthenticatedStudentRouteRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
