@@ -1,25 +1,15 @@
-import { ClipboardList } from "lucide-react";
+import { BuildingComplex, UserGroup } from "lucide-react";
 import type { NavItem } from "./types";
 
 export const studentNav: NavItem[] = [
   {
-    label: "Teacher",
-    href: "/student/teacher",
-    icon: ClipboardList,
+    label: "Teachers",
+    href: "/student/teachers",
+    icon: UserGroup,
   },
   {
-    label: "Guidance",
-    href: "/student/guidance",
-    icon: ClipboardList,
-  },
-  {
-    label: "Clinic",
-    href: "/student/clinic",
-    icon: ClipboardList,
-  },
-  {
-    label: "Library",
-    href: "/student/library",
-    icon: ClipboardList,
+    label: "Facilities",
+    href: "/student/facilities",
+    icon: BuildingComplex,
   },
 ];
