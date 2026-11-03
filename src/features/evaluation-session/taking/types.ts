@@ -1,17 +1,29 @@
-export type EvaluationType = "guidance" | "teacher" | "clinic" | "canteen";
-
 export type EvaluationStatus = "pending" | "overdue" | "completed";
 
-export interface EvaluationAssignment {
+// Base interface for shared fields
+interface BaseEvaluation {
   id: number;
-  type: EvaluationType;
   status: EvaluationStatus;
-  targetName: string;
-  targetSubtitle: string;
-  formTitle: string;
-  formDescription: string;
   dueDate: string;
   questionCount: number;
   academicYear?: string;
   semester?: string;
+  formTitle: string;
+  formDescription: string;
+}
+
+// Teacher specific
+export interface TeacherEvaluation extends BaseEvaluation {
+  type: "teacher";
+  teacherName: string;
+  subjectCode: string;
+  section: string;
+}
+
+// Facility specific
+export interface FacilityEvaluation extends BaseEvaluation {
+  type: "facility";
+  facilityName: string;
+  location: string;
+  category: string; // e.g., "Clinic", "Canteen", "Guidance"
 }
