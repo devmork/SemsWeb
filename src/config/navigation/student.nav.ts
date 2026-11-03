@@ -1,26 +1,25 @@
-import { ClipboardList, UserCircle } from "lucide-react";
+import { ClipboardList } from "lucide-react";
 import type { NavItem } from "./types";
 
 export const studentNav: NavItem[] = [
-  { label: "My Profile", href: "/student/profile", icon: UserCircle },
   {
-    label: "Guidance",
-    href: "/student/guidance-evaluations",
+    label: "Teacher",
+    href: "/student/teacher",
     icon: ClipboardList,
   },
   {
-    label: "Teacher",
-    href: "/student/teacher-evaluations",
+    label: "Guidance",
+    href: "/student/guidance",
     icon: ClipboardList,
   },
   {
     label: "Clinic",
-    href: "/student/clinic-evaluations",
+    href: "/student/clinic",
     icon: ClipboardList,
   },
   {
     label: "Library",
-    href: "/student/library-evaluations",
+    href: "/student/library",
     icon: ClipboardList,
   },
 ];
