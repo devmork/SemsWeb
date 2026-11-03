@@ -1,21 +1,25 @@
 import { api } from "@/lib/api";
-import type { EvaluationAssignment, EvaluationType } from "../types";
+import type { TeacherEvaluation, FacilityEvaluation } from "../types";
 
 export const evaluationService = {
-  async getMyEvaluations(
-    type: EvaluationType,
-  ): Promise<EvaluationAssignment[]> {
-    const { data } = await api.get<EvaluationAssignment[]>(
-      "/api/evaluation/my-evaluations",
-      { params: { type } },
+  // Separate endpoint for teachers
+  async getTeacherEvaluations(): Promise<TeacherEvaluation[]> {
+    const { data } = await api.get<TeacherEvaluation[]>(
+      "/api/evaluation/my-evaluations/teachers",
     );
     return data;
   },
 
-  async getMyEvaluation(id: number): Promise<EvaluationAssignment> {
-    const { data } = await api.get<EvaluationAssignment>(
-      `/api/evaluation/my-evaluations/${id}`,
+  // Separate endpoint for facilities
+  async getFacilityEvaluations(): Promise<FacilityEvaluation[]> {
+    const { data } = await api.get<FacilityEvaluation[]>(
+      "/api/evaluation/my-evaluations/facilities",
     );
+    return data;
+  },
+
+  async getEvaluationDetail(id: number) {
+    const { data } = await api.get(`/api/evaluation/my-evaluations/${id}`);
     return data;
   },
 };
