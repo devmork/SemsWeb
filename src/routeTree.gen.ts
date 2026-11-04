@@ -20,6 +20,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedStudentFacilitiesRouteImport } from './routes/_authenticated/student/facilities'
 import { Route as AuthenticatedStudentProfileRouteImport } from './routes/_authenticated/student/profile'
 import { Route as AuthenticatedStudentTeachersRouteImport } from './routes/_authenticated/student/teachers'
+import { Route as AuthenticatedStudentEvaluateEvaluateIdRouteImport } from './routes/_authenticated/student/evaluate.$evaluateId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -79,6 +80,12 @@ const AuthenticatedStudentTeachersRoute =
     path: '/teachers',
     getParentRoute: () => AuthenticatedStudentRouteRoute,
   } as any)
+const AuthenticatedStudentEvaluateEvaluateIdRoute =
+  AuthenticatedStudentEvaluateEvaluateIdRouteImport.update({
+    id: '/evaluate/$evaluateId',
+    path: '/evaluate/$evaluateId',
+    getParentRoute: () => AuthenticatedStudentRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +110,7 @@ export interface FileRoutesByTo {
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +125,7 @@ export interface FileRoutesById {
   '/_authenticated/student/profile': typeof AuthenticatedStudentProfileRoute
   '/_authenticated/student/teachers': typeof AuthenticatedStudentTeachersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/student/profile'
     | '/student/teachers'
     | '/admin/'
+    | '/student/evaluate/$evaluateId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/student/profile'
     | '/student/teachers'
     | '/admin'
+    | '/student/evaluate/$evaluateId'
   id:
     | '__root__'
     | '/'
@@ -154,6 +166,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/profile'
     | '/_authenticated/student/teachers'
     | '/_authenticated/admin/'
+    | '/_authenticated/student/evaluate/$evaluateId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -242,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentTeachersRouteImport
       parentRoute: typeof AuthenticatedStudentRouteRoute
     }
+    '/_authenticated/student/evaluate/$evaluateId': {
+      id: '/_authenticated/student/evaluate/$evaluateId'
+      path: '/evaluate/$evaluateId'
+      fullPath: '/student/evaluate/$evaluateId'
+      preLoaderRoute: typeof AuthenticatedStudentEvaluateEvaluateIdRouteImport
+      parentRoute: typeof AuthenticatedStudentRouteRoute
+    }
   }
 }
 
@@ -263,6 +283,7 @@ interface AuthenticatedStudentRouteRouteChildren {
   AuthenticatedStudentFacilitiesRoute: typeof AuthenticatedStudentFacilitiesRoute
   AuthenticatedStudentProfileRoute: typeof AuthenticatedStudentProfileRoute
   AuthenticatedStudentTeachersRoute: typeof AuthenticatedStudentTeachersRoute
+  AuthenticatedStudentEvaluateEvaluateIdRoute: typeof AuthenticatedStudentEvaluateEvaluateIdRoute
 }
 
 const AuthenticatedStudentRouteRouteChildren: AuthenticatedStudentRouteRouteChildren =
@@ -270,6 +291,8 @@ const AuthenticatedStudentRouteRouteChildren: AuthenticatedStudentRouteRouteChil
     AuthenticatedStudentFacilitiesRoute: AuthenticatedStudentFacilitiesRoute,
     AuthenticatedStudentProfileRoute: AuthenticatedStudentProfileRoute,
     AuthenticatedStudentTeachersRoute: AuthenticatedStudentTeachersRoute,
+    AuthenticatedStudentEvaluateEvaluateIdRoute:
+      AuthenticatedStudentEvaluateEvaluateIdRoute,
   }
 
 const AuthenticatedStudentRouteRouteWithChildren =
