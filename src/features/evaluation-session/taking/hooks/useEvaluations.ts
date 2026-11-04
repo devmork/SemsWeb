@@ -1,11 +1,13 @@
 // src/features/evaluation-session/taking/hooks/useEvaluations.ts
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { evaluationService } from "../service/evaluationService";
+import type { SubmitEvaluationPayload } from "../types";
 
 export const evaluationKeys = {
   all: ["student", "evaluations"] as const,
   teachers: () => [...evaluationKeys.all, "teachers"] as const,
   facilities: () => [...evaluationKeys.all, "facilities"] as const,
+  detail: (id: number) => [...evaluationKeys.all, "detail", id] as const,
 };
 
 export function useTeacherEvaluations() {
@@ -19,5 +21,28 @@ export function useFacilityEvaluations() {
   return useQuery({
     queryKey: evaluationKeys.facilities(),
     queryFn: evaluationService.getFacilityEvaluations,
+  });
+}
+
+export function useSubmitEvaluation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: number;
+      payload: SubmitEvaluationPayload;
+    }) => evaluationService.submitEvaluation(id, payload),
+    onSuccess: (_, variables) => {
+      // 1. Invalidate the detail view (though we are navigating away anyway)
+      queryClient.invalidateQueries({
+        queryKey: evaluationKeys.detail(variables.id),
+      });
+      // 2. Invalidate the lists so the "Start Evaluation" button updates to "Submitted"
+      queryClient.invalidateQueries({ queryKey: evaluationKeys.teachers() });
+      queryClient.invalidateQueries({ queryKey: evaluationKeys.facilities() });
+    },
   });
 }
