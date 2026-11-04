@@ -13,6 +13,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import type { FacilityEvaluation } from "../types";
+import { Link } from "@tanstack/react-router"; // Added import
 
 interface FacilityEvaluationCardProps {
   evaluation: FacilityEvaluation;
@@ -65,7 +66,15 @@ export function FacilityEvaluationCard({
         </p>
         <Button
           variant={isCompleted ? "outline" : "default"}
-          disabled={isCompleted}>
+          disabled={isCompleted}
+          render={
+            !isCompleted ? (
+              <Link
+                to="/student/evaluate/$evaluateId"
+                params={{ evaluateId: evaluation.id.toString() }}
+              />
+            ) : undefined
+          }>
           {isCompleted ? (
             <>
               <CheckCircle2 className="mr-2 size-4" /> Submitted
