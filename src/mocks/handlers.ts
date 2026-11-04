@@ -190,6 +190,93 @@ export const handlers = [
     return HttpResponse.json(facilities);
   }),
 
+  http.post(
+    "/api/evaluation/my-evaluations/:id/submit",
+    async ({ request, params }) => {
+      const payload = await request.json();
+      const evaluationId = Number(params.id);
+
+      // Simulate network delay
+      await delay(1000);
+
+      console.log(
+        `Mock Received Submission for Evaluation ${evaluationId}:`,
+        payload,
+      );
+
+      // Simulate a duplicate submission error for testing purposes
+      // if (evaluationId === 1 && (payload as any).answers.length === 0) {
+      //   return new HttpResponse(JSON.stringify({ message: "Evaluation already submitted." }), { status: 409 });
+      // }
+
+      return HttpResponse.json({
+        success: true,
+        message: "Evaluation submitted successfully.",
+      });
+    },
+  ),
+
+  http.get("/api/evaluation/my-evaluations/:id", async ({ params }) => {
+    await delay(500);
+
+    const mockDetail = {
+      id: Number(params.id),
+      title: "Student to Faculty Evaluation AY 2026-2027 (1ST SEMESTER)",
+      targetName: "Prof. Maria Santos",
+      targetSubtitle: "BSIT 3A — Web Systems & Development (IT 312)",
+      dueDate: "2026-10-28T23:59:59Z",
+      respondentEmail: "juan_delacruz@dmc.edu.ph",
+      categories: [
+        {
+          id: 1,
+          title: "TEACHING METHODOLOGY & PEDAGOGY",
+          weightPercentage: 40,
+          questions: [
+            {
+              id: 101,
+              text: "The instructor clearly explains the course objectives and grading criteria.",
+              isRequired: true,
+            },
+            {
+              id: 102,
+              text: "The instructor demonstrates thorough knowledge of the subject matter.",
+              isRequired: true,
+            },
+            {
+              id: 103,
+              text: "The instructor uses varied teaching methods to engage students.",
+              isRequired: true,
+            },
+          ],
+        },
+        {
+          id: 2,
+          title: "CLASSROOM MANAGEMENT",
+          weightPercentage: 30,
+          questions: [
+            {
+              id: 201,
+              text: "The instructor maintains a respectful and inclusive classroom environment.",
+              isRequired: true,
+            },
+            {
+              id: 202,
+              text: "The instructor manages class time effectively.",
+              isRequired: true,
+            },
+            {
+              id: 203,
+              text: "The instructor addresses student disruptions appropriately.",
+              isRequired: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    return HttpResponse.json(mockDetail);
+  }),
+
   // ----------------------------------------
   // EVALUATION TYPES
   // ----------------------------------------
