@@ -27,3 +27,36 @@ export interface FacilityEvaluation extends BaseEvaluation {
   location: string;
   category: string; // e.g., "Clinic", "Canteen", "Guidance"
 }
+
+export interface EvaluationQuestion {
+  id: number;
+  text: string;
+  isRequired: boolean;
+}
+
+export interface EvaluationCategory {
+  id: number;
+  title: string;
+  weightPercentage: number; // e.g., 40 for 40%
+  questions: EvaluationQuestion[];
+}
+
+export interface EvaluationDetail {
+  id: number;
+  title: string;
+  targetName: string;
+  targetSubtitle: string;
+  dueDate: string;
+  categories: EvaluationCategory[];
+  respondentEmail: string;
+}
+
+export interface EvaluationAnswer {
+  questionId: number;
+  rating: number;
+}
+
+export interface SubmitEvaluationPayload {
+  evaluationId: number;
+  answers: EvaluationAnswer[];
+}
