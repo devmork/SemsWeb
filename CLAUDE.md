@@ -2,19 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Skills
-
-**Always check for relevant skills before executing any command or generating code.** Before starting work, check if a skill exists in `.claude/skills/` that matches the task:
-
-- `/api-doc` — use when documenting APIs, routes, or service endpoints
-- `/new-component` — use when creating new UI components (CVA, cn, forwardRef patterns enforced)
-
-If a skill matches the task, invoke it via the Skill tool and follow its instructions. Do not proceed with ad-hoc implementation when a skill covers the workflow.
-
-For sub-agents (code review, UI review), dispatch via the Agent tool:
-- `code-reviewer` — for reviewing changes for correctness, conventions, layer separation
-- `ui-reviewer` — for checking accessibility, contrast, focus, design-system consistency
-
 ## Commands
 
 ```bash
@@ -85,6 +72,7 @@ src/
 ### Role-Based Navigation
 
 Navigation is defined per role in `src/config/navigation/`:
+
 - `admin.nav.ts` — admin nav items
 - `qa.nav.ts` — QA nav items
 - `student.nav.ts` — student nav items
@@ -104,3 +92,17 @@ Navigation is defined per role in `src/config/navigation/`:
 - **Admin API path inconsistency**: `useUsers.ts` calls `/admin/users` while `evaluationService.ts` calls `/api/evaluation/...`. The auth service uses `/api/auth/...`. There is no single API prefix convention enforced — check the backend contract before adding new endpoints.
 - **Role casing**: `toUserRole()` in `authService.ts` normalizes role strings to lowercase. The backend may return different casing — always normalize through this function.
 - **QA module is largely unbuilt**: The `qa` route currently only has a layout route (`route.tsx`) with no child pages. The "management" subfolder of `evaluation-session` is empty. QA features (categories, questions, form templates, sessions) need to be created from scratch.
+
+## Skills
+
+**Always check for relevant skills before executing any command or generating code.** Before starting work, check if a skill exists in `.claude/skills/` that matches the task:
+
+- `/api-doc` — use when documenting APIs, routes, or service endpoints
+- `/new-component` — use when creating new UI components (CVA, cn, forwardRef patterns enforced)
+
+If a skill matches the task, invoke it via the Skill tool and follow its instructions. Do not proceed with ad-hoc implementation when a skill covers the workflow.
+
+For sub-agents (code review, UI review), dispatch via the Agent tool:
+
+- `code-reviewer` — for reviewing changes for correctness, conventions, layer separation
+- `ui-reviewer` — for checking accessibility, contrast, focus, design-system consistency
