@@ -9,7 +9,13 @@ const mockEvaluationTypes = [
   { evaluationTypeId: 2, evaluationTypeName: "Facility Evaluation" },
 ];
 
-const mockCategories = [
+const mockCategories: Array<{
+  catNo: number;
+  evaluationTypeId: number;
+  catRn: string;
+  catName: string;
+  catRate: number;
+}> = [
   {
     catNo: 1,
     evaluationTypeId: 1,
@@ -33,12 +39,29 @@ const mockCategories = [
   },
 ];
 
-const mockQuestions = [
+const mockQuestions: Array<{
+  qnNo: number;
+  catNo: number;
+  qnName: string;
+}> = [
   { qnNo: 1, catNo: 1, qnName: "The teacher explains lessons clearly." },
   { qnNo: 2, catNo: 1, qnName: "The teacher uses appropriate examples." },
   { qnNo: 3, catNo: 2, qnName: "The teacher maintains an orderly classroom." },
   { qnNo: 4, catNo: 3, qnName: "The facility is clean and well-maintained." },
 ];
+
+// shape consumed by categoryService / useCategories (management UI)
+function toManagementCategory(c: (typeof mockCategories)[number]) {
+  return {
+    id: c.catNo,
+    name: c.catName,
+    weightPercentage: c.catRate,
+    questionCount: mockQuestions.filter((q) => q.catNo === c.catNo).length,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+let nextCatNo = 100;
 
 const mockForms = [
   {
@@ -302,6 +325,77 @@ export const handlers = [
       return HttpResponse.json(filtered);
     }
     return HttpResponse.json(mockCategories);
+  }),
+
+  // ----------------------------------------
+  // CATEGORY MANAGEMENT (QA UI — /api/categories)
+  // ----------------------------------------
+  // GET /api/categories
+  http.get("/api/categories", async () => {
+    await delay(300);
+    return HttpResponse.json(mockCategories.map(toManagementCategory));
+  }),
+
+  // POST /api/categories
+  http.post("/api/categories", async ({ request }) => {
+    const body = (await request.json()) as {
+      name?: string;
+      weightPercentage?: number;
+    };
+    await delay(300);
+    if (!body.name?.trim() || body.weightPercentage == null) {
+      return HttpResponse.json(
+        { message: "name and weightPercentage are required" },
+        { status: 422 },
+      );
+    }
+    const catNo = nextCatNo++;
+    const created = {
+      catNo,
+      evaluationTypeId: 1,
+      catRn: String.fromCharCode(64 + (catNo % 26)) || "Z",
+      catName: body.name.trim(),
+      catRate: body.weightPercentage,
+    };
+    mockCategories.push(created);
+    return HttpResponse.json(toManagementCategory(created), { status: 201 });
+  }),
+
+  // DELETE /api/categories/:id — guarded: refuses when questions remain
+  http.delete("/api/categories/:id", async ({ params }) => {
+    const id = Number(params.id);
+    await delay(300);
+    const idx = mockCategories.findIndex((c) => c.catNo === id);
+    if (idx === -1) return new HttpResponse(null, { status: 404 });
+    const questionCount = mockQuestions.filter((q) => q.catNo === id).length;
+    if (questionCount > 0) {
+      return HttpResponse.json(
+        { message: `Category still has ${questionCount} question(s) assigned` },
+        { status: 409 },
+      );
+    }
+    mockCategories.splice(idx, 1);
+    return HttpResponse.json({ success: true });
+  }),
+
+  // PUT /api/categories/:id
+  http.put("/api/categories/:id", async ({ request, params }) => {
+    const body = (await request.json()) as {
+      name?: string;
+      weightPercentage?: number;
+    };
+    const id = Number(params.id);
+    await delay(300);
+    const idx = mockCategories.findIndex((c) => c.catNo === id);
+    if (idx === -1) return new HttpResponse(null, { status: 404 });
+    const current = mockCategories[idx]!;
+    const updated = {
+      ...current,
+      catName: body.name?.trim() ?? current.catName,
+      catRate: body.weightPercentage ?? current.catRate,
+    };
+    mockCategories[idx] = updated;
+    return HttpResponse.json(toManagementCategory(updated));
   }),
 
   // ----------------------------------------

@@ -12,7 +12,7 @@ const MOCK_DEV_USER: UserResponse = {
   id: 1,
   name: "Den Mark Enoy",
   email: "den_enoy@dmc.edu.ph",
-  role: "student",
+  role: "qa",
   pictureUrl: null,
   studentProfile: {
     schoolStudentId: "2023-0444",

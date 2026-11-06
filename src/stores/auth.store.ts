@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import type { AuthUser } from "@/types/domain";
+import type { UserResponse } from "@/types/domain";
 
 interface AuthState {
   /** Profile only. The tokens are HttpOnly cookies and are never readable here. */
-  user: AuthUser | null;
-  setUser: (user: AuthUser) => void;
+  user: UserResponse | null;
+  setUser: (user: UserResponse) => void;
   clearUser: () => void;
 }
 
