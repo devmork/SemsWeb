@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Skills
+
+**Always check for relevant skills before executing any command or generating code.** Before starting work, check if a skill exists in `.claude/skills/` that matches the task:
+
+- `/api-doc` — use when documenting APIs, routes, or service endpoints
+- `/new-component` — use when creating new UI components (CVA, cn, forwardRef patterns enforced)
+
+If a skill matches the task, invoke it via the Skill tool and follow its instructions. Do not proceed with ad-hoc implementation when a skill covers the workflow.
+
+For sub-agents (code review, UI review), dispatch via the Agent tool:
+- `code-reviewer` — for reviewing changes for correctness, conventions, layer separation
+- `ui-reviewer` — for checking accessibility, contrast, focus, design-system consistency
+
 ## Commands
 
 ```bash
