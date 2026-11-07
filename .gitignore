@@ -17,6 +17,7 @@ specs
 .specify
 .claude
 docs
+.tanstack
 
 # Editor directories and files
 .vscode/*
