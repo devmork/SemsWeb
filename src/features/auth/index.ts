@@ -5,4 +5,5 @@ export {
   logout,
   fetchCurrentUser,
 } from "./services/authService";
-export type { LoginSearch, UserResponse } from "./types";
+export type { LoginSearch } from "./types";
+export type { UserResponse } from "@/types/domain";
