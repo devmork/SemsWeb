@@ -418,6 +418,92 @@ export const handlers = [
   }),
 
   // ----------------------------------------
+  // QUESTION MANAGEMENT (QA UI — /api/evaluation/categories/:catNo/questions)
+  // Consumed by questionService / useQuestions
+  // ----------------------------------------
+  // GET /api/evaluation/categories/:catNo/questions
+  http.get(
+    "/api/evaluation/categories/:catNo/questions",
+    async ({ params }) => {
+      const catNo = Number(params.catNo);
+      await delay(300);
+      const questions = mockQuestions.filter((q) => q.catNo === catNo);
+      return HttpResponse.json(
+        questions.map((q) => ({ QnNo: q.qnNo, QnName: q.qnName })),
+      );
+    },
+  ),
+
+  // POST /api/evaluation/categories/:catNo/questions
+  http.post(
+    "/api/evaluation/categories/:catNo/questions",
+    async ({ request, params }) => {
+      const catNo = Number(params.catNo);
+      const body = (await request.json()) as { QnName?: string };
+      await delay(300);
+      if (!body.QnName?.trim()) {
+        return HttpResponse.json(
+          { message: "QnName is required" },
+          { status: 422 },
+        );
+      }
+      const nextQnNo =
+        mockQuestions.length > 0
+          ? Math.max(...mockQuestions.map((q) => q.qnNo)) + 1
+          : 1;
+      const created = { qnNo: nextQnNo, catNo, qnName: body.QnName.trim() };
+      mockQuestions.push(created);
+      return HttpResponse.json(
+        {
+          message: "Question created successfully.",
+          data: { QnNo: created.qnNo, QnName: created.qnName },
+        },
+        { status: 201 },
+      );
+    },
+  ),
+
+  // PUT /api/evaluation/categories/:catNo/questions/:qnNo
+  http.put(
+    "/api/evaluation/categories/:catNo/questions/:qnNo",
+    async ({ request, params }) => {
+      const catNo = Number(params.catNo);
+      const qnNo = Number(params.qnNo);
+      const body = (await request.json()) as { QnName?: string };
+      await delay(300);
+      const idx = mockQuestions.findIndex(
+        (q) => q.catNo === catNo && q.qnNo === qnNo,
+      );
+      if (idx === -1) return new HttpResponse(null, { status: 404 });
+      const updated = {
+        ...mockQuestions[idx]!,
+        qnName: body.QnName?.trim() ?? mockQuestions[idx]!.qnName,
+      };
+      mockQuestions[idx] = updated;
+      return HttpResponse.json({
+        message: "Question updated successfully.",
+        data: { QnNo: updated.qnNo, QnName: updated.qnName },
+      });
+    },
+  ),
+
+  // DELETE /api/evaluation/categories/:catNo/questions/:qnNo
+  http.delete(
+    "/api/evaluation/categories/:catNo/questions/:qnNo",
+    async ({ params }) => {
+      const catNo = Number(params.catNo);
+      const qnNo = Number(params.qnNo);
+      await delay(300);
+      const idx = mockQuestions.findIndex(
+        (q) => q.catNo === catNo && q.qnNo === qnNo,
+      );
+      if (idx === -1) return new HttpResponse(null, { status: 404 });
+      mockQuestions.splice(idx, 1);
+      return HttpResponse.json({ success: true });
+    },
+  ),
+
+  // ----------------------------------------
   // FORMS
   // ----------------------------------------
   // GET /api/evaluation/forms

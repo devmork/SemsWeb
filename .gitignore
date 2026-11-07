@@ -12,9 +12,12 @@ dist
 dist-ssr
 *.local
 .env
-repomix-output.xml
-.claude
 CLAUDE.md
+specs
+.specify
+.claude
+docs
+.tanstack
 
 # Editor directories and files
 .vscode/*
