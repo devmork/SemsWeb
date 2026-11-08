@@ -2,7 +2,7 @@
 
 # SemsWeb — School Evaluation System
 
-School evaluation management system (teachers + facilities feedback). Roles: **student** (takes evaluations), **qa** (manages forms/categories/questions/sessions), **admin** (manages user roles). Frontend: React 19 + TypeScript + Vite, TanStack Router/Query, Zustand, Tailwind 4, shadcn-style UI (`components.json`, style `base-vega`). No backend in this repo; API base URL is configured client-side.
+School evaluation management system (teachers + facilities feedback). Roles: **student** (takes evaluations), **qa** (manages forms/categories/questions/sessions), **admin** (manages user roles). Frontend: React 19 + TypeScript + Vite, TanStack Router/Query, Zustand, Tailwind 4, shadcn-style UI (`components.json`, style `base-vega`). No backend in this repo; API base URL is configured client-side. Sibling layout: lives at `Mark Projects/Sems/SemsWeb` next to `SemsApi` (../SemsApi) — two independent git repos under one parent folder, no root repo; local API runs at `https://localhost:7278`.
 
 ## Session start — read docs first
 
