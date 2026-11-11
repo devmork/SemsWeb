@@ -19,6 +19,7 @@ import { Route as AuthenticatedStudentRouteRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedQaCategoriesRouteImport } from './routes/_authenticated/qa/categories'
 import { Route as AuthenticatedQaFormsRouteImport } from './routes/_authenticated/qa/forms'
+import { Route as AuthenticatedQaSessionsRouteImport } from './routes/_authenticated/qa/sessions'
 import { Route as AuthenticatedStudentFacilitiesRouteImport } from './routes/_authenticated/student/facilities'
 import { Route as AuthenticatedStudentProfileRouteImport } from './routes/_authenticated/student/profile'
 import { Route as AuthenticatedStudentTeachersRouteImport } from './routes/_authenticated/student/teachers'
@@ -76,6 +77,11 @@ const AuthenticatedQaFormsRoute = AuthenticatedQaFormsRouteImport.update({
   path: '/forms',
   getParentRoute: () => AuthenticatedQaRouteRoute,
 } as any)
+const AuthenticatedQaSessionsRoute = AuthenticatedQaSessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
+  getParentRoute: () => AuthenticatedQaRouteRoute,
+} as any)
 const AuthenticatedStudentFacilitiesRoute =
   AuthenticatedStudentFacilitiesRouteImport.update({
     id: '/facilities',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/qa/categories': typeof AuthenticatedQaCategoriesRoute
   '/qa/forms': typeof AuthenticatedQaFormsRoute
+  '/qa/sessions': typeof AuthenticatedQaSessionsRoute
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/qa/categories': typeof AuthenticatedQaCategoriesRoute
   '/qa/forms': typeof AuthenticatedQaFormsRoute
+  '/qa/sessions': typeof AuthenticatedQaSessionsRoute
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_authenticated/qa/categories': typeof AuthenticatedQaCategoriesRoute
   '/_authenticated/qa/forms': typeof AuthenticatedQaFormsRoute
+  '/_authenticated/qa/sessions': typeof AuthenticatedQaSessionsRoute
   '/_authenticated/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/_authenticated/student/profile': typeof AuthenticatedStudentProfileRoute
   '/_authenticated/student/teachers': typeof AuthenticatedStudentTeachersRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/qa/categories'
     | '/qa/forms'
+    | '/qa/sessions'
     | '/student/facilities'
     | '/student/profile'
     | '/student/teachers'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/qa/categories'
     | '/qa/forms'
+    | '/qa/sessions'
     | '/student/facilities'
     | '/student/profile'
     | '/student/teachers'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_authenticated/qa/categories'
     | '/_authenticated/qa/forms'
+    | '/_authenticated/qa/sessions'
     | '/_authenticated/student/facilities'
     | '/_authenticated/student/profile'
     | '/_authenticated/student/teachers'
@@ -286,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedQaFormsRouteImport
       parentRoute: typeof AuthenticatedQaRouteRoute
     }
+    '/_authenticated/qa/sessions': {
+      id: '/_authenticated/qa/sessions'
+      path: '/sessions'
+      fullPath: '/qa/sessions'
+      preLoaderRoute: typeof AuthenticatedQaSessionsRouteImport
+      parentRoute: typeof AuthenticatedQaRouteRoute
+    }
     '/_authenticated/student/facilities': {
       id: '/_authenticated/student/facilities'
       path: '/facilities'
@@ -341,12 +360,14 @@ const AuthenticatedAdminRouteRouteWithChildren =
 interface AuthenticatedQaRouteRouteChildren {
   AuthenticatedQaCategoriesRoute: typeof AuthenticatedQaCategoriesRoute
   AuthenticatedQaFormsRoute: typeof AuthenticatedQaFormsRoute
+  AuthenticatedQaSessionsRoute: typeof AuthenticatedQaSessionsRoute
   AuthenticatedQaQuestionsCatNoRoute: typeof AuthenticatedQaQuestionsCatNoRoute
 }
 
 const AuthenticatedQaRouteRouteChildren: AuthenticatedQaRouteRouteChildren = {
   AuthenticatedQaCategoriesRoute: AuthenticatedQaCategoriesRoute,
   AuthenticatedQaFormsRoute: AuthenticatedQaFormsRoute,
+  AuthenticatedQaSessionsRoute: AuthenticatedQaSessionsRoute,
   AuthenticatedQaQuestionsCatNoRoute: AuthenticatedQaQuestionsCatNoRoute,
 }
 
