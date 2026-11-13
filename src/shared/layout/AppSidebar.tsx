@@ -1,5 +1,4 @@
-"use client";
-
+import type { ReactNode } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,12 +11,14 @@ import {
 import { IconCommand } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { AppSidebarNav } from "./AppSidebarNav";
-import { AppSidebarFooter } from "./AppSidebarFooter";
-import { useRoleNavigation } from "@/shared/hooks/useRoleNavigation";
+import type { NavigationItem } from "@/shared/config/navigation/types";
 
-export function AppSidebar() {
-  const { items } = useRoleNavigation();
+interface AppSidebarProps {
+  items: NavigationItem[];
+  footer?: ReactNode;
+}
 
+export function AppSidebar({ items, footer }: AppSidebarProps) {
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader>
@@ -42,9 +43,7 @@ export function AppSidebar() {
         <AppSidebarNav items={items} />
       </SidebarContent>
 
-      <SidebarFooter>
-        <AppSidebarFooter />
-      </SidebarFooter>
+      {footer ? <SidebarFooter>{footer}</SidebarFooter> : null}
     </Sidebar>
   );
 }

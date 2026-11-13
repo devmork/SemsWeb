@@ -6,10 +6,16 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "./AppSidebar";
-import { useEffect, useState } from "react";
-import BootLoader from "./BootLoader";
+import { useEffect, useState, type ReactNode } from "react";
+import { BootLoader } from "./BootLoader";
+import type { NavigationItem } from "@/shared/config/navigation/types";
 
-export function AppLayout() {
+interface AppLayoutProps {
+  navItems: NavigationItem[];
+  sidebarFooter?: ReactNode;
+}
+
+export function AppLayout({ navItems, sidebarFooter }: AppLayoutProps) {
   const [isSyncing, setIsSyncing] = useState(true);
 
   useEffect(() => {
@@ -28,7 +34,7 @@ export function AppLayout() {
   }
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar items={navItems} footer={sidebarFooter} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />

@@ -1,4 +1,4 @@
-import type { UserRole } from "@/types/domain";
+import type { UserRole } from "@/shared/types/user";
 
 export interface ManagedUser {
   userId: number;

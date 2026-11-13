@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import type { UserRole } from "@/types/domain";
+import type { UserRole } from "@/shared/types/user";
 import type { ManagedUser } from "../types";
+import { userService } from "../services/userService";
 import { usersQueryKey } from "./useUsers";
 
 interface UpdateRoleInput {
@@ -14,7 +14,7 @@ export function useUpdateUserRole() {
 
   return useMutation({
     mutationFn: ({ userId, role }: UpdateRoleInput) =>
-      api.post(`/superadmin/users/${userId}/role`, { role }),
+      userService.updateUserRole(userId, role),
 
     // optimistic update: flip the role in the cached list immediately
     onMutate: async ({ userId, role }) => {

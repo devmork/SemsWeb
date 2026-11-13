@@ -6,7 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ManagedUser } from "../types";
-import type { UserRole } from "@/types/domain";
+import type { UserRole } from "@/shared/types/user";
 import { RoleBadge } from "./RoleBadge";
 import { useUpdateUserRole } from "../hooks/useUpdateUserRole";
 

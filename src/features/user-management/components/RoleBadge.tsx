@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import type { UserRole } from "@/types/domain";
+import { cn } from "@/shared/lib/utils";
+import type { UserRole } from "@/shared/types/user";
 
 const ROLE_STYLES: Record<UserRole, string> = {
   admin: "bg-primary/10 text-primary",

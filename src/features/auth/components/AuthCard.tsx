@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldSeparator } from "@/components/ui/field";
-import { AuthLayout } from "@/shared/layout";
+import { AuthLayout } from "./AuthLayout";
 import { Info } from "lucide-react";
 import { GoogleIcon } from "./GoogleIcon";
-import { LOGIN_ERROR_MESSAGES, SCHOOL_EMAIL_DOMAIN } from "../constant";
+import { LOGIN_ERROR_MESSAGES, SCHOOL_EMAIL_DOMAIN } from "../constants";
 import { startGoogleSignIn } from "../services/authService";
 
 interface AuthCardProps {

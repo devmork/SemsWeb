@@ -5,7 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import type { NavigationItem } from "@/shared/hooks/useRoleNavigation";
+import type { NavigationItem } from "@/shared/config/navigation/types";
 
 export function AppSidebarNav({ items }: { items: NavigationItem[] }) {
   if (items.length === 0) return null;

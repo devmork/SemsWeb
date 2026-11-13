@@ -1,6 +1,6 @@
-import { api, API_BASE_URL } from "@/lib/api";
-import { useAuthStore } from "@/stores/auth.store";
-import type { UserResponse, UserRole } from "@/types/domain";
+import { api, API_BASE_URL } from "@/shared/api/client";
+import { useAuthStore } from "../stores/auth.store";
+import type { UserResponse, UserRole } from "@/shared/types/user";
 
 const USER_ROLES: readonly UserRole[] = ["admin", "qa", "student"];
 
