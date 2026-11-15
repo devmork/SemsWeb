@@ -17,6 +17,8 @@ export { sessionService } from "./services/sessionService";
 
 export type {
   Session,
+  SessionDetail,
+  SessionDetailForm,
   CreateSessionInput,
   UpdateSessionInput,
   SessionSubmission,

@@ -8,13 +8,19 @@ export interface Form {
   evaluationTypeName: string;
   title: string;
   description: string | null;
-  createdBy: string;
+  createdBy: number;
   isActive: 0 | 1;
   createdAt: string;
 }
 
 export interface FormDetail extends Form {
-  categories: { catNo: number; catRn: number | null; catName: string | null; catRate: number | null; questions: { qnNo: number; qnName: string | null }[]; };
+  categories: {
+    catNo: number;
+    catRn: string | null;
+    catName: string | null;
+    catRate: number | null;
+    questions: { qnNo: number; qnName: string | null }[];
+  }[];
 }
 
 export interface CreateFormInput {
@@ -47,7 +53,7 @@ export interface EvaluationType {
 export interface CategoryOption {
   catNo: number;
   evaluationTypeId: number;
-  catRn: number | null;
+  catRn: string | null;
   catName: string | null;
   catRate: number | null;
 }

@@ -39,9 +39,6 @@ export function CategoryTable({
               Weight
             </th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Questions
-            </th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               <span className="sr-only">Actions</span>
             </th>
           </tr>
@@ -49,7 +46,7 @@ export function CategoryTable({
         <tbody>
           {categories.map((category) => (
             <tr
-              key={category.id}
+              key={category.catNo}
               className="border-t border-hairline hover:bg-muted/40"
             >
               <td className="px-4 py-3 text-sm font-medium">
@@ -58,16 +55,13 @@ export function CategoryTable({
               <td className="px-4 py-3">
                 <div className="flex min-w-32 items-center gap-2">
                   <Progress
-                    value={Math.min(100, Math.max(0, category.catRate))}
+                    value={Math.min(100, Math.max(0, category.catRate ?? 0))}
                     className="w-20"
                   />
                   <span className="text-sm tabular-nums">
-                    {category.catRate}%
+                    {category.catRate ?? "—"}%
                   </span>
                 </div>
-              </td>
-              <td className="px-4 py-3 text-sm text-muted-foreground tabular-nums">
-                {category.questionCount}
               </td>
               <td className="px-4 py-3">
                 <div className="flex items-center justify-end gap-1">

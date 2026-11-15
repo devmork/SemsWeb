@@ -12,13 +12,13 @@ import { FacilityEvaluationCard } from "./FacilityEvaluationCard";
 
 export function FacilityEvaluationList() {
   const { data, isPending, isError } = useFacilityEvaluations();
-  const [typeFilter, setTypeFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const filteredData = useMemo(() => {
     if (!data) return [];
-    if (typeFilter === "all") return data;
-    return data.filter((e) => e.category === typeFilter);
-  }, [data, typeFilter]);
+    if (statusFilter === "all") return data;
+    return data.filter((e) => e.status === statusFilter);
+  }, [data, statusFilter]);
 
   return (
     <EvaluationPageLayout
@@ -30,19 +30,18 @@ export function FacilityEvaluationList() {
       filters={
         <div className="flex flex-col gap-1.5 w-full sm:w-[180px]">
           <span className="text-xs font-medium text-muted-foreground">
-            Facility Type
+            Status
           </span>
           <Select
-            value={typeFilter}
-            onValueChange={(value) => setTypeFilter(value ?? "all")}>
+            value={statusFilter}
+            onValueChange={(value) => setStatusFilter(value ?? "all")}>
             <SelectTrigger>
-              <SelectValue placeholder="All Types" />
+              <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
-              <SelectItem value="clinic">Clinic</SelectItem>
-              <SelectItem value="canteen">Canteen</SelectItem>
-              <SelectItem value="library">Library</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -51,7 +51,7 @@ export function MyProfile() {
 
           <div className="flex flex-col gap-2">
             <span className="text-xs text-muted-foreground font-medium">
-              ID: {profile.schoolStudentId}
+              ID: {profile.studentNumber}
             </span>
             <h2 className="text-3xl font-bold tracking-tight uppercase">
               {user.name}
@@ -59,14 +59,14 @@ export function MyProfile() {
 
             <div className="flex flex-wrap items-center gap-2 mt-1">
               <span className="inline-flex items-center rounded-md border border-hairline px-2 py-1 text-xs font-medium text-muted-foreground">
-                ID: {profile.schoolStudentId}
+                ID: {profile.studentNumber}
               </span>
               <span className="inline-flex items-center rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white">
-                {profile.program ?? "N/A"} — {profile.yearLevel ?? "N/A"}
+                {profile.gradeLevel ?? "N/A"} — {profile.section ?? "N/A"}
               </span>
               <span className="inline-flex items-center rounded-md border border-hairline px-2 py-1 text-xs font-medium text-muted-foreground">
-                {profile.academicYear ?? "N/A"} · {profile.semester ?? "N/A"} ·{" "}
-                {profile.enrollmentStatus ?? "N/A"}
+                {profile.schoolYear ?? "N/A"} · Term {profile.term ?? "N/A"} ·{" "}
+                {profile.status ?? "N/A"}
               </span>
             </div>
           </div>
@@ -102,10 +102,10 @@ export function MyProfile() {
               </div>
               <div>
                 <p className="text-[11px] font-medium text-muted-foreground uppercase">
-                  Suffix
+                  Section
                 </p>
                 <p className="text-sm font-bold mt-1">
-                  {profile.suffix || "N/A"}
+                  {profile.section || "N/A"}
                 </p>
               </div>
             </div>

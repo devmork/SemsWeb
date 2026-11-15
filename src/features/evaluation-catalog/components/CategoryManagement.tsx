@@ -56,21 +56,21 @@ function CategoryCardSkeleton() {
 }
 
 function CategoryQuestionPanel({ category }: { category: Category }) {
-  const { data: questions = [], isLoading, error } = useQuestions(category.id);
+  const { data: questions = [], isLoading, error } = useQuestions(category.catNo);
   const {
     mutate: createQuestion,
     isPending: isCreating,
     error: createError,
     reset: resetCreateError,
-  } = useCreateQuestion(category.id);
+  } = useCreateQuestion(category.catNo);
   const {
     mutate: updateQuestion,
     isPending: isUpdating,
     error: updateError,
     reset: resetUpdateError,
-  } = useUpdateQuestion(category.id);
+  } = useUpdateQuestion(category.catNo);
   const { mutate: deleteQuestion, isPending: isDeleting } = useDeleteQuestion(
-    category.id,
+    category.catNo,
   );
 
   const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
@@ -258,7 +258,12 @@ export function CategoryManagement() {
     error: updateError,
     reset: resetUpdateError,
   } = useUpdateCategory();
-  const { mutate: deleteCategory, isPending: isDeleting } = useDeleteCategory();
+  const {
+    mutate: deleteCategory,
+    isPending: isDeleting,
+    error: deleteError,
+    reset: resetDeleteError,
+  } = useDeleteCategory();
 
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -273,7 +278,7 @@ export function CategoryManagement() {
   const filteredCategories = useMemo(
     () =>
       trimmedQuery
-        ? categories.filter((c) => c.catName.toLowerCase().includes(trimmedQuery))
+        ? categories.filter((c) => (c.catName ?? "").toLowerCase().includes(trimmedQuery))
         : categories,
     [categories, trimmedQuery],
   );
@@ -287,20 +292,22 @@ export function CategoryManagement() {
       setEditingCategory(null);
     };
     if (editingCategory) {
-      updateCategory({ id: editingCategory.id, input }, { onSuccess });
+      updateCategory({ catNo: editingCategory.catNo, input }, { onSuccess });
     } else {
       createCategory(input, { onSuccess });
     }
   };
 
-  const handleDeleteConfirm = (id: number) => {
-    deleteCategory(id, {
+  const handleDeleteConfirm = (catNo: number) => {
+    deleteCategory(catNo, {
       onSuccess: () => {
         setDeleteDialogOpen(false);
         setDeletingCategory(null);
       },
     });
   };
+
+  const deleteSubmitError = mutationErrorMessage(deleteError);
 
   return (
     <div className="flex flex-col gap-4">
@@ -357,9 +364,9 @@ export function CategoryManagement() {
           onValueChange={setOpenValues}
           className="flex flex-col gap-4">
           {filteredCategories.map((category) => (
-            <Card key={category.id}>
+            <Card key={category.catNo}>
               <AccordionItem
-                value={String(category.id)}
+                value={String(category.catNo)}
                 className="border-none">
                 <CardHeader className="pb-0">
                   <div className="flex items-center justify-between gap-4">
@@ -385,6 +392,7 @@ export function CategoryManagement() {
                         className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                         onClick={(e) => {
                           e.stopPropagation();
+                          resetDeleteError();
                           setDeletingCategory(category);
                           setDeleteDialogOpen(true);
                         }}>
@@ -428,6 +436,7 @@ export function CategoryManagement() {
         category={deletingCategory}
         onConfirm={handleDeleteConfirm}
         isPending={isDeleting}
+        error={deleteSubmitError}
       />
     </div>
   );

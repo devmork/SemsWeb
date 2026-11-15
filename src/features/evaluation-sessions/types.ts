@@ -48,6 +48,33 @@ export interface SessionSubmission {
   submittedAtUtc: string;
 }
 
+/** Shape of the `form` object returned by `GET /api/evaluation/sessions/{id}`. */
+export interface SessionDetailForm {
+  formId: number;
+  code: string;
+  gradeBand: string | null;
+  targetType: string;
+  programId: number;
+  evaluationTypeId: number;
+  evaluationTypeName: string;
+  title: string;
+  description: string | null;
+  createdBy: number;
+  isActive: 0 | 1;
+  createdAt: string;
+  categories: {
+    catNo: number;
+    catRn: string | null;
+    catName: string | null;
+    catRate: number | null;
+    questions: { qnNo: number; qnName: string | null }[];
+  }[];
+}
+
+export interface SessionDetail extends Session {
+  form: SessionDetailForm | null;
+}
+
 export const SESSION_STATUSES: { value: SessionStatus; label: string }[] = [
   { value: "Draft", label: "Draft" },
   { value: "Open", label: "Open" },

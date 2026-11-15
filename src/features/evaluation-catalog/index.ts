@@ -22,14 +22,20 @@ export {
   useDeleteQuestion,
   questionKeys,
 } from "./hooks/useQuestions";
+export {
+  useEvaluationTypes,
+  evaluationTypeKeys,
+} from "./hooks/useEvaluationTypes";
 
 export { categoryService } from "./services/categoryService";
 export { questionService } from "./services/questionService";
+export { evaluationTypeService } from "./services/evaluationTypeService";
 
 export type {
   Category,
   CreateCategoryInput,
   UpdateCategoryInput,
+  EvaluationTypeOption,
   Question,
   CreateQuestionInput,
   UpdateQuestionInput,

@@ -83,7 +83,7 @@ export function useCreateForm() {
         evaluationTypeName: "",
         title: input.title,
         description: input.description ?? null,
-        createdBy: "",
+        createdBy: 0,
         isActive: input.isActive ?? 0,
         createdAt: new Date().toISOString(),
       };

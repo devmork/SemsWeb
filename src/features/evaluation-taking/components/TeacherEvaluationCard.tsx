@@ -1,9 +1,4 @@
-import {
-  ArrowRight,
-  CalendarIcon,
-  CheckCircle2,
-  GraduationCap,
-} from "lucide-react";
+import { ArrowRight, CalendarIcon, CheckCircle2, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +8,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import type { TeacherEvaluation } from "../types";
-import { Link } from "@tanstack/react-router"; // Import Link
+import { Link } from "@tanstack/react-router";
 
 interface TeacherEvaluationCardProps {
   evaluation: TeacherEvaluation;
@@ -22,7 +17,7 @@ interface TeacherEvaluationCardProps {
 export function TeacherEvaluationCard({
   evaluation,
 }: TeacherEvaluationCardProps) {
-  const isCompleted = evaluation.status === "completed";
+  const isCompleted = evaluation.isCompleted;
 
   return (
     <Card className="gap-4 shadow-sm flex flex-col justify-between">
@@ -32,7 +27,7 @@ export function TeacherEvaluationCard({
         </Badge>
         <Badge variant="outline" className="text-muted-foreground">
           <CalendarIcon className="mr-1 size-3" />
-          {evaluation.academicYear} • {evaluation.semester}
+          {evaluation.schoolYear} · Term {evaluation.term}
         </Badge>
       </CardHeader>
 
@@ -44,28 +39,20 @@ export function TeacherEvaluationCard({
           <div className="flex flex-col text-sm text-brand-accent">
             <span className="font-semibold">{evaluation.subjectCode}</span>
             <span className="text-muted-foreground text-xs">
-              {evaluation.section}
+              {evaluation.subjectDescription}
+            </span>
+            <span className="text-muted-foreground text-xs">
+              Grade {evaluation.gradeLevel} · {evaluation.section}
             </span>
           </div>
-        </div>
-
-        <div className="rounded-lg bg-muted/50 p-4 border border-hairline">
-          <p className="text-sm font-semibold text-foreground">
-            {evaluation.formTitle}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {evaluation.formDescription}
-          </p>
         </div>
       </CardContent>
 
       <CardFooter className="flex items-center justify-between gap-3 border-t pt-4 mt-auto">
         <p className="text-xs text-muted-foreground">
-          Due:{" "}
-          <span className="font-semibold text-foreground">
-            {new Date(evaluation.dueDate).toLocaleDateString()}
-          </span>{" "}
-          ({evaluation.questionCount} questions)
+          {isCompleted && evaluation.submittedAtUtc
+            ? `Submitted ${new Date(evaluation.submittedAtUtc).toLocaleDateString()}`
+            : "Pending"}
         </p>
         <Button
           variant={isCompleted ? "outline" : "default"}
@@ -74,7 +61,8 @@ export function TeacherEvaluationCard({
             !isCompleted ? (
               <Link
                 to="/student/evaluate/$evaluateId"
-                params={{ evaluateId: evaluation.id.toString() }}
+                params={{ evaluateId: evaluation.subjectOfferingId.toString() }}
+                search={{ type: "teacher" }}
               />
             ) : undefined
           }>

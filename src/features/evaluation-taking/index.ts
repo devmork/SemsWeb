@@ -18,12 +18,16 @@ export {
 export { evaluationService } from "./services/evaluationService";
 
 export type {
+  EvaluationKind,
   EvaluationStatus,
+  StudentEvaluation,
   TeacherEvaluation,
   FacilityEvaluation,
   EvaluationQuestion,
   EvaluationCategory,
   EvaluationDetail,
   EvaluationAnswer,
-  SubmitEvaluationPayload,
+  SubmitTeacherEvaluationInput,
+  SubmitFacilityEvaluationInput,
+  SubmitEvaluationInput,
 } from "./types";

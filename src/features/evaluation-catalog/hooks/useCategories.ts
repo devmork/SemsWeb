@@ -11,10 +11,10 @@ export const categoryKeys = {
   list: () => [...categoryKeys.all, "list"] as const,
 };
 
-export function useCategories() {
+export function useCategories(evaluationTypeId?: number) {
   return useQuery({
     queryKey: categoryKeys.list(),
-    queryFn: categoryService.getCategories,
+    queryFn: () => categoryService.getCategories(evaluationTypeId),
   });
 }
 
@@ -43,14 +43,11 @@ export function useCreateCategory() {
       await queryClient.cancelQueries({ queryKey: categoryKeys.list() });
       const previous = snapshot(queryClient);
       const optimistic: Category = {
-        id: -Date.now(),
-        name: input.catName,
-        evaluationTypeId: input.evaluationTypeId ?? 0,
-        catRn: input.catRn ?? "",
+        catNo: -Date.now(),
+        evaluationTypeId: input.evaluationTypeId,
+        catRn: input.catRn,
         catName: input.catName,
         catRate: input.catRate,
-        questionCount: 0,
-        createdAt: new Date().toISOString(),
       };
       queryClient.setQueryData<Category[]>(categoryKeys.list(), (old = []) => [
         ...old,
@@ -69,19 +66,20 @@ export function useUpdateCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, input }: { id: number; input: UpdateCategoryInput }) =>
-      categoryService.updateCategory(id, input),
-    onMutate: async ({ id, input }) => {
+    mutationFn: ({ catNo, input }: { catNo: number; input: UpdateCategoryInput }) =>
+      categoryService.updateCategory(catNo, input),
+    onMutate: async ({ catNo, input }) => {
       await queryClient.cancelQueries({ queryKey: categoryKeys.list() });
       const previous = snapshot(queryClient);
       queryClient.setQueryData<Category[]>(categoryKeys.list(), (old = []) =>
         old.map((c) =>
-          c.id === id
+          c.catNo === catNo
             ? {
                 ...c,
-                name: input.catName ?? c.name,
-                catName: input.catName ?? c.catName,
-                catRate: input.catRate ?? c.catRate,
+                evaluationTypeId: input.evaluationTypeId,
+                catRn: input.catRn,
+                catName: input.catName,
+                catRate: input.catRate,
               }
             : c,
         ),
@@ -99,16 +97,16 @@ export function useDeleteCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => categoryService.deleteCategory(id),
-    onMutate: async (id) => {
+    mutationFn: (catNo: number) => categoryService.deleteCategory(catNo),
+    onMutate: async (catNo) => {
       await queryClient.cancelQueries({ queryKey: categoryKeys.list() });
       const previous = snapshot(queryClient);
       queryClient.setQueryData<Category[]>(categoryKeys.list(), (old = []) =>
-        old.filter((c) => c.id !== id),
+        old.filter((c) => c.catNo !== catNo),
       );
       return { previous } satisfies Context;
     },
-    onError: (_err, _id, ctx) => rollback(queryClient, ctx),
+    onError: (_err, _catNo, ctx) => rollback(queryClient, ctx),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.all });
     },

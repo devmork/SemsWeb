@@ -15,13 +15,14 @@ const MOCK_DEV_USER: UserResponse = {
   role: "qa",
   pictureUrl: null,
   studentProfile: {
-    schoolStudentId: "2023-0444",
-    program: "BSIT",
-    yearLevel: "3",
-    academicYear: "2026-2027",
-    semester: "1",
-    enrollmentStatus: "Enrolled",
-    suffix: null,
+    studentId: 1,
+    studentNumber: "2023-0444",
+    gradeLevel: "Grade 3",
+    section: "BSIT-3A",
+    schoolYear: "2026-2027",
+    term: 1,
+    status: "Enrolled",
+    subjects: [],
   },
 };
 

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useParams, useNavigate, Link } from "@tanstack/react-router";
+import { useParams, useSearch, useNavigate, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,9 +14,13 @@ import { Rating } from "./Rating";
 import { useSubmitEvaluation, useEvaluationDetail } from "../hooks/useEvaluations";
 import { useAuthStore } from "@/features/auth";
 import { Progress } from "@/components/ui/progress";
+import type { SubmitEvaluationInput } from "../types";
 
 export function EvaluationTakingView() {
   const { evaluateId } = useParams({
+    from: "/_authenticated/student/evaluate/$evaluateId",
+  });
+  const { type } = useSearch({
     from: "/_authenticated/student/evaluate/$evaluateId",
   });
   const navigate = useNavigate();
@@ -24,15 +28,18 @@ export function EvaluationTakingView() {
 
   const { data: evaluation, isPending } = useEvaluationDetail(
     Number(evaluateId),
+    type,
   );
 
+  // keyed by qnNo — question ids are unique across categories.
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
 
   const { mutate: submitEvaluation, isPending: isSubmitting } =
     useSubmitEvaluation();
 
-  // Defensive check: Ensure evaluation and categories exist before calculating
+  const listPath = type === "facility" ? "/student/facilities" : "/student/teachers";
+
   const { totalQuestions, answeredCount } = useMemo(() => {
     if (!evaluation || !Array.isArray(evaluation.categories)) {
       return { totalQuestions: 0, answeredCount: 0 };
@@ -75,7 +82,7 @@ export function EvaluationTakingView() {
         <Button
           variant="outline"
           className="mt-4"
-          onClick={() => navigate({ to: "/student/teachers" })}>
+          onClick={() => navigate({ to: listPath })}>
           Go back to evaluations
         </Button>
       </div>
@@ -86,8 +93,8 @@ export function EvaluationTakingView() {
   const isLastCategory =
     currentCategoryIndex === evaluation.categories.length - 1;
 
-  const handleRatingChange = (questionId: number, rating: number) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: rating }));
+  const handleRatingChange = (qnNo: number, rating: number) => {
+    setAnswers((prev) => ({ ...prev, [qnNo]: rating }));
   };
 
   const handleNext = () => {
@@ -105,29 +112,44 @@ export function EvaluationTakingView() {
   };
 
   const handleSubmit = () => {
-    const formattedAnswers = Object.entries(answers).map(
-      ([questionId, rating]) => ({
-        questionId: Number(questionId),
-        rating,
-      }),
+    const payloadAnswers = evaluation.categories.flatMap((category) =>
+      category.questions.map((question) => ({
+        catNo: category.catNo,
+        qnNo: question.qnNo,
+        rateVal: answers[question.qnNo] ?? 0,
+      })),
     );
 
-    submitEvaluation(
-      {
-        id: evaluation.id,
-        payload: { evaluationId: evaluation.id, answers: formattedAnswers },
+    const input: SubmitEvaluationInput =
+      evaluation.type === "facility"
+        ? {
+            type: "facility",
+            facilityId: evaluation.id,
+            evaluationSessionId: evaluation.evaluationSessionId ?? 0,
+            evaluationTypeId: evaluation.evaluationTypeId ?? 0,
+            formId: evaluation.formId ?? undefined,
+            answers: payloadAnswers,
+          }
+        : {
+            type: "teacher",
+            subjectOfferingId: evaluation.id,
+            evaluationTypeId: evaluation.evaluationTypeId ?? 0,
+            formId: evaluation.formId ?? undefined,
+            schoolYear: evaluation.schoolYear,
+            term: evaluation.term,
+            answers: payloadAnswers,
+          };
+
+    submitEvaluation(input, {
+      onSuccess: () => {
+        alert("Evaluation submitted successfully!");
+        navigate({ to: listPath });
       },
-      {
-        onSuccess: () => {
-          alert("Evaluation submitted successfully!");
-          navigate({ to: "/student/facilities" });
-        },
-        onError: (error) => {
-          console.error("Submission failed", error);
-          alert("Failed to submit evaluation. Please try again.");
-        },
+      onError: (error) => {
+        console.error("Submission failed", error);
+        alert("Failed to submit evaluation. Please try again.");
       },
-    );
+    });
   };
 
   return (
@@ -135,7 +157,7 @@ export function EvaluationTakingView() {
       {/* Sticky Header for Progress & Navigation */}
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-hairline px-4 md:px-8 py-3 flex items-center justify-between">
         <Link
-          to="/student/teachers"
+          to={listPath}
           className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="mr-2 size-4" /> Exit Evaluation
         </Link>
@@ -160,12 +182,12 @@ export function EvaluationTakingView() {
                 {evaluation.title}
               </h1>
               <div className="bg-muted text-foreground px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap self-start">
-                Due:{" "}
-                {new Date(evaluation.dueDate).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {evaluation.dueDate
+                  ? `Due: ${new Date(evaluation.dueDate).toLocaleDateString(
+                      "en-US",
+                      { month: "short", day: "numeric", year: "numeric" },
+                    )}`
+                  : `${evaluation.schoolYear} · Term ${evaluation.term}`}
               </div>
             </div>
 
@@ -173,10 +195,14 @@ export function EvaluationTakingView() {
               <span className="font-semibold text-foreground">
                 {evaluation.targetName}
               </span>
-              <span className="text-muted-foreground">•</span>
-              <span className="text-brand-accent font-medium">
-                {evaluation.targetSubtitle}
-              </span>
+              {evaluation.targetSubtitle ? (
+                <>
+                  <span className="text-muted-foreground">·</span>
+                  <span className="text-brand-accent font-medium">
+                    {evaluation.targetSubtitle}
+                  </span>
+                </>
+              ) : null}
             </div>
           </div>
 
@@ -206,9 +232,11 @@ export function EvaluationTakingView() {
                 {activeCategory.title}
               </h2>
             </div>
-            <span className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full self-start sm:self-auto">
-              Weight: {activeCategory.weightPercentage}%
-            </span>
+            {activeCategory.weightPercentage != null ? (
+              <span className="text-sm font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full self-start sm:self-auto">
+                Weight: {activeCategory.weightPercentage}%
+              </span>
+            ) : null}
           </div>
 
           {/* Instructions */}
@@ -239,7 +267,7 @@ export function EvaluationTakingView() {
           <div className="grid gap-4">
             {activeCategory.questions.map((question, index) => (
               <Card
-                key={question.id}
+                key={question.qnNo}
                 className="shadow-sm border-hairline bg-card">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-start gap-6">
@@ -249,17 +277,15 @@ export function EvaluationTakingView() {
                           {index + 1}.
                         </span>
                         {question.text}{" "}
-                        {question.isRequired && (
-                          <span className="text-destructive ml-1">*</span>
-                        )}
+                        <span className="text-destructive ml-1">*</span>
                       </p>
                     </div>
                     <div className="shrink-0 flex justify-center md:justify-end">
                       <Rating
                         disabled={isSubmitting}
-                        value={answers[question.id] || 0}
+                        value={answers[question.qnNo] || 0}
                         onChange={(rating) =>
-                          handleRatingChange(question.id, rating)
+                          handleRatingChange(question.qnNo, rating)
                         }
                       />
                     </div>

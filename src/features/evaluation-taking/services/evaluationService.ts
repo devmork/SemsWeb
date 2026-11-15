@@ -1,39 +1,163 @@
 import { api } from "@/shared/api/client";
 import type {
-  TeacherEvaluation,
+  EvaluationCategory,
   FacilityEvaluation,
-  EvaluationDetail,
-  SubmitEvaluationPayload,
+  SubmitFacilityEvaluationInput,
+  SubmitTeacherEvaluationInput,
+  TeacherEvaluation,
 } from "../types";
 
+/** Mirrors `SemsApi.DTO.EvaluationAssignments.EvaluationAssignmentDto`. */
+type TeacherAssignmentDto = {
+  subjectOfferingId: number;
+  subjectId: number;
+  subjectCode: string;
+  subjectDescription: string;
+  teacherId: number;
+  teacherName: string;
+  teacherEmployeeNumber: string;
+  gradeLevel: number;
+  section: string;
+  schoolYear: string;
+  term: number;
+  evaluationTypeId: number | null;
+  formId: number | null;
+  isCompleted: boolean;
+  submittedAtUtc: string | null;
+};
+
+/** Mirrors `SemsApi.DTO.Facility.FacilityEvaluationAssignmentDto`. */
+type FacilityAssignmentDto = {
+  facilityId: number;
+  facilityName: string;
+  description: string | null;
+  location: string | null;
+  evaluationTypeId: number;
+  formId: number;
+  evaluationSessionId: number;
+  schoolYear: string;
+  term: number;
+  isCompleted: boolean;
+  submittedAtUtc: string | null;
+};
+
+/** Mirrors `SemsApi.DTO.Evaluation.EvaluationCategoryDto`. */
+type FormCategoryDto = {
+  catNo: number;
+  catRn: string | null;
+  catName: string | null;
+  catRate: number | null;
+  questions: { qnNo: number; qnName: string | null }[];
+};
+
+/** Subset of `EvaluationSessionDetailDto` needed by the facility flow. */
+type SessionDetailDto = {
+  closesAtUtc: string | null;
+  form: { categories: FormCategoryDto[] } | null;
+};
+
+function toCategories(dtos: FormCategoryDto[] | null | undefined): EvaluationCategory[] {
+  return (dtos ?? []).map((category) => ({
+    catNo: category.catNo,
+    title: category.catName ?? `Category ${category.catNo}`,
+    weightPercentage: category.catRate,
+    questions: (category.questions ?? []).map((question) => ({
+      qnNo: question.qnNo,
+      text: question.qnName ?? "",
+    })),
+  }));
+}
+
 export const evaluationService = {
-  // Separate endpoint for teachers
+  // ---- assignments -------------------------------------------------------
+
   async getTeacherEvaluations(): Promise<TeacherEvaluation[]> {
-    const { data } = await api.get<TeacherEvaluation[]>(
-      "/api/evaluation/my-evaluations/teachers",
+    const { data } = await api.get<TeacherAssignmentDto[]>(
+      "/api/evaluation/assignments/me",
     );
-    return data;
+    return data.map((dto) => ({
+      type: "teacher" as const,
+      id: dto.subjectOfferingId,
+      subjectOfferingId: dto.subjectOfferingId,
+      subjectId: dto.subjectId,
+      subjectCode: dto.subjectCode,
+      subjectDescription: dto.subjectDescription,
+      teacherId: dto.teacherId,
+      teacherName: dto.teacherName,
+      teacherEmployeeNumber: dto.teacherEmployeeNumber,
+      gradeLevel: dto.gradeLevel,
+      section: dto.section,
+      schoolYear: dto.schoolYear,
+      term: dto.term,
+      evaluationTypeId: dto.evaluationTypeId,
+      formId: dto.formId,
+      isCompleted: dto.isCompleted,
+      submittedAtUtc: dto.submittedAtUtc,
+      status: dto.isCompleted ? "completed" : "pending",
+    }));
   },
 
-  // Separate endpoint for facilities
   async getFacilityEvaluations(): Promise<FacilityEvaluation[]> {
-    const { data } = await api.get<FacilityEvaluation[]>(
-      "/api/evaluation/my-evaluations/facilities",
+    const { data } = await api.get<FacilityAssignmentDto[]>(
+      "/api/evaluation/facility-assignments/me",
     );
-    return data;
+    return data.map((dto) => ({
+      type: "facility" as const,
+      id: dto.facilityId,
+      facilityId: dto.facilityId,
+      facilityName: dto.facilityName,
+      description: dto.description,
+      location: dto.location,
+      evaluationTypeId: dto.evaluationTypeId,
+      formId: dto.formId,
+      evaluationSessionId: dto.evaluationSessionId,
+      schoolYear: dto.schoolYear,
+      term: dto.term,
+      isCompleted: dto.isCompleted,
+      submittedAtUtc: dto.submittedAtUtc,
+      status: dto.isCompleted ? "completed" : "pending",
+    }));
   },
 
-  async getEvaluationDetail(id: number): Promise<EvaluationDetail> {
-    const { data } = await api.get<EvaluationDetail>(
-      `/api/evaluation/my-evaluations/${id}`,
-    );
-    return data;
+  // ---- form content ------------------------------------------------------
+
+  /** `GET /api/evaluation/form?evaluationTypeId=` — categories + questions. */
+  async getFormCategories(
+    evaluationTypeId: number,
+  ): Promise<EvaluationCategory[]> {
+    const { data } = await api.get<FormCategoryDto[]>("/api/evaluation/form", {
+      params: { evaluationTypeId },
+    });
+    return toCategories(data);
   },
 
-  async submitEvaluation(
-    id: number,
-    payload: SubmitEvaluationPayload,
+  /** `GET /api/evaluation/sessions/{id}` — facility evaluations carry a session. */
+  async getSessionCategories(sessionId: number): Promise<{
+    closesAtUtc: string | null;
+    categories: EvaluationCategory[];
+  }> {
+    const { data } = await api.get<SessionDetailDto>(
+      `/api/evaluation/sessions/${sessionId}`,
+    );
+    return {
+      closesAtUtc: data.closesAtUtc,
+      categories: toCategories(data.form?.categories),
+    };
+  },
+
+  // ---- submissions -------------------------------------------------------
+
+  /** `POST /api/evaluation/assignments/me/submit`. */
+  async submitTeacherEvaluation(
+    input: SubmitTeacherEvaluationInput,
   ): Promise<void> {
-    await api.post(`/api/evaluation/my-evaluations/${id}/submit`, payload);
+    await api.post("/api/evaluation/assignments/me/submit", input);
+  },
+
+  /** `POST /api/evaluation/facility-assignments/me/submit`. */
+  async submitFacilityEvaluation(
+    input: SubmitFacilityEvaluationInput,
+  ): Promise<void> {
+    await api.post("/api/evaluation/facility-assignments/me/submit", input);
   },
 };

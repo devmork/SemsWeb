@@ -20,7 +20,7 @@ export const sessionKeys = {
 export function useSessions() {
   return useQuery({
     queryKey: sessionKeys.list(),
-    queryFn: sessionService.getSessions,
+    queryFn: () => sessionService.getSessions(),
   });
 }
 

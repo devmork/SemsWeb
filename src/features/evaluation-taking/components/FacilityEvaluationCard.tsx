@@ -1,9 +1,4 @@
-import {
-  ArrowRight,
-  Building2,
-  CalendarIcon,
-  CheckCircle2,
-} from "lucide-react";
+import { ArrowRight, Building2, CalendarIcon, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +8,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import type { FacilityEvaluation } from "../types";
-import { Link } from "@tanstack/react-router"; // Added import
+import { Link } from "@tanstack/react-router";
 
 interface FacilityEvaluationCardProps {
   evaluation: FacilityEvaluation;
@@ -22,17 +17,17 @@ interface FacilityEvaluationCardProps {
 export function FacilityEvaluationCard({
   evaluation,
 }: FacilityEvaluationCardProps) {
-  const isCompleted = evaluation.status === "completed";
+  const isCompleted = evaluation.isCompleted;
 
   return (
     <Card className="gap-4 shadow-sm flex flex-col justify-between">
       <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
         <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-200 border-none">
-          <Building2 className="mr-1 size-3" /> {evaluation.category}
+          <Building2 className="mr-1 size-3" /> Facility
         </Badge>
         <Badge variant="outline" className="text-muted-foreground">
           <CalendarIcon className="mr-1 size-3" />
-          {evaluation.academicYear} • {evaluation.semester}
+          {evaluation.schoolYear} · Term {evaluation.term}
         </Badge>
       </CardHeader>
 
@@ -42,27 +37,21 @@ export function FacilityEvaluationCard({
             {evaluation.facilityName}
           </h3>
           <p className="text-sm text-brand-accent font-medium">
-            {evaluation.location}
+            {evaluation.location ?? "Campus facility"}
           </p>
-        </div>
-
-        <div className="rounded-lg bg-muted/50 p-4 border border-hairline">
-          <p className="text-sm font-semibold text-foreground">
-            {evaluation.formTitle}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {evaluation.formDescription}
-          </p>
+          {evaluation.description ? (
+            <p className="text-xs text-muted-foreground">
+              {evaluation.description}
+            </p>
+          ) : null}
         </div>
       </CardContent>
 
       <CardFooter className="flex items-center justify-between gap-3 border-t pt-4 mt-auto">
         <p className="text-xs text-muted-foreground">
-          Due:{" "}
-          <span className="font-semibold text-foreground">
-            {new Date(evaluation.dueDate).toLocaleDateString()}
-          </span>{" "}
-          ({evaluation.questionCount} questions)
+          {isCompleted && evaluation.submittedAtUtc
+            ? `Submitted ${new Date(evaluation.submittedAtUtc).toLocaleDateString()}`
+            : "Pending"}
         </p>
         <Button
           variant={isCompleted ? "outline" : "default"}
@@ -71,7 +60,8 @@ export function FacilityEvaluationCard({
             !isCompleted ? (
               <Link
                 to="/student/evaluate/$evaluateId"
-                params={{ evaluateId: evaluation.id.toString() }}
+                params={{ evaluateId: evaluation.facilityId.toString() }}
+                search={{ type: "facility" }}
               />
             ) : undefined
           }>

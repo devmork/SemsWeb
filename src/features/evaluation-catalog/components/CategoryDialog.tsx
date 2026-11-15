@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,6 +16,14 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useEvaluationTypes } from "../hooks/useEvaluationTypes";
 import type { Category, CreateCategoryInput } from "../types";
 
 interface CategoryDialogProps {
@@ -28,6 +36,8 @@ interface CategoryDialogProps {
 }
 
 interface FormValues {
+  evaluationTypeId: string;
+  catRn: string;
   catName: string;
   catRate: string;
 }
@@ -41,14 +51,21 @@ export function CategoryDialog({
   submitError = null,
 }: CategoryDialogProps) {
   const isEdit = !!category;
+  const { data: evaluationTypes = [] } = useEvaluationTypes();
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: { catName: "", catRate: "" },
+    defaultValues: {
+      evaluationTypeId: "",
+      catRn: "",
+      catName: "",
+      catRate: "",
+    },
   });
 
   useEffect(() => {
@@ -56,16 +73,25 @@ export function CategoryDialog({
       reset(
         category
           ? {
-              catName: category.catName,
-              catRate: String(category.catRate),
+              evaluationTypeId: String(category.evaluationTypeId),
+              catRn: category.catRn ?? "",
+              catName: category.catName ?? "",
+              catRate: category.catRate == null ? "" : String(category.catRate),
             }
-          : { catName: "", catRate: "" },
+          : {
+              evaluationTypeId: "",
+              catRn: "",
+              catName: "",
+              catRate: "",
+            },
       );
     }
   }, [open, category, reset]);
 
   const onFormSubmit = (values: FormValues) => {
     onSubmit({
+      evaluationTypeId: Number(values.evaluationTypeId),
+      catRn: values.catRn.trim(),
       catName: values.catName.trim(),
       catRate: Number(values.catRate),
     });
@@ -77,17 +103,67 @@ export function CategoryDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {isEdit ? "Edit Category" : "Add Category"}
-          </DialogTitle>
+          <DialogTitle>{isEdit ? "Edit Category" : "Add Category"}</DialogTitle>
           <DialogDescription>
             {isEdit
-              ? "Update the category name or weight percentage."
-              : "Create a new category with its weight percentage. Questions will be assigned to this category."}
+              ? "Update the category details. All fields are required."
+              : "Create a new category for an evaluation type. Questions will be assigned to this category."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onFormSubmit)} noValidate>
           <FieldGroup>
+            <Field data-invalid={!!errors.evaluationTypeId}>
+              <FieldLabel htmlFor="category-type">Evaluation Type</FieldLabel>
+              <Controller
+                name="evaluationTypeId"
+                control={control}
+                rules={{
+                  required: "Evaluation type is required",
+                  validate: (v) =>
+                    Number(v) > 0 || "Evaluation type is required",
+                }}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={isPending}>
+                    <SelectTrigger id="category-type" className="w-full">
+                      <SelectValue placeholder="Select evaluation type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {evaluationTypes.map((t) => (
+                        <SelectItem
+                          key={t.evaluationTypeId}
+                          value={String(t.evaluationTypeId)}>
+                          {t.evaluationTypeName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FieldError errors={[errors.evaluationTypeId]} />
+            </Field>
+            <Field data-invalid={!!errors.catRn}>
+              <FieldLabel htmlFor="category-code">Category Code</FieldLabel>
+              <Input
+                id="category-code"
+                placeholder="e.g. TE"
+                maxLength={10}
+                disabled={isPending}
+                {...register("catRn", {
+                  required: "Category code is required",
+                  maxLength: {
+                    value: 10,
+                    message: "Code must be at most 10 characters",
+                  },
+                })}
+              />
+              <p className="text-xs text-muted-foreground">
+                Short reference code, e.g. TE
+              </p>
+              <FieldError errors={[errors.catRn]} />
+            </Field>
             <Field data-invalid={!!errors.catName}>
               <FieldLabel htmlFor="category-name">Name</FieldLabel>
               <Input
@@ -101,6 +177,10 @@ export function CategoryDialog({
                     value: 2,
                     message: "Name must be at least 2 characters",
                   },
+                  maxLength: {
+                    value: 150,
+                    message: "Name must be at most 150 characters",
+                  },
                 })}
               />
               <FieldError errors={[errors.catName]} />
@@ -111,13 +191,13 @@ export function CategoryDialog({
                 id="category-weight"
                 type="number"
                 step="0.1"
-                min={1}
+                min={0}
                 max={100}
                 placeholder="e.g. 40"
                 disabled={isPending}
                 {...register("catRate", {
                   required: "Weight is required",
-                  min: { value: 1, message: "Weight must be at least 1%" },
+                  min: { value: 0, message: "Weight cannot be negative" },
                   max: { value: 100, message: "Weight cannot exceed 100%" },
                 })}
               />
@@ -134,8 +214,7 @@ export function CategoryDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isPending}
-            >
+              disabled={isPending}>
               Cancel
             </Button>
             <Button type="submit" disabled={isPending}>

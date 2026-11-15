@@ -1,62 +1,112 @@
-export type EvaluationStatus = "pending" | "overdue" | "completed";
+export type EvaluationKind = "teacher" | "facility";
 
-// Base interface for shared fields
-interface BaseEvaluation {
-  id: number;
-  status: EvaluationStatus;
-  dueDate: string;
-  questionCount: number;
-  academicYear?: string;
-  semester?: string;
-  formTitle: string;
-  formDescription: string;
-}
+export type EvaluationStatus = "pending" | "completed";
 
-// Teacher specific
-export interface TeacherEvaluation extends BaseEvaluation {
+/**
+ * Mirrors `SemsApi.DTO.EvaluationAssignments.EvaluationAssignmentDto`
+ * (`GET /api/evaluation/assignments/me`).
+ */
+export interface TeacherEvaluation {
   type: "teacher";
-  teacherName: string;
+  /** Alias of `subjectOfferingId`, used by the route param. */
+  id: number;
+  subjectOfferingId: number;
+  subjectId: number;
   subjectCode: string;
+  subjectDescription: string;
+  teacherId: number;
+  teacherName: string;
+  teacherEmployeeNumber: string;
+  gradeLevel: number;
   section: string;
+  schoolYear: string;
+  term: number;
+  evaluationTypeId: number | null;
+  formId: number | null;
+  isCompleted: boolean;
+  submittedAtUtc: string | null;
+  status: EvaluationStatus;
 }
 
-// Facility specific
-export interface FacilityEvaluation extends BaseEvaluation {
+/**
+ * Mirrors `SemsApi.DTO.Facility.FacilityEvaluationAssignmentDto`
+ * (`GET /api/evaluation/facility-assignments/me`).
+ */
+export interface FacilityEvaluation {
   type: "facility";
+  /** Alias of `facilityId`, used by the route param. */
+  id: number;
+  facilityId: number;
   facilityName: string;
-  location: string;
-  category: string; // e.g., "Clinic", "Canteen", "Guidance"
+  description: string | null;
+  location: string | null;
+  evaluationTypeId: number;
+  formId: number;
+  evaluationSessionId: number;
+  schoolYear: string;
+  term: number;
+  isCompleted: boolean;
+  submittedAtUtc: string | null;
+  status: EvaluationStatus;
 }
+
+export type StudentEvaluation = TeacherEvaluation | FacilityEvaluation;
 
 export interface EvaluationQuestion {
-  id: number;
+  qnNo: number;
   text: string;
-  isRequired: boolean;
 }
 
 export interface EvaluationCategory {
-  id: number;
+  catNo: number;
   title: string;
-  weightPercentage: number; // e.g., 40 for 40%
+  weightPercentage: number | null;
   questions: EvaluationQuestion[];
 }
 
+/** Composed view model for the taking screen (assignment + form content). */
 export interface EvaluationDetail {
   id: number;
+  type: EvaluationKind;
   title: string;
   targetName: string;
   targetSubtitle: string;
-  dueDate: string;
+  dueDate: string | null;
+  schoolYear: string;
+  term: number;
+  evaluationTypeId: number | null;
+  formId: number | null;
+  evaluationSessionId: number | null;
   categories: EvaluationCategory[];
-  respondentEmail: string;
 }
 
+/** Mirrors `SemsApi.DTO.EvaluationAssignments.EvaluationAnswerDto`. */
 export interface EvaluationAnswer {
-  questionId: number;
-  rating: number;
+  catNo: number;
+  qnNo: number;
+  rateVal: number;
 }
 
-export interface SubmitEvaluationPayload {
-  evaluationId: number;
+/** Mirrors `SemsApi.DTO.EvaluationAssignments.SubmitSubjectEvaluationRequest`. */
+export interface SubmitTeacherEvaluationInput {
+  subjectOfferingId: number;
+  evaluationTypeId: number;
+  formId?: number | undefined;
+  schoolYear: string;
+  term: number;
+  evaluationSessionId?: number | undefined;
   answers: EvaluationAnswer[];
 }
+
+/** Mirrors `SemsApi.DTO.Facility.SubmitFacilityEvaluationRequest`. */
+export interface SubmitFacilityEvaluationInput {
+  facilityId: number;
+  evaluationSessionId: number;
+  evaluationTypeId: number;
+  formId?: number | undefined;
+  answers: EvaluationAnswer[];
+}
+
+export type SubmitEvaluationInput =
+  | ({ type: "teacher" } & SubmitTeacherEvaluationInput)
+  | ({ type: "facility" } & SubmitFacilityEvaluationInput);
