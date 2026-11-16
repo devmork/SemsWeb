@@ -1,14 +1,14 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router"
 import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import type { NavigationItem } from "@/shared/config/navigation/types";
+} from "@/components/ui/sidebar"
+import type { NavigationItem } from "@/shared/config/navigation/types"
 
 export function AppSidebarNav({ items }: { items: NavigationItem[] }) {
-  if (items.length === 0) return null;
+  if (items.length === 0) return null
 
   return (
     <SidebarGroup>
@@ -26,5 +26,5 @@ export function AppSidebarNav({ items }: { items: NavigationItem[] }) {
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  );
+  )
 }
