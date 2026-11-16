@@ -6,7 +6,7 @@
 
 :root {
   /* Surfaces — from docs/DESIGN.md canvas + surface scale */
-  --background: oklch(1 0 0);
+  --background: oklch(0.9816 0.0017 247.8);
   --foreground: oklch(0.1776 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.1776 0 0);
@@ -51,7 +51,7 @@
   --chart-4: oklch(0.6368 0.2078 25.3);
   --chart-5: oklch(0.6056 0.2189 292.7);
 
-  /* Sidebar — light rail matching the canvas */
+  /* Sidebar — matches canvas */
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.1776 0 0);
   --sidebar-primary: oklch(0.1776 0 0);
@@ -89,7 +89,7 @@
 
 .dark {
   /* Surfaces — surface-dark #101010 with elevated #1a1a1a */
-  --background: oklch(0.173 0 0);
+  --background: oklch(0.2178 0 0);
   --foreground: oklch(1 0 0);
   --card: oklch(0.2178 0 0);
   --card-foreground: oklch(1 0 0);
@@ -130,7 +130,7 @@
   --chart-4: oklch(0.7768 0.2078 25.3);
   --chart-5: oklch(0.7256 0.2189 292.7);
 
-  /* Sidebar — dark rail */
+  /* Sidebar — dark canvas (#101010) */
   --sidebar: oklch(0.173 0 0);
   --sidebar-foreground: oklch(1 0 0);
   --sidebar-primary: oklch(1 0 0);
