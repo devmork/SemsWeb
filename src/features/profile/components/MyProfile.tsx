@@ -44,7 +44,7 @@ export function MyProfile() {
                 className="rounded-2xl"
               />
             )}
-            <AvatarFallback className="rounded-2xl bg-blue-100 text-blue-700 text-2xl font-semibold">
+            <AvatarFallback className="rounded-2xl bg-brand-accent/10 text-brand-accent text-2xl font-semibold">
               {initials}
             </AvatarFallback>
           </Avatar>
@@ -61,7 +61,7 @@ export function MyProfile() {
               <span className="inline-flex items-center rounded-md border border-hairline px-2 py-1 text-xs font-medium text-muted-foreground">
                 ID: {profile.studentNumber}
               </span>
-              <span className="inline-flex items-center rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white">
+              <span className="inline-flex items-center rounded-md bg-brand-accent px-2 py-1 text-xs font-medium text-brand-accent-foreground">
                 {profile.gradeLevel ?? "N/A"} — {profile.section ?? "N/A"}
               </span>
               <span className="inline-flex items-center rounded-md border border-hairline px-2 py-1 text-xs font-medium text-muted-foreground">

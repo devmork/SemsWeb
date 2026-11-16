@@ -22,7 +22,7 @@ export function FacilityEvaluationCard({
   return (
     <Card className="gap-4 shadow-sm flex flex-col justify-between">
       <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-        <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-200 border-none">
+        <Badge className="bg-success/10 text-success hover:bg-success/20 border-none">
           <Building2 className="mr-1 size-3" /> Facility
         </Badge>
         <Badge variant="outline" className="text-muted-foreground">

@@ -22,7 +22,7 @@ export function TeacherEvaluationCard({
   return (
     <Card className="gap-4 shadow-sm flex flex-col justify-between">
       <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-none">
+        <Badge className="bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/20 border-none">
           <GraduationCap className="mr-1 size-3" /> Teacher
         </Badge>
         <Badge variant="outline" className="text-muted-foreground">
