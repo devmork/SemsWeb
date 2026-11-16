@@ -40,7 +40,7 @@ export default defineConfig([
             },
             {
               group: ["@/app/*", "@/app/**"],
-              message: "Shared code must not import from the app layer.",
+              message: "The app layer was removed; compose from routes or features.",
             },
             {
               group: ["@/routes/*", "@/routes/**"],
@@ -52,7 +52,30 @@ export default defineConfig([
     },
   },
   {
-    // Features may use shared code, but never the app composition layer or routes.
+    // Deliberate exception: the authenticated shell composes role navigation
+    // (auth) and the account menu (profile). It may import features, but still
+    // must not reach into routes or the removed app layer.
+    files: ["src/shared/layout/AuthenticatedLayout.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/app/*", "@/app/**"],
+              message: "The app layer was removed; compose from routes or features.",
+            },
+            {
+              group: ["@/routes/*", "@/routes/**"],
+              message: "Shared code must not import from routes.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // Features may use shared code, but never routes or the removed app layer.
     files: ["src/features/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-imports": [
@@ -61,7 +84,7 @@ export default defineConfig([
           patterns: [
             {
               group: ["@/app/*", "@/app/**"],
-              message: "Features must not import from the app layer.",
+              message: "The app layer was removed; compose from routes or features.",
             },
             {
               group: ["@/routes/*", "@/routes/**"],
