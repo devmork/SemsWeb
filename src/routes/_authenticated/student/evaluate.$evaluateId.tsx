@@ -1,5 +1,5 @@
-import { EvaluationTakingView } from "@/features/evaluation-taking";
-import type { EvaluationKind } from "@/features/evaluation-taking";
+import { EvaluationTakingView } from "@/features/student/evaluations";
+import type { EvaluationKind } from "@/features/student/evaluations";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(

@@ -18,7 +18,7 @@ import {
 import { IconSelector, IconLogout, IconUser } from "@tabler/icons-react";
 import { logout, useAuthStore } from "@/features/auth";
 import { useState } from "react";
-import { MyProfileDialog } from "@/features/profile";
+import { MyProfileDialog } from "./MyProfileDialog";
 
 function initials(name: string) {
   return name

@@ -16,21 +16,17 @@ import {
   useUpdateCategory,
 } from "../hooks/useCategories";
 import {
-  useQuestions,
+  DeleteQuestionDialog,
+  QuestionDialog,
   useCreateQuestion,
-  useUpdateQuestion,
   useDeleteQuestion,
-} from "../hooks/useQuestions";
-import type {
-  Category,
-  CreateCategoryInput,
-  Question,
-  CreateQuestionInput,
-} from "../types";
+  useQuestions,
+  useUpdateQuestion,
+} from "@/features/qa/questions";
+import type { CreateQuestionInput, Question } from "@/features/qa/questions";
+import type { Category, CreateCategoryInput } from "../types";
 import { CategoryDialog } from "./CategoryDialog";
 import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
-import { QuestionDialog } from "./QuestionDialog";
-import { DeleteQuestionDialog } from "./DeleteQuestionDialog";
 import { IconEdit, IconTrash, IconPlus } from "@tabler/icons-react";
 
 function mutationErrorMessage(error: unknown): string | null {

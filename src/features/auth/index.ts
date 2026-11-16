@@ -16,5 +16,6 @@ export {
 } from "./guards";
 
 export { useAuthStore } from "./stores/auth.store";
+export { useRoleNavigation } from "./hooks/useRoleNavigation";
 
 export type { LoginSearch } from "./types";
