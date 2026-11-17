@@ -38,8 +38,6 @@ export interface FacilityEvaluation {
   id: number;
   facilityId: number;
   facilityName: string;
-  description: string | null;
-  location: string | null;
   evaluationTypeId: number;
   formId: number;
   evaluationSessionId: number;

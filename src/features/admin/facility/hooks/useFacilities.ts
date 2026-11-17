@@ -36,8 +36,6 @@ export function useCreateFacility() {
       const optimistic: Facility = {
         facilityId: -Date.now(),
         facilityName: input.facilityName,
-        description: input.description ?? null,
-        location: input.location ?? null,
         isActive: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -76,14 +74,6 @@ export function useUpdateFacility() {
               ? {
                   ...f,
                   facilityName: input.facilityName,
-                  description:
-                    input.description !== undefined
-                      ? input.description ?? null
-                      : f.description,
-                  location:
-                    input.location !== undefined
-                      ? input.location ?? null
-                      : f.location,
                   isActive: input.isActive ?? f.isActive,
                 }
               : f,

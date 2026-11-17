@@ -96,8 +96,10 @@ export function useEvaluationDetail(id: number, type: EvaluationKind) {
       id: facility.id,
       type: "facility",
       title: facility.facilityName,
-      targetName: facility.location ?? "Campus facility",
-      targetSubtitle: facility.description ?? "",
+      targetName: facility.facilityName,
+      targetSubtitle: [facility.schoolYear, `Term ${facility.term}`]
+        .filter(Boolean)
+        .join(" · "),
       dueDate: facilitySession.data?.closesAtUtc ?? null,
       schoolYear: facility.schoolYear,
       term: facility.term,

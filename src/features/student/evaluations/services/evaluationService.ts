@@ -30,8 +30,6 @@ type TeacherAssignmentDto = {
 type FacilityAssignmentDto = {
   facilityId: number;
   facilityName: string;
-  description: string | null;
-  location: string | null;
   evaluationTypeId: number;
   formId: number;
   evaluationSessionId: number;
@@ -106,8 +104,6 @@ export const evaluationService = {
       id: dto.facilityId,
       facilityId: dto.facilityId,
       facilityName: dto.facilityName,
-      description: dto.description,
-      location: dto.location,
       evaluationTypeId: dto.evaluationTypeId,
       formId: dto.formId,
       evaluationSessionId: dto.evaluationSessionId,

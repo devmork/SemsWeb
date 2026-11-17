@@ -16,10 +16,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type {
-  Facility,
-  CreateFacilityInput,
-} from "../types";
+import type { Facility, CreateFacilityInput } from "../types";
 
 type FacilityFormInput = CreateFacilityInput & { isActive?: boolean | undefined };
 
@@ -34,8 +31,6 @@ interface FacilityDialogProps {
 
 interface FormValues {
   facilityName: string;
-  location: string;
-  description: string;
   isActive: boolean;
 }
 
@@ -57,8 +52,6 @@ export function FacilityDialog({
   } = useForm<FormValues>({
     defaultValues: {
       facilityName: "",
-      location: "",
-      description: "",
       isActive: true,
     },
   });
@@ -69,14 +62,10 @@ export function FacilityDialog({
         facility
           ? {
               facilityName: facility.facilityName,
-              location: facility.location ?? "",
-              description: facility.description ?? "",
               isActive: facility.isActive,
             }
           : {
               facilityName: "",
-              location: "",
-              description: "",
               isActive: true,
             },
       );
@@ -86,8 +75,6 @@ export function FacilityDialog({
   const onFormSubmit = (values: FormValues) => {
     onSubmit({
       facilityName: values.facilityName.trim(),
-      location: values.location.trim() || undefined,
-      description: values.description.trim() || undefined,
       isActive: values.isActive,
     });
   };
@@ -99,7 +86,7 @@ export function FacilityDialog({
           <DialogTitle>{isEdit ? "Edit Facility" : "Add Facility"}</DialogTitle>
           <DialogDescription>
             {isEdit
-              ? "Update the facility details, including whether it is active."
+              ? "Update the facility name or whether it is active."
               : "Register a new campus facility that students can evaluate."}
           </DialogDescription>
         </DialogHeader>
@@ -116,33 +103,11 @@ export function FacilityDialog({
                   required: "Facility name is required",
                   minLength: { value: 2, message: "Name is too short" },
                   maxLength: { value: 100, message: "Name is too long" },
+                  validate: (value) =>
+                    value.trim().length > 0 || "Facility name is required",
                 })}
               />
               <FieldError errors={[errors.facilityName]} />
-            </Field>
-            <Field data-invalid={!!errors.location}>
-              <FieldLabel htmlFor="facility-location">Location</FieldLabel>
-              <Input
-                id="facility-location"
-                placeholder="e.g. Building A, Room 301"
-                disabled={isPending}
-                {...register("location", {
-                  maxLength: { value: 150, message: "Location is too long" },
-                })}
-              />
-              <FieldError errors={[errors.location]} />
-            </Field>
-            <Field data-invalid={!!errors.description}>
-              <FieldLabel htmlFor="facility-description">Description</FieldLabel>
-              <Input
-                id="facility-description"
-                placeholder="Brief description of the facility"
-                disabled={isPending}
-                {...register("description", {
-                  maxLength: { value: 500, message: "Description is too long" },
-                })}
-              />
-              <FieldError errors={[errors.description]} />
             </Field>
             {isEdit && (
               <label className="flex items-center gap-2 text-sm">
@@ -171,8 +136,8 @@ export function FacilityDialog({
             <Button type="submit" disabled={isPending}>
               {isPending
                 ? isEdit
-                  ? "Saving..."
-                  : "Creating..."
+                  ? "Saving…"
+                  : "Creating…"
                 : isEdit
                   ? "Save Changes"
                   : "Create Facility"}
