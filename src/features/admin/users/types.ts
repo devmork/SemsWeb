@@ -20,6 +20,12 @@ export function fullNameOf(user: ManagedUser): string {
     .join(" ");
 }
 
+export function initialsOf(user: ManagedUser): string {
+  const first = user.firstName?.trim()[0] ?? "";
+  const last = user.lastName?.trim()[0] ?? "";
+  return `${first}${last}`.toUpperCase() || "?";
+}
+
 export interface UpdateUserRolesInput {
   userId: number;
   roles: UserRole[];

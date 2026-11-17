@@ -9,4 +9,4 @@ export { userService } from "./services/userService";
 export type { GetUsersParams } from "./services/userService";
 
 export type { ManagedUser, UpdateUserRolesInput } from "./types";
-export { fullNameOf } from "./types";
+export { fullNameOf, initialsOf } from "./types";
