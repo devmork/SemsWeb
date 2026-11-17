@@ -80,7 +80,12 @@ export function EvaluationTypeManagement() {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const { data: types, isPending, isError, error } = useEvaluationTypes({
+  const {
+    data: types,
+    isPending,
+    isError,
+    error,
+  } = useEvaluationTypes({
     search: debouncedQuery || undefined,
   });
   const {
@@ -194,10 +199,10 @@ export function EvaluationTypeManagement() {
             <thead>
               <tr className="border-b border-border bg-muted/50">
                 <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Name
+                  #
                 </th>
                 <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  ID
+                  Name
                 </th>
                 <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Actions
@@ -209,11 +214,11 @@ export function EvaluationTypeManagement() {
                 <tr
                   key={type.evaluationTypeId}
                   className="border-b border-border last:border-0 transition-colors hover:bg-muted/40">
-                  <td className="px-5 py-3 text-sm font-medium text-foreground">
-                    {type.evaluationTypeName}
-                  </td>
                   <td className="px-5 py-3 text-sm text-muted-foreground tabular-nums">
                     {type.evaluationTypeId}
+                  </td>
+                  <td className="px-5 py-3 text-sm font-medium text-foreground">
+                    {type.evaluationTypeName}
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-1">
