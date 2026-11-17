@@ -16,6 +16,7 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedQaRouteRouteImport } from './routes/_authenticated/qa/route'
 import { Route as AuthenticatedStudentRouteRouteImport } from './routes/_authenticated/student/route'
+import { Route as AuthenticatedAdminEvaluationTypesRouteImport } from './routes/_authenticated/admin/evaluation-types'
 import { Route as AuthenticatedAdminFacilitiesRouteImport } from './routes/_authenticated/admin/facilities'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedQaCategoriesRouteImport } from './routes/_authenticated/qa/categories'
@@ -61,6 +62,12 @@ const AuthenticatedStudentRouteRoute =
     id: '/student',
     path: '/student',
     getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminEvaluationTypesRoute =
+  AuthenticatedAdminEvaluationTypesRouteImport.update({
+    id: '/evaluation-types',
+    path: '/evaluation-types',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminFacilitiesRoute =
   AuthenticatedAdminFacilitiesRouteImport.update({
@@ -127,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
+  '/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
   '/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/qa/categories': typeof AuthenticatedQaCategoriesRoute
@@ -145,6 +153,7 @@ export interface FileRoutesByTo {
   '/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
+  '/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
   '/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/qa/categories': typeof AuthenticatedQaCategoriesRoute
@@ -165,6 +174,7 @@ export interface FileRoutesById {
   '/_authenticated/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/_auth/forbidden': typeof AuthForbiddenRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_authenticated/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
   '/_authenticated/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/qa/categories': typeof AuthenticatedQaCategoriesRoute
@@ -185,6 +195,7 @@ export interface FileRouteTypes {
     | '/student'
     | '/forbidden'
     | '/login'
+    | '/admin/evaluation-types'
     | '/admin/facilities'
     | '/admin/users'
     | '/qa/categories'
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/student'
     | '/forbidden'
     | '/login'
+    | '/admin/evaluation-types'
     | '/admin/facilities'
     | '/admin/users'
     | '/qa/categories'
@@ -222,6 +234,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student'
     | '/_auth/forbidden'
     | '/_auth/login'
+    | '/_authenticated/admin/evaluation-types'
     | '/_authenticated/admin/facilities'
     | '/_authenticated/admin/users'
     | '/_authenticated/qa/categories'
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/student'
       preLoaderRoute: typeof AuthenticatedStudentRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/evaluation-types': {
+      id: '/_authenticated/admin/evaluation-types'
+      path: '/evaluation-types'
+      fullPath: '/admin/evaluation-types'
+      preLoaderRoute: typeof AuthenticatedAdminEvaluationTypesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/facilities': {
       id: '/_authenticated/admin/facilities'
@@ -366,12 +386,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminEvaluationTypesRoute: typeof AuthenticatedAdminEvaluationTypesRoute
   AuthenticatedAdminFacilitiesRoute: typeof AuthenticatedAdminFacilitiesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminEvaluationTypesRoute:
+      AuthenticatedAdminEvaluationTypesRoute,
     AuthenticatedAdminFacilitiesRoute: AuthenticatedAdminFacilitiesRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   }
