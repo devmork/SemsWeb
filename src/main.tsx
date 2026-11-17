@@ -3,6 +3,8 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { setUnauthorizedHandler } from "@/shared/api/client";
+import { useAuthStore } from "@/features/auth";
 import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({ routeTree, context: { auth: undefined! } });
@@ -22,29 +24,23 @@ const queryClient = new QueryClient({
   },
 });
 
-async function enableMocking() {
-  if (import.meta.env.DEV) {
-    // 1. Import the virtual module provided by the plugin
-    const { network } = await import("virtual:msw");
-    // 2. Import your handlers
-    const { handlers } = await import("./mocks/handlers");
-
-    // 3. Configure and enable
-    network.configure({ handlers });
-    await network.enable();
-  }
-}
-
-enableMocking().then(() => {
-  const rootElement = document.getElementById("root")!;
-  if (!rootElement.innerHTML) {
-    const root = ReactDOM.createRoot(rootElement);
-    root.render(
-      <StrictMode>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
-      </StrictMode>,
-    );
+// The API client stays framework- and app-agnostic; session-expiry behaviour is
+// wired here at the entry point.
+setUnauthorizedHandler(() => {
+  useAuthStore.getState().clearUser();
+  if (window.location.pathname !== "/login") {
+    window.location.assign("/login");
   }
 });
+
+const rootElement = document.getElementById("root")!;
+if (!rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </StrictMode>,
+  );
+}

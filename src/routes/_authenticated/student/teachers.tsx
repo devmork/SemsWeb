@@ -1,4 +1,4 @@
-import TeacherEvaluationList from "@/features/evaluation-session/taking/components/TeacherEvaluationList";
+import { TeacherEvaluationList } from "@/features/student/evaluations";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/student/teachers")({

@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { redirectIfAuthenticated } from "@/lib/guards";
+import { redirectIfAuthenticated } from "@/features/auth";
 
 // Landing route. The backend redirects here after a successful Google login.
 export const Route = createFileRoute("/")({

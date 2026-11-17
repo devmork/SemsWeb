@@ -9,7 +9,7 @@ const BOOT_SEQUENCE = [
   "Access granted.",
 ];
 
-export default function BootLoader() {
+export function BootLoader() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
