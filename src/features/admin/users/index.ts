@@ -1,10 +1,12 @@
-export { AdminDashboard } from "./components/AdminDashboard";
+export { UserManagement } from "./components/UserManagement";
 export { UserRoleTable } from "./components/UserRoleTable";
 export { RoleBadge } from "./components/RoleBadge";
 
 export { useUsers, usersQueryKey } from "./hooks/useUsers";
-export { useUpdateUserRole } from "./hooks/useUpdateUserRole";
+export { useUpdateUserRoles } from "./hooks/useUpdateUserRole";
 
 export { userService } from "./services/userService";
+export type { GetUsersParams } from "./services/userService";
 
-export type { ManagedUser } from "./types";
+export type { ManagedUser, UpdateUserRolesInput } from "./types";
+export { fullNameOf } from "./types";

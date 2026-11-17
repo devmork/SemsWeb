@@ -30,9 +30,6 @@ export function AppSidebar({ items, footer }: AppSidebarProps) {
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">SEMS</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  Evaluation System
-                </span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

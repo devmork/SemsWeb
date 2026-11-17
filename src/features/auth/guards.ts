@@ -6,31 +6,31 @@ import type { UserResponse, UserRole } from "@/shared/types/user";
 
 let sessionPromise: Promise<UserResponse | null> | null = null;
 
-const isDev = import.meta.env.DEV;
+// const isDev = import.meta.env.DEV;
 
-const MOCK_DEV_USER: UserResponse = {
-  id: 1,
-  name: "Den Mark Enoy",
-  email: "den_enoy@dmc.edu.ph",
-  role: "qa",
-  pictureUrl: null,
-  studentProfile: {
-    studentId: 1,
-    studentNumber: "2023-0444",
-    gradeLevel: "Grade 3",
-    section: "BSIT-3A",
-    schoolYear: "2026-2027",
-    term: 1,
-    status: "Enrolled",
-    subjects: [],
-  },
-};
+// const MOCK_DEV_USER: UserResponse = {
+//   id: 1,
+//   name: "Den Mark Enoy",
+//   email: "den_enoy@dmc.edu.ph",
+//   role: "admin",
+//   pictureUrl: null,
+//   studentProfile: {
+//     studentId: 1,
+//     studentNumber: "2023-0444",
+//     gradeLevel: "Grade 3",
+//     section: "BSIT-3A",
+//     schoolYear: "2026-2027",
+//     term: 1,
+//     status: "Enrolled",
+//     subjects: [],
+//   },
+// };
 
 export function restoreSession(): Promise<UserResponse | null> {
-  if (isDev) {
-    useAuthStore.getState().setUser(MOCK_DEV_USER);
-    return Promise.resolve(MOCK_DEV_USER);
-  }
+  // if (isDev) {
+  //   useAuthStore.getState().setUser(MOCK_DEV_USER);
+  //   return Promise.resolve(MOCK_DEV_USER);
+  // }
 
   const cached = useAuthStore.getState().user;
   if (cached) return Promise.resolve(cached);

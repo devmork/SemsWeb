@@ -6,8 +6,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { AppSidebar } from "./AppSidebar";
-import { useEffect, useState, type ReactNode } from "react";
-import { BootLoader } from "./BootLoader";
+import { type ReactNode } from "react";
+// import { BootLoader } from "./BootLoader";
 import { AnimateUIProvider } from "@animate-ui/react/provider";
 import type { NavigationItem } from "@/shared/config/navigation/types";
 
@@ -17,22 +17,22 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ navItems, sidebarFooter }: AppLayoutProps) {
-  const [isSyncing, setIsSyncing] = useState(true);
+  // const [isSyncing, setIsSyncing] = useState(true);
 
-  useEffect(() => {
-    // Stall for 2.5 seconds while the animation plays out
-    // In production, tie this to your `useQuery` loading state
-    const timer = setTimeout(() => {
-      setIsSyncing(false);
-    }, 8000);
+  // useEffect(() => {
+  //   // Stall for 2.5 seconds while the animation plays out
+  //   // In production, tie this to your `useQuery` loading state
+  //   const timer = setTimeout(() => {
+  //     setIsSyncing(false);
+  //   }, 8000);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   // If still syncing, show the loading screen
-  if (isSyncing) {
-    return <BootLoader />;
-  }
+  // if (isSyncing) {
+  //   return <BootLoader />;
+  // }
   return (
     <AnimateUIProvider>
       <SidebarProvider>

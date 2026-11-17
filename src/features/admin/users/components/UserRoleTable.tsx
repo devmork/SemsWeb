@@ -6,14 +6,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ManagedUser } from "../types";
+import { fullNameOf } from "../types";
 import type { UserRole } from "@/shared/types/user";
 import { RoleBadge } from "./RoleBadge";
-import { useUpdateUserRole } from "../hooks/useUpdateUserRole";
+import { useUpdateUserRoles } from "../hooks/useUpdateUserRole";
 
 const ROLE_OPTIONS: UserRole[] = ["student", "qa", "admin"];
 
 export function UserRoleTable({ users }: { users: ManagedUser[] }) {
-  const { mutate: updateRole, isPending } = useUpdateUserRole();
+  const { mutate: updateRoles, isPending } = useUpdateUserRoles();
 
   return (
     <div className="overflow-hidden rounded-xl border border-hairline">
@@ -27,7 +28,10 @@ export function UserRoleTable({ users }: { users: ManagedUser[] }) {
               Email
             </th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Current role
+              Status
+            </th>
+            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Current roles
             </th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Change role
@@ -35,36 +39,50 @@ export function UserRoleTable({ users }: { users: ManagedUser[] }) {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user.userId} className="border-t border-hairline">
-              <td className="px-4 py-3 text-sm">{user.fullName}</td>
-              <td className="px-4 py-3 text-sm text-muted-foreground">
-                {user.email}
-              </td>
-              <td className="px-4 py-3">
-                <RoleBadge role={user.role} />
-              </td>
-              <td className="px-4 py-3">
-                <Select
-                  value={user.role}
-                  disabled={isPending}
-                  onValueChange={(value) =>
-                    updateRole({ userId: user.userId, role: value as UserRole })
-                  }>
-                  <SelectTrigger className="w-36 rounded-md border-hairline text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ROLE_OPTIONS.map((role) => (
-                      <SelectItem key={role} value={role}>
-                        {role}
-                      </SelectItem>
+          {users.map((user) => {
+            const primaryRole =
+              ROLE_OPTIONS.find((r) => user.roles.includes(r)) ?? "student";
+            return (
+              <tr key={user.id} className="border-t border-hairline">
+                <td className="px-4 py-3 text-sm">{fullNameOf(user)}</td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">
+                  {user.email}
+                </td>
+                <td className="px-4 py-3 text-sm text-muted-foreground">
+                  {user.status}
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-wrap gap-1">
+                    {user.roles.map((role) => (
+                      <RoleBadge key={role} role={role} />
                     ))}
-                  </SelectContent>
-                </Select>
-              </td>
-            </tr>
-          ))}
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <Select
+                    value={primaryRole}
+                    disabled={isPending}
+                    onValueChange={(value) =>
+                      updateRoles({
+                        userId: user.id,
+                        roles: [value as UserRole],
+                      })
+                    }>
+                    <SelectTrigger className="w-36 rounded-md border-hairline text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ROLE_OPTIONS.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {role}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

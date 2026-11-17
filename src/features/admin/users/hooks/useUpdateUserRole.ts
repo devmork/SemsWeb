@@ -4,39 +4,38 @@ import type { ManagedUser } from "../types";
 import { userService } from "../services/userService";
 import { usersQueryKey } from "./useUsers";
 
-interface UpdateRoleInput {
+interface UpdateUserRolesInput {
   userId: number;
-  role: UserRole;
+  roles: UserRole[];
 }
 
-export function useUpdateUserRole() {
+export function useUpdateUserRoles() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, role }: UpdateRoleInput) =>
-      userService.updateUserRole(userId, role),
+    mutationFn: ({ userId, roles }: UpdateUserRolesInput) =>
+      userService.updateUserRoles(userId, roles),
 
-    // optimistic update: flip the role in the cached list immediately
-    onMutate: async ({ userId, role }) => {
+    onMutate: async ({ userId, roles }) => {
       await queryClient.cancelQueries({ queryKey: usersQueryKey });
-      const previousUsers =
-        queryClient.getQueryData<ManagedUser[]>(usersQueryKey);
+      const previous = queryClient.getQueriesData<ManagedUser[]>({
+        queryKey: usersQueryKey,
+      });
 
-      queryClient.setQueryData<ManagedUser[]>(usersQueryKey, (old) =>
-        old?.map((u) => (u.userId === userId ? { ...u, role } : u)),
+      queryClient.setQueriesData<ManagedUser[]>(
+        { queryKey: usersQueryKey },
+        (old) => old?.map((u) => (u.id === userId ? { ...u, roles } : u)),
       );
 
-      return { previousUsers };
+      return { previous };
     },
 
-    // roll back to the snapshot if the request fails
     onError: (_err, _vars, context) => {
-      if (context?.previousUsers) {
-        queryClient.setQueryData(usersQueryKey, context.previousUsers);
-      }
+      context?.previous.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
     },
 
-    // re-sync with the server regardless of outcome
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: usersQueryKey });
     },
