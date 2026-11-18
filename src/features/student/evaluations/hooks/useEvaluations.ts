@@ -11,8 +11,8 @@ export const evaluationKeys = {
   all: ["student", "evaluations"] as const,
   teachers: () => [...evaluationKeys.all, "teachers"] as const,
   facilities: () => [...evaluationKeys.all, "facilities"] as const,
-  form: (evaluationTypeId: number) =>
-    [...evaluationKeys.all, "form", evaluationTypeId] as const,
+  form: (formId: number) =>
+    [...evaluationKeys.all, "form", formId] as const,
   session: (sessionId: number) =>
     [...evaluationKeys.all, "session", sessionId] as const,
 };
@@ -53,10 +53,10 @@ export function useEvaluationDetail(id: number, type: EvaluationKind) {
       : undefined;
 
   const teacherForm = useQuery({
-    queryKey: evaluationKeys.form(teacher?.evaluationTypeId ?? 0),
+    queryKey: evaluationKeys.form(teacher?.formId ?? 0),
     queryFn: () =>
-      evaluationService.getFormCategories(teacher!.evaluationTypeId!),
-    enabled: type === "teacher" && teacher?.evaluationTypeId != null,
+      evaluationService.getFormCategories(teacher!.formId!),
+    enabled: type === "teacher" && teacher?.formId != null,
   });
 
   const facilitySession = useQuery({
@@ -119,7 +119,7 @@ export function useEvaluationDetail(id: number, type: EvaluationKind) {
   const isPending =
     type === "teacher"
       ? teacherAssignments.isPending ||
-        (teacher?.evaluationTypeId != null && teacherForm.isPending)
+        (teacher?.formId != null && teacherForm.isPending)
       : facilityAssignments.isPending ||
         (facility != null && facilitySession.isPending);
 

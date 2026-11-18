@@ -12,14 +12,13 @@ import type {
 type SessionDto = {
   evaluationSessionId: number;
   formId: number;
-  formCode: string;
   formTitle: string;
   evaluationTypeId: number;
   evaluationTypeName: string;
-  targetType: string;
-  programId: number;
   schoolYear: string;
   term: number;
+  gradeLevelFrom: number | null;
+  gradeLevelTo: number | null;
   opensAtUtc: string | null;
   closesAtUtc: string | null;
   status: string;
@@ -33,15 +32,11 @@ type SessionDto = {
 
 /** Mirrors `EvaluationSessionDetailDto` — a session plus its form tree. */
 type SessionDetailDto = SessionDto & {
-  form: FormDetailDto | null;
+  evaluationForm: FormDetailDto | null;
 };
 
 type FormDetailDto = {
   formId: number;
-  code: string;
-  gradeBand: string | null;
-  targetType: string;
-  programId: number;
   evaluationTypeId: number;
   evaluationTypeName: string;
   title: string;
@@ -75,14 +70,13 @@ function toSession(dto: SessionDto): Session {
   return {
     id: dto.evaluationSessionId,
     formId: dto.formId,
-    formCode: dto.formCode,
     formTitle: dto.formTitle,
     evaluationTypeId: dto.evaluationTypeId,
     evaluationTypeName: dto.evaluationTypeName,
-    targetType: dto.targetType,
-    programId: dto.programId,
     schoolYear: dto.schoolYear,
     term: dto.term,
+    gradeLevelFrom: dto.gradeLevelFrom ?? null,
+    gradeLevelTo: dto.gradeLevelTo ?? null,
     opensAtUtc: dto.opensAtUtc,
     closesAtUtc: dto.closesAtUtc,
     status: dto.status as SessionStatus,
@@ -98,21 +92,17 @@ function toSession(dto: SessionDto): Session {
 function toSessionDetail(dto: SessionDetailDto): SessionDetail {
   return {
     ...toSession(dto),
-    form: dto.form
+    evaluationForm: dto.evaluationForm
       ? {
-          formId: dto.form.formId,
-          code: dto.form.code,
-          gradeBand: dto.form.gradeBand,
-          targetType: dto.form.targetType,
-          programId: dto.form.programId,
-          evaluationTypeId: dto.form.evaluationTypeId,
-          evaluationTypeName: dto.form.evaluationTypeName,
-          title: dto.form.title,
-          description: dto.form.description,
-          createdBy: dto.form.createdBy,
-          isActive: dto.form.isActive === 1 ? 1 : 0,
-          createdAt: dto.form.createdAt,
-          categories: (dto.form.categories ?? []).map((category) => ({
+          formId: dto.evaluationForm.formId,
+          evaluationTypeId: dto.evaluationForm.evaluationTypeId,
+          evaluationTypeName: dto.evaluationForm.evaluationTypeName,
+          title: dto.evaluationForm.title,
+          description: dto.evaluationForm.description,
+          createdBy: dto.evaluationForm.createdBy,
+          isActive: dto.evaluationForm.isActive === 1 ? 1 : 0,
+          createdAt: dto.evaluationForm.createdAt,
+          categories: (dto.evaluationForm.categories ?? []).map((category) => ({
             categoryId: category.categoryId,
             categoryName: category.categoryName,
             categoryRate: category.categoryRate,

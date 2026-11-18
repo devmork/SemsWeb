@@ -32,8 +32,7 @@ export function DeleteFormDialog({
           <DialogDescription>
             Are you sure you want to delete{" "}
             <span className="font-medium text-foreground">
-              {form?.code ?? "this form"}
-              {form?.title ? ` — ${form.title}` : ""}
+              {form?.title ?? "this form"}
             </span>
             ? Forms used by evaluation sessions may break. This action can't be
             undone.

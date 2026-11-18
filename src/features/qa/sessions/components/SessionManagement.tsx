@@ -72,7 +72,6 @@ export function SessionManagement() {
         ? sessions.filter(
             (s) =>
               s.formTitle.toLowerCase().includes(trimmedQuery) ||
-              s.formCode.toLowerCase().includes(trimmedQuery) ||
               s.schoolYear.toLowerCase().includes(trimmedQuery),
           )
         : sessions,

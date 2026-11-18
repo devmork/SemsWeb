@@ -50,7 +50,7 @@ type FormCategoryDto = {
 /** Subset of `EvaluationSessionDetailDto` needed by the facility flow. */
 type SessionDetailDto = {
   closesAtUtc: string | null;
-  form: { categories: FormCategoryDto[] } | null;
+  evaluationForm: { categories: FormCategoryDto[] } | null;
 };
 
 function toCategories(dtos: FormCategoryDto[] | null | undefined): EvaluationCategory[] {
@@ -116,12 +116,10 @@ export const evaluationService = {
 
   // ---- form content ------------------------------------------------------
 
-  /** `GET /api/evaluation/form?evaluationTypeId=` — categories + questions. */
-  async getFormCategories(
-    evaluationTypeId: number,
-  ): Promise<EvaluationCategory[]> {
+  /** `GET /api/evaluation/form?formId=` — categories + questions for a form. */
+  async getFormCategories(formId: number): Promise<EvaluationCategory[]> {
     const { data } = await api.get<FormCategoryDto[]>("/api/evaluation/form", {
-      params: { evaluationTypeId },
+      params: { formId },
     });
     return toCategories(data);
   },
@@ -136,7 +134,7 @@ export const evaluationService = {
     );
     return {
       closesAtUtc: data.closesAtUtc,
-      categories: toCategories(data.form?.categories),
+      categories: toCategories(data.evaluationForm?.categories),
     };
   },
 

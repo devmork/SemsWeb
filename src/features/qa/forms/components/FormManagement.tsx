@@ -1,59 +1,17 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  useForms,
-  useCreateForm,
-  useDeleteForm,
-  useUpdateForm,
-} from "../hooks/useForms";
-import type { CreateFormInput, Form } from "../types";
+import { useForms, useDeleteForm } from "../hooks/useForms";
+import type { Form } from "../types";
 import { FormTable } from "./FormTable";
-import { FormDialog } from "./FormDialog";
 import { DeleteFormDialog } from "./DeleteFormDialog";
 
-function mutationErrorMessage(error: unknown): string | null {
-  if (!error) return null;
-  if (typeof error === "object" && "response" in error) {
-    const response = (
-      error as { response?: { data?: { message?: string } } }
-    ).response;
-    if (response?.data?.message) return response.data.message;
-  }
-  return "Something went wrong. Please try again.";
-}
-
-function FormCardSkeleton() {
-  return (
-    <div className="overflow-hidden rounded-xl border border-hairline">
-      <div className="space-y-3 p-4">
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-5 w-3/4" />
-      </div>
-    </div>
-  );
-}
-
 export function FormManagement() {
+  const navigate = useNavigate();
   const { data: forms = [], isLoading, error } = useForms();
-  const {
-    mutate: createForm,
-    isPending: isCreating,
-    error: createError,
-    reset: resetCreateError,
-  } = useCreateForm();
-  const {
-    mutate: updateForm,
-    isPending: isUpdating,
-    error: updateError,
-    reset: resetUpdateError,
-  } = useUpdateForm();
   const { mutate: deleteForm, isPending: isDeleting } = useDeleteForm();
 
-  const [formDialogOpen, setFormDialogOpen] = useState(false);
-  const [editingForm, setEditingForm] = useState<Form | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingForm, setDeletingForm] = useState<Form | null>(null);
   const [query, setQuery] = useState("");
@@ -62,29 +20,10 @@ export function FormManagement() {
   const filteredForms = useMemo(
     () =>
       trimmedQuery
-        ? forms.filter(
-            (f) =>
-              f.title.toLowerCase().includes(trimmedQuery) ||
-              f.code.toLowerCase().includes(trimmedQuery),
-          )
+        ? forms.filter((f) => f.title.toLowerCase().includes(trimmedQuery))
         : forms,
     [forms, trimmedQuery],
   );
-
-  const submitError =
-    mutationErrorMessage(createError) ?? mutationErrorMessage(updateError);
-
-  const handleFormSubmit = (input: CreateFormInput) => {
-    const onSuccess = () => {
-      setFormDialogOpen(false);
-      setEditingForm(null);
-    };
-    if (editingForm) {
-      updateForm({ id: editingForm.formId, input }, { onSuccess });
-    } else {
-      createForm(input, { onSuccess });
-    }
-  };
 
   const handleDeleteConfirm = (id: number) => {
     deleteForm(id, {
@@ -96,64 +35,73 @@ export function FormManagement() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-lg font-semibold">Form Templates</h1>
-        <Button
-          onClick={() => {
-            setEditingForm(null);
-            resetCreateError();
-            resetUpdateError();
-            setFormDialogOpen(true);
-          }}
-        >
-          Add Form
-        </Button>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search forms..."
-          aria-label="Search forms"
-          className="max-w-xs"
-        />
-      </div>
+    <div className="flex flex-col gap-6">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            Forms
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Build evaluation forms: pick an evaluation type, link categories, and
+            author questions per category.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative w-full sm:w-64">
+            <Input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search forms…"
+              aria-label="Search forms"
+              className="pl-3"
+            />
+          </div>
+          <Button onClick={() => navigate({ to: "/qa/forms/create" })}>
+            Add Form
+          </Button>
+        </div>
+      </header>
 
       {isLoading ? (
-        <FormCardSkeleton />
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-16 animate-pulse rounded-xl border border-border bg-muted" />
+          ))}
+        </div>
       ) : error ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-hairline py-16 text-center">
+        <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-border bg-card py-16 text-center shadow-sm">
           <p className="text-sm font-medium">Couldn't load forms</p>
           <p className="text-sm text-muted-foreground">
             Check your connection and try again.
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.location.reload()}
-          >
+          <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
             Retry
           </Button>
         </div>
       ) : filteredForms.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-border bg-card py-16 text-center shadow-sm">
           <p className="text-sm font-medium">No form templates yet</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Create one to pair an evaluation type with a title and code.
+            Create one to pick an evaluation type, the categories it covers,
+            and the questions under each.
           </p>
         </div>
       ) : (
         <FormTable
           forms={filteredForms}
-          onEdit={(form) => {
-            setEditingForm(form);
-            resetCreateError();
-            resetUpdateError();
-            setFormDialogOpen(true);
-          }}
+          onManageContent={(form) =>
+            navigate({
+              to: "/qa/forms/$formId",
+              params: { formId: String(form.formId) },
+            })
+          }
+          onEdit={(form) =>
+            navigate({
+              to: "/qa/forms/$formId",
+              params: { formId: String(form.formId) },
+            })
+          }
           onDelete={(form) => {
             setDeletingForm(form);
             setDeleteDialogOpen(true);
@@ -161,17 +109,6 @@ export function FormManagement() {
         />
       )}
 
-      <FormDialog
-        open={formDialogOpen}
-        onOpenChange={(open) => {
-          setFormDialogOpen(open);
-          if (!open) setEditingForm(null);
-        }}
-        form={editingForm}
-        onSubmit={handleFormSubmit}
-        isPending={isCreating || isUpdating}
-        submitError={submitError}
-      />
       <DeleteFormDialog
         open={deleteDialogOpen}
         onOpenChange={(open) => {
