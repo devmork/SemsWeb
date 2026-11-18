@@ -7,8 +7,19 @@ export interface NavItem {
   icon: LucideIcon;
 }
 
+/** A labeled group of links — renders a SidebarGroupLabel above its items. */
+export interface NavSection {
+  label: string;
+  items: NavItem[];
+}
+
 export interface NavigationItem extends NavItem {
   isActive: boolean;
 }
 
-export type NavConfig = Record<UserRole, NavItem[]>;
+export interface NavigationSection {
+  label: string;
+  items: NavigationItem[];
+}
+
+export type NavConfig = Record<UserRole, NavSection[]>;

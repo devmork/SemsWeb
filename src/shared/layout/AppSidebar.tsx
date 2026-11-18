@@ -11,14 +11,14 @@ import {
 import { IconCommand } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { AppSidebarNav } from "./AppSidebarNav";
-import type { NavigationItem } from "@/shared/config/navigation/types";
+import type { NavigationSection } from "@/shared/config/navigation/types";
 
 interface AppSidebarProps {
-  items: NavigationItem[];
+  sections: NavigationSection[];
   footer?: ReactNode;
 }
 
-export function AppSidebar({ items, footer }: AppSidebarProps) {
+export function AppSidebar({ sections, footer }: AppSidebarProps) {
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader>
@@ -37,7 +37,7 @@ export function AppSidebar({ items, footer }: AppSidebarProps) {
       </SidebarHeader>
 
       <SidebarContent>
-        <AppSidebarNav items={items} />
+        <AppSidebarNav sections={sections} />
       </SidebarContent>
 
       {footer ? <SidebarFooter>{footer}</SidebarFooter> : null}

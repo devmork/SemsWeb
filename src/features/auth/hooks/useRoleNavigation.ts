@@ -1,10 +1,10 @@
 import { useMatchRoute } from "@tanstack/react-router";
 import { navConfig } from "@/shared/config/navigation";
-import type { NavigationItem } from "@/shared/config/navigation/types";
+import type { NavigationSection } from "@/shared/config/navigation/types";
 import { useAuthStore } from "@/features/auth";
 
 export function useRoleNavigation(): {
-  items: NavigationItem[];
+  sections: NavigationSection[];
   role: string | null;
   isLoading: boolean;
 } {
@@ -12,14 +12,17 @@ export function useRoleNavigation(): {
   const matchRoute = useMatchRoute();
 
   if (!role) {
-    return { items: [], role: null, isLoading: true };
+    return { sections: [], role: null, isLoading: true };
   }
 
   const raw = navConfig[role] ?? [];
-  const items: NavigationItem[] = raw.map((item) => ({
-    ...item,
-    isActive: Boolean(matchRoute({ to: item.href, fuzzy: item.href !== "/" })),
+  const sections: NavigationSection[] = raw.map((section) => ({
+    label: section.label,
+    items: section.items.map((item) => ({
+      ...item,
+      isActive: Boolean(matchRoute({ to: item.href, fuzzy: item.href !== "/" })),
+    })),
   }));
 
-  return { items, role, isLoading: false };
+  return { sections, role, isLoading: false };
 }

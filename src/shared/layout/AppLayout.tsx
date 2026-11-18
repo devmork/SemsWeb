@@ -9,14 +9,14 @@ import { AppSidebar } from "./AppSidebar";
 import { type ReactNode } from "react";
 // import { BootLoader } from "./BootLoader";
 import { AnimateUIProvider } from "@animate-ui/react/provider";
-import type { NavigationItem } from "@/shared/config/navigation/types";
+import type { NavigationSection } from "@/shared/config/navigation/types";
 
 interface AppLayoutProps {
-  navItems: NavigationItem[];
+  navSections: NavigationSection[];
   sidebarFooter?: ReactNode;
 }
 
-export function AppLayout({ navItems, sidebarFooter }: AppLayoutProps) {
+export function AppLayout({ navSections, sidebarFooter }: AppLayoutProps) {
   // const [isSyncing, setIsSyncing] = useState(true);
 
   // useEffect(() => {
@@ -36,7 +36,7 @@ export function AppLayout({ navItems, sidebarFooter }: AppLayoutProps) {
   return (
     <AnimateUIProvider>
       <SidebarProvider>
-        <AppSidebar items={navItems} footer={sidebarFooter} />
+        <AppSidebar sections={navSections} footer={sidebarFooter} />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
