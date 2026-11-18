@@ -2,32 +2,16 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { IconEdit, IconTrash, IconPlus, IconFolderOpen } from "@tabler/icons-react";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  useCategories,
   useCreateCategory,
   useDeleteCategory,
+  useCategories,
   useUpdateCategory,
 } from "../hooks/useCategories";
-import {
-  DeleteQuestionDialog,
-  QuestionDialog,
-  useCreateQuestion,
-  useDeleteQuestion,
-  useQuestions,
-  useUpdateQuestion,
-} from "@/features/qa/questions";
-import type { CreateQuestionInput, Question } from "@/features/qa/questions";
 import type { Category, CreateCategoryInput } from "../types";
 import { CategoryDialog } from "./CategoryDialog";
 import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
-import { IconEdit, IconTrash, IconPlus } from "@tabler/icons-react";
 
 function mutationErrorMessage(error: unknown): string | null {
   if (!error) return null;
@@ -39,208 +23,57 @@ function mutationErrorMessage(error: unknown): string | null {
   return "Something went wrong. Please try again.";
 }
 
-function CategoryCardSkeleton() {
+function TableSkeleton() {
   return (
-    <div className="overflow-hidden rounded-xl border border-hairline">
-      <div className="space-y-3 p-4">
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-5 w-3/4" />
+    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+      <div className="border-b border-border bg-muted/50 px-5 py-3">
+        <Skeleton className="h-3 w-24" />
       </div>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-4 border-b border-border px-5 py-4 last:border-0">
+          <Skeleton className="h-4 flex-1" />
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-9 w-20" />
+        </div>
+      ))}
     </div>
   );
 }
 
-function CategoryQuestionPanel({ category }: { category: Category }) {
-  const { data: questions = [], isLoading, error } = useQuestions(category.catNo);
-  const {
-    mutate: createQuestion,
-    isPending: isCreating,
-    error: createError,
-    reset: resetCreateError,
-  } = useCreateQuestion(category.catNo);
-  const {
-    mutate: updateQuestion,
-    isPending: isUpdating,
-    error: updateError,
-    reset: resetUpdateError,
-  } = useUpdateQuestion(category.catNo);
-  const { mutate: deleteQuestion, isPending: isDeleting } = useDeleteQuestion(
-    category.catNo,
-  );
-
-  const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
-  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deletingQuestion, setDeletingQuestion] = useState<Question | null>(
-    null,
-  );
-  const [query, setQuery] = useState("");
-
-  const trimmedQuery = query.trim().toLowerCase();
-  const filteredQuestions = useMemo(
-    () =>
-      trimmedQuery
-        ? questions.filter((q) => q.text.toLowerCase().includes(trimmedQuery))
-        : questions,
-    [questions, trimmedQuery],
-  );
-
-  const submitError =
-    mutationErrorMessage(createError) ?? mutationErrorMessage(updateError);
-
-  const handleQuestionSubmit = (input: CreateQuestionInput) => {
-    const onSuccess = () => {
-      setQuestionDialogOpen(false);
-      setEditingQuestion(null);
-    };
-    if (editingQuestion) {
-      updateQuestion({ qnNo: editingQuestion.id, input }, { onSuccess });
-    } else {
-      createQuestion(input, { onSuccess });
-    }
-  };
-
-  const handleDeleteConfirm = (qnNo: number) => {
-    deleteQuestion(qnNo, {
-      onSuccess: () => {
-        setDeleteDialogOpen(false);
-        setDeletingQuestion(null);
-      },
-    });
-  };
-
+function StateCard({
+  icon,
+  title,
+  description,
+  tone = "muted",
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  tone?: "muted" | "error";
+}) {
   return (
-    <div className="flex flex-col gap-4 px-4 pb-4">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-sm text-muted-foreground">
-          Manage the evaluation questions in this category.
-        </p>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setEditingQuestion(null);
-            resetCreateError();
-            resetUpdateError();
-            setQuestionDialogOpen(true);
-          }}>
-          <IconPlus /> Add Question
-        </Button>
+    <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-16 text-center shadow-sm">
+      <div
+        className={`flex size-12 items-center justify-center rounded-full ${
+          tone === "error"
+            ? "bg-destructive/10 text-destructive"
+            : "bg-muted text-muted-foreground"
+        }`}>
+        {icon}
       </div>
-
-      <div className="flex items-center gap-3">
-        <Input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search questions..."
-          aria-label="Search questions"
-          className="max-w-xs"
-        />
+      <div className="space-y-1">
+        <p className="text-base font-semibold text-foreground">{title}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-
-      {isLoading ? (
-        <CategoryCardSkeleton />
-      ) : error ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-hairline py-16 text-center">
-          <p className="text-sm font-medium">Couldn't load questions</p>
-          <p className="text-sm text-muted-foreground">
-            Check your connection and try again.
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.location.reload()}>
-            Retry
-          </Button>
-        </div>
-      ) : filteredQuestions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-sm font-medium">No questions yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Add a question to start building this category.
-          </p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-hairline">
-          <table className="w-full min-w-[560px] text-left">
-            <thead>
-              <tr className="bg-canvas-soft">
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Question
-                </th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredQuestions.map((question) => (
-                <tr
-                  key={question.id}
-                  className="border-t border-hairline hover:bg-muted/40">
-                  <td className="px-4 py-3 text-sm">{question.text}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Edit question ${question.id}`}
-                        onClick={() => {
-                          setEditingQuestion(question);
-                          resetCreateError();
-                          resetUpdateError();
-                          setQuestionDialogOpen(true);
-                        }}>
-                        <IconEdit />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Delete question ${question.id}`}
-                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => {
-                          setDeletingQuestion(question);
-                          setDeleteDialogOpen(true);
-                        }}>
-                        <IconTrash />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <QuestionDialog
-        open={questionDialogOpen}
-        onOpenChange={(open) => {
-          setQuestionDialogOpen(open);
-          if (!open) setEditingQuestion(null);
-        }}
-        question={editingQuestion}
-        onSubmit={handleQuestionSubmit}
-        isPending={isCreating || isUpdating}
-        submitError={submitError}
-      />
-      <DeleteQuestionDialog
-        open={deleteDialogOpen}
-        onOpenChange={(open) => {
-          setDeleteDialogOpen(open);
-          if (!open) setDeletingQuestion(null);
-        }}
-        question={deletingQuestion}
-        onConfirm={handleDeleteConfirm}
-        isPending={isDeleting}
-      />
     </div>
   );
 }
 
 export function CategoryManagement() {
+  const [query, setQuery] = useState("");
+
   const { data: categories = [], isLoading, error } = useCategories();
   const {
     mutate: createCategory,
@@ -267,20 +100,29 @@ export function CategoryManagement() {
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(
     null,
   );
-  const [query, setQuery] = useState("");
-  const [openValues, setOpenValues] = useState<string[]>([]);
 
-  const trimmedQuery = query.trim().toLowerCase();
-  const filteredCategories = useMemo(
+const trimmedQuery = query.trim().toLowerCase();
+
+const filteredCategories = useMemo(
     () =>
       trimmedQuery
-        ? categories.filter((c) => (c.catName ?? "").toLowerCase().includes(trimmedQuery))
+        ? categories.filter((c) =>
+            (c.categoryName ?? "").toLowerCase().includes(trimmedQuery),
+          )
         : categories,
     [categories, trimmedQuery],
   );
 
   const submitError =
     mutationErrorMessage(createError) ?? mutationErrorMessage(updateError);
+  const deleteSubmitError = mutationErrorMessage(deleteError);
+
+  const openCreate = () => {
+    setEditingCategory(null);
+    resetCreateError();
+    resetUpdateError();
+    setCategoryDialogOpen(true);
+  };
 
   const handleCategorySubmit = (input: CreateCategoryInput) => {
     const onSuccess = () => {
@@ -288,14 +130,17 @@ export function CategoryManagement() {
       setEditingCategory(null);
     };
     if (editingCategory) {
-      updateCategory({ catNo: editingCategory.catNo, input }, { onSuccess });
+      updateCategory(
+        { categoryId: editingCategory.categoryId, input },
+        { onSuccess },
+      );
     } else {
       createCategory(input, { onSuccess });
     }
   };
 
-  const handleDeleteConfirm = (catNo: number) => {
-    deleteCategory(catNo, {
+  const handleDeleteConfirm = (categoryId: number) => {
+    deleteCategory(categoryId, {
       onSuccess: () => {
         setDeleteDialogOpen(false);
         setDeletingCategory(null);
@@ -303,77 +148,101 @@ export function CategoryManagement() {
     });
   };
 
-  const deleteSubmitError = mutationErrorMessage(deleteError);
+  // client-side search only
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-lg font-semibold">Categories</h1>
-        <Button
-          onClick={() => {
-            setEditingCategory(null);
-            resetCreateError();
-            resetUpdateError();
-            setCategoryDialogOpen(true);
-          }}>
-          Add Category
-        </Button>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search categories..."
-          aria-label="Search categories"
-          className="max-w-xs"
-        />
-      </div>
-
-      {isLoading ? (
-        <CategoryCardSkeleton />
-      ) : error ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-hairline py-16 text-center">
-          <p className="text-sm font-medium">Couldn't load categories</p>
+    <div className="flex flex-col gap-6">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            Categories
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Check your connection and try again.
+            Shared evaluation categories. Questions are now managed per form.
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.location.reload()}>
-            Retry
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative w-full sm:w-64">
+            <IconFolderOpen
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
+            <Input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search categories…"
+              aria-label="Search categories"
+              className="pl-9"
+            />
+          </div>
+          <Button onClick={openCreate}>
+            <IconPlus /> Add Category
           </Button>
         </div>
+      </header>
+
+      {isLoading ? (
+        <TableSkeleton />
+      ) : error ? (
+        <StateCard
+          icon={<IconFolderOpen className="size-5" />}
+          title="Couldn't load categories"
+          description={
+            error instanceof Error
+              ? error.message
+              : "Check your connection and try again."
+          }
+          tone="error"
+        />
       ) : filteredCategories.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-sm font-medium">No categories yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Create a category to start organizing questions.
-          </p>
-        </div>
+        <StateCard
+          icon={<IconFolderOpen className="size-5" />}
+          title={trimmedQuery ? "No categories found" : "No categories yet"}
+          description={
+            trimmedQuery
+              ? "Try a different name."
+              : "Create a category to start organizing questions."
+          }
+        />
       ) : (
-        <Accordion
-          multiple
-          value={openValues}
-          onValueChange={setOpenValues}
-          className="flex flex-col gap-4">
-          {filteredCategories.map((category) => (
-            <Card key={category.catNo}>
-              <AccordionItem
-                value={String(category.catNo)}
-                className="border-none">
-                <CardHeader className="pb-0">
-                  <div className="flex items-center justify-between gap-4">
-                    <CardTitle>{category.catName}</CardTitle>
-                    <div className="flex items-center gap-1">
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <table className="w-full min-w-[560px] text-left">
+            <thead>
+              <tr className="border-b border-border bg-muted/50">
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Name
+                </th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Weight
+                </th>
+                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCategories.map((category) => (
+                <tr
+                  key={category.categoryId}
+                  className="border-b border-border last:border-0 transition-colors hover:bg-muted/40">
+                  <td className="px-5 py-3 text-sm font-medium text-foreground">
+                    {category.categoryName}
+                  </td>
+                  <td className="px-5 py-3">
+                    <div className="flex min-w-32 items-center gap-2">
+                      <span className="text-sm tabular-nums text-muted-foreground">
+                        {category.categoryRate ?? "—"}%
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3">
+                    <div className="flex items-center justify-end gap-1">
                       <Button
                         variant="ghost"
                         size="icon-sm"
-                        aria-label={`Edit ${category.catName}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        aria-label={`Edit ${category.categoryName}`}
+                        onClick={() => {
                           setEditingCategory(category);
                           resetCreateError();
                           resetUpdateError();
@@ -384,32 +253,22 @@ export function CategoryManagement() {
                       <Button
                         variant="ghost"
                         size="icon-sm"
-                        aria-label={`Delete ${category.catName}`}
+                        aria-label={`Delete ${category.categoryName}`}
                         className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           resetDeleteError();
                           setDeletingCategory(category);
                           setDeleteDialogOpen(true);
                         }}>
                         <IconTrash />
                       </Button>
-                      <AccordionTrigger
-                        className="py-1 px-2"
-                        onClick={(e) => e.stopPropagation()}>
-                        <span className="sr-only">Toggle questions</span>
-                      </AccordionTrigger>
                     </div>
-                  </div>
-                </CardHeader>
-
-                <AccordionContent className="px-4 pb-4">
-                  <CategoryQuestionPanel category={category} />
-                </AccordionContent>
-              </AccordionItem>
-            </Card>
-          ))}
-        </Accordion>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       <CategoryDialog

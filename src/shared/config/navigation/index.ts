@@ -9,4 +9,10 @@ export const navConfig: NavConfig = {
   student: studentNav,
 };
 
-export type { NavItem, NavConfig } from "./types";
+export type {
+  NavItem,
+  NavSection,
+  NavigationItem,
+  NavigationSection,
+  NavConfig,
+} from "./types";

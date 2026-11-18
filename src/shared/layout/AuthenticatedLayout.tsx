@@ -8,7 +8,7 @@ import { useRoleNavigation } from "@/features/auth";
  * composes the authenticated shell (role navigation + account menu).
  */
 export function AuthenticatedLayout() {
-  const { items } = useRoleNavigation();
+  const { sections } = useRoleNavigation();
 
-  return <AppLayout navItems={items} sidebarFooter={<SidebarAccountMenu />} />;
+  return <AppLayout navSections={sections} sidebarFooter={<SidebarAccountMenu />} />;
 }

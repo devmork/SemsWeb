@@ -67,14 +67,13 @@ export function useCreateSession() {
       const optimistic: Session = {
         id: -Date.now(),
         formId: input.formId,
-        formCode: "",
         formTitle: "",
         evaluationTypeId: 0,
         evaluationTypeName: "",
-        targetType: "",
-        programId: 0,
         schoolYear: input.schoolYear,
         term: input.term,
+        gradeLevelFrom: input.gradeLevelFrom ?? null,
+        gradeLevelTo: input.gradeLevelTo ?? null,
         opensAtUtc: input.opensAtUtc,
         closesAtUtc: input.closesAtUtc,
         status: "Draft",
@@ -114,10 +113,22 @@ export function useUpdateSession() {
                 ...s,
                 status: input.status ?? s.status,
                 opensAtUtc:
-                  input.opensAtUtc ?? s.opensAtUtc,
+                  input.opensAtUtc !== undefined
+                    ? input.opensAtUtc
+                    : s.opensAtUtc,
                 closesAtUtc:
-                  input.closesAtUtc ?? s.closesAtUtc,
-                notes: input.notes ?? s.notes,
+                  input.closesAtUtc !== undefined
+                    ? input.closesAtUtc
+                    : s.closesAtUtc,
+                gradeLevelFrom:
+                  input.gradeLevelFrom !== undefined
+                    ? input.gradeLevelFrom
+                    : s.gradeLevelFrom,
+                gradeLevelTo:
+                  input.gradeLevelTo !== undefined
+                    ? input.gradeLevelTo
+                    : s.gradeLevelTo,
+                notes: input.notes !== undefined ? input.notes : s.notes,
               }
             : s,
         ),

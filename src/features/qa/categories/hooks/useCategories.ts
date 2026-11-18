@@ -43,11 +43,10 @@ export function useCreateCategory() {
       await queryClient.cancelQueries({ queryKey: categoryKeys.list() });
       const previous = snapshot(queryClient);
       const optimistic: Category = {
-        catNo: -Date.now(),
+        categoryId: -Date.now(),
         evaluationTypeId: input.evaluationTypeId,
-        catRn: input.catRn,
-        catName: input.catName,
-        catRate: input.catRate,
+        categoryName: input.categoryName,
+        categoryRate: input.categoryRate,
       };
       queryClient.setQueryData<Category[]>(categoryKeys.list(), (old = []) => [
         ...old,
@@ -66,20 +65,19 @@ export function useUpdateCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ catNo, input }: { catNo: number; input: UpdateCategoryInput }) =>
-      categoryService.updateCategory(catNo, input),
-    onMutate: async ({ catNo, input }) => {
+    mutationFn: ({ categoryId, input }: { categoryId: number; input: UpdateCategoryInput }) =>
+      categoryService.updateCategory(categoryId, input),
+    onMutate: async ({ categoryId, input }) => {
       await queryClient.cancelQueries({ queryKey: categoryKeys.list() });
       const previous = snapshot(queryClient);
       queryClient.setQueryData<Category[]>(categoryKeys.list(), (old = []) =>
         old.map((c) =>
-          c.catNo === catNo
+          c.categoryId === categoryId
             ? {
                 ...c,
                 evaluationTypeId: input.evaluationTypeId,
-                catRn: input.catRn,
-                catName: input.catName,
-                catRate: input.catRate,
+                categoryName: input.categoryName,
+                categoryRate: input.categoryRate,
               }
             : c,
         ),
@@ -97,16 +95,16 @@ export function useDeleteCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (catNo: number) => categoryService.deleteCategory(catNo),
-    onMutate: async (catNo) => {
+    mutationFn: (categoryId: number) => categoryService.deleteCategory(categoryId),
+    onMutate: async (categoryId) => {
       await queryClient.cancelQueries({ queryKey: categoryKeys.list() });
       const previous = snapshot(queryClient);
       queryClient.setQueryData<Category[]>(categoryKeys.list(), (old = []) =>
-        old.filter((c) => c.catNo !== catNo),
+        old.filter((c) => c.categoryId !== categoryId),
       );
       return { previous } satisfies Context;
     },
-    onError: (_err, _catNo, ctx) => rollback(queryClient, ctx),
+    onError: (_err, _categoryId, ctx) => rollback(queryClient, ctx),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.all });
     },

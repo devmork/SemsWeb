@@ -37,9 +37,8 @@ interface CategoryDialogProps {
 
 interface FormValues {
   evaluationTypeId: string;
-  catRn: string;
-  catName: string;
-  catRate: string;
+  categoryName: string;
+  categoryRate: string;
 }
 
 export function CategoryDialog({
@@ -62,9 +61,8 @@ export function CategoryDialog({
   } = useForm<FormValues>({
     defaultValues: {
       evaluationTypeId: "",
-      catRn: "",
-      catName: "",
-      catRate: "",
+      categoryName: "",
+      categoryRate: "",
     },
   });
 
@@ -74,15 +72,14 @@ export function CategoryDialog({
         category
           ? {
               evaluationTypeId: String(category.evaluationTypeId),
-              catRn: category.catRn ?? "",
-              catName: category.catName ?? "",
-              catRate: category.catRate == null ? "" : String(category.catRate),
+              categoryName: category.categoryName ?? "",
+              categoryRate:
+                category.categoryRate == null ? "" : String(category.categoryRate),
             }
           : {
               evaluationTypeId: "",
-              catRn: "",
-              catName: "",
-              catRate: "",
+              categoryName: "",
+              categoryRate: "",
             },
       );
     }
@@ -91,9 +88,8 @@ export function CategoryDialog({
   const onFormSubmit = (values: FormValues) => {
     onSubmit({
       evaluationTypeId: Number(values.evaluationTypeId),
-      catRn: values.catRn.trim(),
-      catName: values.catName.trim(),
-      catRate: Number(values.catRate),
+      categoryName: values.categoryName.trim(),
+      categoryRate: Number(values.categoryRate),
     });
     // Dialog stays open on failure — parent closes it via onOpenChange(false)
     // only in mutation onSuccess. Closing here would lose form data on error.
@@ -128,7 +124,13 @@ export function CategoryDialog({
                     onValueChange={field.onChange}
                     disabled={isPending}>
                     <SelectTrigger id="category-type" className="w-full">
-                      <SelectValue placeholder="Select evaluation type" />
+                      <SelectValue placeholder="Select evaluation type">
+                        {(value) =>
+                          evaluationTypes.find(
+                            (t) => String(t.evaluationTypeId) === String(value),
+                          )?.evaluationTypeName ?? "Select evaluation type"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {evaluationTypes.map((t) => (
@@ -144,34 +146,14 @@ export function CategoryDialog({
               />
               <FieldError errors={[errors.evaluationTypeId]} />
             </Field>
-            <Field data-invalid={!!errors.catRn}>
-              <FieldLabel htmlFor="category-code">Category Code</FieldLabel>
-              <Input
-                id="category-code"
-                placeholder="e.g. TE"
-                maxLength={10}
-                disabled={isPending}
-                {...register("catRn", {
-                  required: "Category code is required",
-                  maxLength: {
-                    value: 10,
-                    message: "Code must be at most 10 characters",
-                  },
-                })}
-              />
-              <p className="text-xs text-muted-foreground">
-                Short reference code, e.g. TE
-              </p>
-              <FieldError errors={[errors.catRn]} />
-            </Field>
-            <Field data-invalid={!!errors.catName}>
+            <Field data-invalid={!!errors.categoryName}>
               <FieldLabel htmlFor="category-name">Name</FieldLabel>
               <Input
                 id="category-name"
                 placeholder="e.g. Teaching Effectiveness"
                 autoFocus
                 disabled={isPending}
-                {...register("catName", {
+                {...register("categoryName", {
                   required: "Category name is required",
                   minLength: {
                     value: 2,
@@ -183,9 +165,9 @@ export function CategoryDialog({
                   },
                 })}
               />
-              <FieldError errors={[errors.catName]} />
+              <FieldError errors={[errors.categoryName]} />
             </Field>
-            <Field data-invalid={!!errors.catRate}>
+            <Field data-invalid={!!errors.categoryRate}>
               <FieldLabel htmlFor="category-weight">Weight (%)</FieldLabel>
               <Input
                 id="category-weight"
@@ -195,13 +177,13 @@ export function CategoryDialog({
                 max={100}
                 placeholder="e.g. 40"
                 disabled={isPending}
-                {...register("catRate", {
+                {...register("categoryRate", {
                   required: "Weight is required",
                   min: { value: 0, message: "Weight cannot be negative" },
                   max: { value: 100, message: "Weight cannot exceed 100%" },
                 })}
               />
-              <FieldError errors={[errors.catRate]} />
+              <FieldError errors={[errors.categoryRate]} />
             </Field>
           </FieldGroup>
           {submitError ? (

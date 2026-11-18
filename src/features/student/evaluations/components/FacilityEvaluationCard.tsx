@@ -37,13 +37,8 @@ export function FacilityEvaluationCard({
             {evaluation.facilityName}
           </h3>
           <p className="text-sm text-brand-accent font-medium">
-            {evaluation.location ?? "Campus facility"}
+            {evaluation.schoolYear} · Term {evaluation.term}
           </p>
-          {evaluation.description ? (
-            <p className="text-xs text-muted-foreground">
-              {evaluation.description}
-            </p>
-          ) : null}
         </div>
       </CardContent>
 

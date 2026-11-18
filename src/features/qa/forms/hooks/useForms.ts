@@ -9,7 +9,6 @@ export const formKeys = {
   evaluationTypes: () => [...formKeys.all, "evaluationTypes"] as const,
   categoriesByType: (evaluationTypeId: number) =>
     [...formKeys.all, "categoriesByType", evaluationTypeId] as const,
-  questions: (catNo: number) => [...formKeys.all, "questions", catNo] as const,
 };
 
 export function useForms() {
@@ -42,14 +41,6 @@ export function useCategoriesByType(evaluationTypeId: number) {
   });
 }
 
-export function useQuestionsFor(catNo: number) {
-  return useQuery({
-    queryKey: formKeys.questions(catNo),
-    queryFn: () => formService.getQuestions(catNo),
-    enabled: catNo > 0,
-  });
-}
-
 type Context = { previous: Form[] | undefined };
 
 function snapshot(queryClient: ReturnType<typeof useQueryClient>) {
@@ -75,10 +66,6 @@ export function useCreateForm() {
       const previous = snapshot(queryClient);
       const optimistic: Form = {
         formId: -Date.now(),
-        code: input.code,
-        gradeBand: input.gradeBand ?? null,
-        targetType: input.targetType ?? "SubjectTeacher",
-        programId: input.programId,
         evaluationTypeId: input.evaluationTypeId,
         evaluationTypeName: "",
         title: input.title,
@@ -114,10 +101,6 @@ export function useUpdateForm() {
           f.formId === id
             ? {
                 ...f,
-                code: input.code ?? f.code,
-                gradeBand: input.gradeBand ?? f.gradeBand,
-                targetType: input.targetType ?? f.targetType,
-                programId: input.programId ?? f.programId,
                 evaluationTypeId:
                   input.evaluationTypeId ?? f.evaluationTypeId,
                 title: input.title ?? f.title,

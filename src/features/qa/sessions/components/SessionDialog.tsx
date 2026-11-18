@@ -1,4 +1,5 @@
-import { useForm } from "react-hook-form";
+import { useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useForms } from "@/features/qa/forms";
 import type {
   CreateSessionInput,
   Session,
@@ -37,6 +39,8 @@ interface FormValues {
   formId: string;
   schoolYear: string;
   term: string;
+  gradeLevelFrom: string;
+  gradeLevelTo: string;
   opensAt: string;
   closesAt: string;
   notes: string;
@@ -53,8 +57,15 @@ export function SessionDialog({
 }: SessionDialogProps) {
   const isEdit = !!session;
 
+  const { data: forms = [] } = useForms();
+  const activeForms = useMemo(
+    () => forms.filter((f) => f.isActive === 1),
+    [forms],
+  );
+
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -63,6 +74,8 @@ export function SessionDialog({
       formId: "",
       schoolYear: "",
       term: "1",
+      gradeLevelFrom: "",
+      gradeLevelTo: "",
       opensAt: "",
       closesAt: "",
       notes: "",
@@ -76,6 +89,10 @@ export function SessionDialog({
       formId: String(session.formId),
       schoolYear: session.schoolYear,
       term: String(session.term),
+      gradeLevelFrom:
+        session.gradeLevelFrom != null ? String(session.gradeLevelFrom) : "",
+      gradeLevelTo:
+        session.gradeLevelTo != null ? String(session.gradeLevelTo) : "",
       opensAt: session.opensAtUtc
         ? new Date(session.opensAtUtc).toISOString().slice(0, 16)
         : "",
@@ -87,10 +104,22 @@ export function SessionDialog({
     });
   }
 
+  const parseGrade = (value: string): number | null => {
+    const trimmed = value.trim();
+    if (trimmed === "") return null;
+    const n = Number(trimmed);
+    return Number.isFinite(n) ? n : null;
+  };
+
   const onFormSubmit = (values: FormValues) => {
+    const gradeLevelFrom = parseGrade(values.gradeLevelFrom);
+    const gradeLevelTo = parseGrade(values.gradeLevelTo);
+
     const input: CreateSessionInput | UpdateSessionInput = isEdit
       ? {
           status: values.status as SessionStatus,
+          gradeLevelFrom,
+          gradeLevelTo,
           opensAtUtc: values.opensAt || null,
           closesAtUtc: values.closesAt || null,
           notes: values.notes.trim() || undefined,
@@ -99,6 +128,8 @@ export function SessionDialog({
           formId: Number(values.formId),
           schoolYear: values.schoolYear.trim(),
           term: Number(values.term),
+          gradeLevelFrom,
+          gradeLevelTo,
           opensAtUtc: values.opensAt || null,
           closesAtUtc: values.closesAt || null,
           notes: values.notes.trim() || undefined,
@@ -110,7 +141,7 @@ export function SessionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit Session" : "Create Session"}</DialogTitle>
           <DialogDescription>
@@ -125,18 +156,52 @@ export function SessionDialog({
               <>
                 <Field data-invalid={!!errors.formId}>
                   <FieldLabel htmlFor="session-form">Form</FieldLabel>
-                  <Select
-                    id="session-form"
-                    disabled={isPending}
-                    {...register("formId", {
-                      required: "A form is required",
-                    })}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a form" />
-                    </SelectTrigger>
-                    <SelectContent />
-                  </Select>
+                  <Controller
+                    control={control}
+                    name="formId"
+                    rules={{ required: "A form is required" }}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value || null}
+                        onValueChange={(value) => field.onChange(value ?? "")}
+                        disabled={isPending}
+                      >
+                        <SelectTrigger id="session-form" className="w-full">
+                          <SelectValue placeholder="Select an active form">
+                            {(value) => {
+                              const selected = activeForms.find(
+                                (f) => String(f.formId) === String(value),
+                              );
+                              return selected
+                                ? selected.title
+                                : "Select an active form";
+                            }}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {activeForms.length === 0 ? (
+                            <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                              No active forms available
+                            </div>
+                          ) : (
+                            activeForms.map((form) => (
+                              <SelectItem
+                                key={form.formId}
+                                value={String(form.formId)}
+                              >
+                                <span className="flex flex-col">
+                                  <span>{form.title}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {form.evaluationTypeName}
+                                  </span>
+                                </span>
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                   <FieldError errors={[errors.formId]} />
                 </Field>
               </>
@@ -145,12 +210,7 @@ export function SessionDialog({
                 <FieldLabel htmlFor="session-form-edit">Form</FieldLabel>
                 <Input
                   id="session-form-edit"
-                  defaultValue={
-                    (session as Session).formTitle +
-                    " (" +
-                    (session as Session).formCode +
-                    ")"
-                  }
+                  defaultValue={(session as Session).formTitle}
                   readOnly
                   disabled={isPending}
                 />
@@ -199,6 +259,61 @@ export function SessionDialog({
               </Select>
               <FieldError errors={[errors.term]} />
             </Field>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field data-invalid={!!errors.gradeLevelFrom}>
+                <FieldLabel htmlFor="session-grade-from">
+                  Grade level from
+                </FieldLabel>
+                <Input
+                  id="session-grade-from"
+                  type="number"
+                  min={0}
+                  max={12}
+                  placeholder="e.g. 4"
+                  disabled={isPending}
+                  {...register("gradeLevelFrom", {
+                    validate: (value) => {
+                      if (!value) return true;
+                      const n = Number(value);
+                      if (!Number.isInteger(n) || n < 0 || n > 12) {
+                        return "Grade must be between 0 and 12.";
+                      }
+                      return true;
+                    },
+                  })}
+                />
+                <FieldError errors={[errors.gradeLevelFrom]} />
+              </Field>
+
+              <Field data-invalid={!!errors.gradeLevelTo}>
+                <FieldLabel htmlFor="session-grade-to">
+                  Grade level to
+                </FieldLabel>
+                <Input
+                  id="session-grade-to"
+                  type="number"
+                  min={0}
+                  max={12}
+                  placeholder="e.g. 6"
+                  disabled={isPending}
+                  {...register("gradeLevelTo", {
+                    validate: (value) => {
+                      if (!value) return true;
+                      const n = Number(value);
+                      if (!Number.isInteger(n) || n < 0 || n > 12) {
+                        return "Grade must be between 0 and 12.";
+                      }
+                      return true;
+                    },
+                  })}
+                />
+                <FieldError errors={[errors.gradeLevelTo]} />
+              </Field>
+              <p className="text-xs text-muted-foreground sm:col-span-2">
+                Optional audience scope (0–12). Leave both blank for all grades.
+              </p>
+            </div>
 
             <Field>
               <FieldLabel htmlFor="session-opens-at">Opens At</FieldLabel>

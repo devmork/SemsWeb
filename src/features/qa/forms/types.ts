@@ -1,9 +1,5 @@
 export interface Form {
   formId: number;
-  code: string;
-  gradeBand: string | null;
-  targetType: string;
-  programId: number;
   evaluationTypeId: number;
   evaluationTypeName: string;
   title: string;
@@ -15,19 +11,14 @@ export interface Form {
 
 export interface FormDetail extends Form {
   categories: {
-    catNo: number;
-    catRn: string | null;
-    catName: string | null;
-    catRate: number | null;
-    questions: { qnNo: number; qnName: string | null }[];
+    categoryId: number;
+    categoryName: string | null;
+    categoryRate: number | null;
+    questions: { questionId: number; questionName: string | null }[];
   }[];
 }
 
 export interface CreateFormInput {
-  code: string;
-  gradeBand?: string | undefined;
-  targetType?: string | undefined;
-  programId: number;
   evaluationTypeId: number;
   title: string;
   description?: string | undefined;
@@ -35,10 +26,6 @@ export interface CreateFormInput {
 }
 
 export interface UpdateFormInput {
-  code?: string | undefined;
-  gradeBand?: string | undefined;
-  targetType?: string | undefined;
-  programId?: number | undefined;
   evaluationTypeId?: number | undefined;
   title?: string | undefined;
   description?: string | undefined;
@@ -51,32 +38,56 @@ export interface EvaluationType {
 }
 
 export interface CategoryOption {
-  catNo: number;
+  categoryId: number;
   evaluationTypeId: number;
-  catRn: string | null;
-  catName: string | null;
-  catRate: number | null;
+  categoryName: string | null;
+  categoryRate: number | null;
 }
 
-export interface QuestionOption {
-  qnNo: number;
-  qnName: string | null;
+/** Mirrors `SemsApi.DTO.FormCategory.FormCategoryResponseDto`. */
+export interface FormCategory {
+  formCategoryId: number;
+  formId: number;
+  categoryId: number;
+  categoryName: string | null;
+  categoryRate: number | null;
+  isActive: boolean;
+  displayOrder: number;
 }
 
-export const TARGET_TYPES = [
-  { value: "SubjectTeacher", label: "Subject Teacher" },
-  { value: "Facility", label: "Facility" },
-] as const;
+/** Mirrors `SemsApi.DTO.FormQuestion.FormQuestionResponseDto`. */
+export interface FormQuestion {
+  formQuestionId: number;
+  formCategoryId: number;
+  questionName: string | null;
+  displayOrder: number;
+  points: number | null;
+}
 
-export const PROGRAM_OPTIONS = [
-  { value: 0, label: "All students" },
-  { value: 1, label: "Preschool – Grade 3" },
-  { value: 2, label: "Grade 4 – 6" },
-  { value: 3, label: "JHS – SHS" },
-] as const;
+export interface CreateFormCategoryInput {
+  formId: number;
+  categoryId: number;
+  isActive?: boolean | undefined;
+  displayOrder?: number | undefined;
+}
 
-export function programLabel(programId: number): string {
-  return (
-    PROGRAM_OPTIONS.find((o) => o.value === programId)?.label ?? "All students"
-  );
+export interface UpdateFormCategoryInput {
+  formCategoryId: number;
+  categoryId?: number | undefined;
+  isActive?: boolean | undefined;
+  displayOrder?: number | undefined;
+}
+
+export interface CreateFormQuestionInput {
+  formCategoryId: number;
+  questionName: string;
+  displayOrder?: number | undefined;
+  points?: number | undefined;
+}
+
+export interface UpdateFormQuestionInput {
+  formQuestionId: number;
+  questionName?: string | undefined;
+  displayOrder?: number | undefined;
+  points?: number | undefined;
 }

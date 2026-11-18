@@ -31,7 +31,7 @@ export function EvaluationTakingView() {
     type,
   );
 
-  // keyed by qnNo — question ids are unique across categories.
+  // keyed by questionId — question ids are unique across categories.
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
 
@@ -69,32 +69,49 @@ export function EvaluationTakingView() {
     );
   }
 
-  // Defensive check: Show error if evaluation is missing or malformed
-  if (
-    !evaluation ||
-    !Array.isArray(evaluation.categories) ||
-    evaluation.categories.length === 0
-  ) {
+  if (!evaluation) {
     return (
-      <div className="p-8 text-destructive max-w-7xl mx-auto w-full">
-        <h2 className="text-xl font-bold mb-2">Invalid Evaluation Data</h2>
-        <p>The evaluation could not be loaded or is in an invalid format.</p>
-        <Button
-          variant="outline"
-          className="mt-4"
-          onClick={() => navigate({ to: listPath })}>
+      <div className="p-8 max-w-7xl mx-auto w-full space-y-3">
+        <h2 className="text-xl font-bold">Evaluation not found</h2>
+        <p className="text-muted-foreground">
+          This evaluation assignment could not be loaded. It may no longer be
+          available.
+        </p>
+        <Button variant="outline" onClick={() => navigate({ to: listPath })}>
           Go back to evaluations
         </Button>
       </div>
     );
   }
 
-  const activeCategory = evaluation.categories[currentCategoryIndex]!;
-  const isLastCategory =
-    currentCategoryIndex === evaluation.categories.length - 1;
+  const categories = Array.isArray(evaluation.categories)
+    ? evaluation.categories
+    : [];
+  if (categories.length === 0 || totalQuestions === 0) {
+    return (
+      <div className="p-8 max-w-7xl mx-auto w-full space-y-3">
+        <h2 className="text-xl font-bold">Evaluation form unavailable</h2>
+        <p className="text-muted-foreground">
+          {type === "teacher"
+            ? "The evaluation form for this subject is not available right now. There may be no open evaluation session for your class yet, or the form has no questions."
+            : "The evaluation form for this facility is not available right now. The session may be closed or the form has no questions."}
+        </p>
+        <Button variant="outline" onClick={() => navigate({ to: listPath })}>
+          Go back to evaluations
+        </Button>
+      </div>
+    );
+  }
 
-  const handleRatingChange = (qnNo: number, rating: number) => {
-    setAnswers((prev) => ({ ...prev, [qnNo]: rating }));
+  const safeCategoryIndex = Math.min(
+    currentCategoryIndex,
+    categories.length - 1,
+  );
+  const activeCategory = categories[safeCategoryIndex]!;
+  const isLastCategory = safeCategoryIndex === categories.length - 1;
+
+  const handleRatingChange = (questionId: number, rating: number) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: rating }));
   };
 
   const handleNext = () => {
@@ -112,31 +129,49 @@ export function EvaluationTakingView() {
   };
 
   const handleSubmit = () => {
-    const payloadAnswers = evaluation.categories.flatMap((category) =>
+    const payloadAnswers = categories.flatMap((category) =>
       category.questions.map((question) => ({
-        catNo: category.catNo,
-        qnNo: question.qnNo,
-        rateVal: answers[question.qnNo] ?? 0,
+        categoryId: category.categoryId,
+        questionId: question.questionId,
+        rateVal: answers[question.questionId] ?? 0,
       })),
     );
+
+    if (payloadAnswers.length === 0) {
+      alert("This evaluation has no questions to submit.");
+      return;
+    }
+
+    if (evaluation.evaluationTypeId == null) {
+      alert("Evaluation type is missing. Please contact QA.");
+      return;
+    }
+
+    if (evaluation.type === "facility" && evaluation.evaluationSessionId == null) {
+      alert("Evaluation session is missing for this facility evaluation.");
+      return;
+    }
 
     const input: SubmitEvaluationInput =
       evaluation.type === "facility"
         ? {
             type: "facility",
             facilityId: evaluation.id,
-            evaluationSessionId: evaluation.evaluationSessionId ?? 0,
-            evaluationTypeId: evaluation.evaluationTypeId ?? 0,
-            formId: evaluation.formId ?? undefined,
+            evaluationSessionId: evaluation.evaluationSessionId!,
+            evaluationTypeId: evaluation.evaluationTypeId,
+            ...(evaluation.formId != null ? { formId: evaluation.formId } : {}),
             answers: payloadAnswers,
           }
         : {
             type: "teacher",
             subjectOfferingId: evaluation.id,
-            evaluationTypeId: evaluation.evaluationTypeId ?? 0,
-            formId: evaluation.formId ?? undefined,
+            evaluationTypeId: evaluation.evaluationTypeId,
+            ...(evaluation.formId != null ? { formId: evaluation.formId } : {}),
             schoolYear: evaluation.schoolYear,
             term: evaluation.term,
+            ...(evaluation.evaluationSessionId != null
+              ? { evaluationSessionId: evaluation.evaluationSessionId }
+              : {}),
             answers: payloadAnswers,
           };
 
@@ -147,7 +182,16 @@ export function EvaluationTakingView() {
       },
       onError: (error) => {
         console.error("Submission failed", error);
-        alert("Failed to submit evaluation. Please try again.");
+        const message =
+          typeof error === "object" &&
+          error !== null &&
+          "response" in error &&
+          typeof (error as { response?: { data?: { message?: string } } })
+            .response?.data?.message === "string"
+            ? (error as { response?: { data?: { message?: string } } }).response!
+                .data!.message!
+            : "Failed to submit evaluation. Please try again.";
+        alert(message);
       },
     });
   };
@@ -225,8 +269,8 @@ export function EvaluationTakingView() {
           <div className="border-b border-hairline pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
             <div>
               <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                Category {currentCategoryIndex + 1} of{" "}
-                {evaluation.categories.length}
+                Category {safeCategoryIndex + 1} of{" "}
+                {categories.length}
               </span>
               <h2 className="text-xl font-bold text-foreground mt-1">
                 {activeCategory.title}
@@ -267,7 +311,7 @@ export function EvaluationTakingView() {
           <div className="grid gap-4">
             {activeCategory.questions.map((question, index) => (
               <Card
-                key={question.qnNo}
+                key={question.questionId}
                 className="shadow-sm border-hairline bg-card">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-start gap-6">
@@ -283,9 +327,9 @@ export function EvaluationTakingView() {
                     <div className="shrink-0 flex justify-center md:justify-end">
                       <Rating
                         disabled={isSubmitting}
-                        value={answers[question.qnNo] || 0}
+                        value={answers[question.questionId] || 0}
                         onChange={(rating) =>
-                          handleRatingChange(question.qnNo, rating)
+                          handleRatingChange(question.questionId, rating)
                         }
                       />
                     </div>
@@ -301,7 +345,7 @@ export function EvaluationTakingView() {
           <Button
             variant="outline"
             onClick={handlePrev}
-            disabled={currentCategoryIndex === 0 || isSubmitting}
+            disabled={safeCategoryIndex === 0 || isSubmitting}
             className="w-32">
             <ChevronLeft className="mr-2 size-4" /> Previous
           </Button>

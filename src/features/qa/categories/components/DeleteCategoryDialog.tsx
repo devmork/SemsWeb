@@ -13,7 +13,7 @@ interface DeleteCategoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   category?: Category | null;
-  onConfirm: (catNo: number) => void;
+  onConfirm: (categoryId: number) => void;
   isPending?: boolean;
   error?: string | null;
 }
@@ -34,7 +34,7 @@ export function DeleteCategoryDialog({
           <DialogDescription>
             Are you sure you want to delete{" "}
             <span className="font-medium text-foreground">
-              {category?.catName ?? "this category"}
+              {category?.categoryName ?? "this category"}
             </span>
             ? This action can't be undone.
           </DialogDescription>
@@ -60,7 +60,7 @@ export function DeleteCategoryDialog({
             type="button"
             variant="destructive"
             disabled={isPending || !category}
-            onClick={() => category && onConfirm(category.catNo)}>
+            onClick={() => category && onConfirm(category.categoryId)}>
             {isPending ? "Deleting..." : "Delete Category"}
           </Button>
         </DialogFooter>

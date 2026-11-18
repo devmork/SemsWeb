@@ -5,7 +5,6 @@ import type {
   EvaluationType,
   Form,
   FormDetail,
-  QuestionOption,
   UpdateFormInput,
 } from "../types";
 
@@ -53,13 +52,6 @@ export const formService = {
     const { data } = await api.get<CategoryOption[]>(
       "/api/evaluation/categories",
       { params: { evaluationTypeId } },
-    );
-    return data;
-  },
-
-  async getQuestions(catNo: number): Promise<QuestionOption[]> {
-    const { data } = await api.get<QuestionOption[]>(
-      `/api/evaluation/categories/${catNo}/questions`,
     );
     return data;
   },

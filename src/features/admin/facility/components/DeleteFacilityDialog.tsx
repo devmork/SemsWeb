@@ -7,52 +7,59 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Question } from "../types";
+import type { Facility } from "../types";
 
-interface DeleteQuestionDialogProps {
+interface DeleteFacilityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  question?: Question | null;
-  onConfirm: (qnNo: number) => void;
+  facility?: Facility | null;
+  onConfirm: (facilityId: number) => void;
   isPending?: boolean;
+  error?: string | null;
 }
 
-export function DeleteQuestionDialog({
+export function DeleteFacilityDialog({
   open,
   onOpenChange,
-  question = null,
+  facility = null,
   onConfirm,
   isPending = false,
-}: DeleteQuestionDialogProps) {
+  error = null,
+}: DeleteFacilityDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Question</DialogTitle>
+          <DialogTitle>Delete Facility</DialogTitle>
           <DialogDescription>
             Are you sure you want to delete{" "}
             <span className="font-medium text-foreground">
-              {question?.text ?? "this question"}
-            </span>{" "}
+              {facility?.facilityName ?? "this facility"}
+            </span>
             ? This action can't be undone.
           </DialogDescription>
         </DialogHeader>
+        <p className="text-xs text-muted-foreground">
+          Evaluations tied to this facility may be affected. The server will
+          reject the request if deletion isn't allowed.
+        </p>
+        {error ? (
+          <p role="alert" className="text-sm text-destructive">{error}</p>
+        ) : null}
         <DialogFooter className="mt-6">
           <Button
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            disabled={isPending}
-          >
+            disabled={isPending}>
             Cancel
           </Button>
           <Button
             type="button"
             variant="destructive"
-            disabled={isPending || !question}
-            onClick={() => question && onConfirm(question.id)}
-          >
-            {isPending ? "Deleting..." : "Delete Question"}
+            disabled={isPending || !facility}
+            onClick={() => facility && onConfirm(facility.facilityId)}>
+            {isPending ? "Deleting..." : "Delete Facility"}
           </Button>
         </DialogFooter>
       </DialogContent>

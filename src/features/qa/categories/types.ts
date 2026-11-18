@@ -1,17 +1,15 @@
 export interface Category {
-  catNo: number;
+  categoryId: number;
   evaluationTypeId: number;
-  catRn: string | null;
-  catName: string | null;
-  catRate: number | null;
+  categoryName: string | null;
+  categoryRate: number | null;
 }
 
-/** The backend validates all four fields on create and update. */
+/** The backend validates all three fields on create and update. */
 export interface CreateCategoryInput {
   evaluationTypeId: number;
-  catRn: string;
-  catName: string;
-  catRate: number;
+  categoryName: string;
+  categoryRate: number;
 }
 
 export type UpdateCategoryInput = CreateCategoryInput;

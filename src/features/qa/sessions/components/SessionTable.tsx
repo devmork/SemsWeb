@@ -1,7 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Session } from "../types";
-import { sessionStatusLabel, sessionStatusVariant } from "../types";
+import {
+  formatGradeRange,
+  sessionStatusLabel,
+  sessionStatusVariant,
+} from "../types";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
 interface SessionTableProps {
@@ -34,7 +38,7 @@ export function SessionTable({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-hairline">
-      <table className="w-full min-w-[820px] text-left">
+      <table className="w-full min-w-[960px] text-left">
         <thead>
           <tr className="bg-canvas-soft">
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -45,6 +49,9 @@ export function SessionTable({
             </th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Term
+            </th>
+            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Grades
             </th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Opens
@@ -75,11 +82,12 @@ export function SessionTable({
               <td className="px-4 py-3 text-sm font-medium">
                 {session.formTitle}
               </td>
-              <td className="px-4 py-3 text-sm">
-                {session.schoolYear}
-              </td>
+              <td className="px-4 py-3 text-sm">{session.schoolYear}</td>
               <td className="px-4 py-3 text-sm text-muted-foreground tabular-nums">
                 {session.term}
+              </td>
+              <td className="px-4 py-3 text-sm text-muted-foreground">
+                {formatGradeRange(session.gradeLevelFrom, session.gradeLevelTo)}
               </td>
               <td className="px-4 py-3 text-sm text-muted-foreground">
                 {session.opensAtUtc ? (

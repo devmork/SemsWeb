@@ -16,14 +16,18 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedQaRouteRouteImport } from './routes/_authenticated/qa/route'
 import { Route as AuthenticatedStudentRouteRouteImport } from './routes/_authenticated/student/route'
-import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminEvaluationTypesRouteImport } from './routes/_authenticated/admin/evaluation-types'
+import { Route as AuthenticatedAdminFacilitiesRouteImport } from './routes/_authenticated/admin/facilities'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedQaCategoriesRouteImport } from './routes/_authenticated/qa/categories'
 import { Route as AuthenticatedQaFormsRouteImport } from './routes/_authenticated/qa/forms'
 import { Route as AuthenticatedQaSessionsRouteImport } from './routes/_authenticated/qa/sessions'
 import { Route as AuthenticatedStudentFacilitiesRouteImport } from './routes/_authenticated/student/facilities'
 import { Route as AuthenticatedStudentProfileRouteImport } from './routes/_authenticated/student/profile'
 import { Route as AuthenticatedStudentTeachersRouteImport } from './routes/_authenticated/student/teachers'
-import { Route as AuthenticatedQaQuestionsCatNoRouteImport } from './routes/_authenticated/qa/questions.$catNo'
+import { Route as AuthenticatedQaFormsIndexRouteImport } from './routes/_authenticated/qa/forms.index'
+import { Route as AuthenticatedQaFormsFormIdRouteImport } from './routes/_authenticated/qa/forms.$formId'
+import { Route as AuthenticatedQaFormsCreateRouteImport } from './routes/_authenticated/qa/forms.create'
 import { Route as AuthenticatedStudentEvaluateEvaluateIdRouteImport } from './routes/_authenticated/student/evaluate.$evaluateId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -61,9 +65,21 @@ const AuthenticatedStudentRouteRoute =
     path: '/student',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthenticatedAdminEvaluationTypesRoute =
+  AuthenticatedAdminEvaluationTypesRouteImport.update({
+    id: '/evaluation-types',
+    path: '/evaluation-types',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminFacilitiesRoute =
+  AuthenticatedAdminFacilitiesRouteImport.update({
+    id: '/facilities',
+    path: '/facilities',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
 const AuthenticatedQaCategoriesRoute =
@@ -100,11 +116,23 @@ const AuthenticatedStudentTeachersRoute =
     path: '/teachers',
     getParentRoute: () => AuthenticatedStudentRouteRoute,
   } as any)
-const AuthenticatedQaQuestionsCatNoRoute =
-  AuthenticatedQaQuestionsCatNoRouteImport.update({
-    id: '/questions/$catNo',
-    path: '/questions/$catNo',
-    getParentRoute: () => AuthenticatedQaRouteRoute,
+const AuthenticatedQaFormsIndexRoute =
+  AuthenticatedQaFormsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedQaFormsRoute,
+  } as any)
+const AuthenticatedQaFormsFormIdRoute =
+  AuthenticatedQaFormsFormIdRouteImport.update({
+    id: '/$formId',
+    path: '/$formId',
+    getParentRoute: () => AuthenticatedQaFormsRoute,
+  } as any)
+const AuthenticatedQaFormsCreateRoute =
+  AuthenticatedQaFormsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthenticatedQaFormsRoute,
   } as any)
 const AuthenticatedStudentEvaluateEvaluateIdRoute =
   AuthenticatedStudentEvaluateEvaluateIdRouteImport.update({
@@ -120,31 +148,39 @@ export interface FileRoutesByFullPath {
   '/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
+  '/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
+  '/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/qa/categories': typeof AuthenticatedQaCategoriesRoute
-  '/qa/forms': typeof AuthenticatedQaFormsRoute
+  '/qa/forms': typeof AuthenticatedQaFormsRouteWithChildren
   '/qa/sessions': typeof AuthenticatedQaSessionsRoute
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
-  '/admin/': typeof AuthenticatedAdminIndexRoute
-  '/qa/questions/$catNo': typeof AuthenticatedQaQuestionsCatNoRoute
+  '/qa/forms/$formId': typeof AuthenticatedQaFormsFormIdRoute
+  '/qa/forms/create': typeof AuthenticatedQaFormsCreateRoute
   '/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
+  '/qa/forms/': typeof AuthenticatedQaFormsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/qa': typeof AuthenticatedQaRouteRouteWithChildren
   '/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
+  '/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
+  '/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/qa/categories': typeof AuthenticatedQaCategoriesRoute
-  '/qa/forms': typeof AuthenticatedQaFormsRoute
   '/qa/sessions': typeof AuthenticatedQaSessionsRoute
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
-  '/admin': typeof AuthenticatedAdminIndexRoute
-  '/qa/questions/$catNo': typeof AuthenticatedQaQuestionsCatNoRoute
+  '/qa/forms/$formId': typeof AuthenticatedQaFormsFormIdRoute
+  '/qa/forms/create': typeof AuthenticatedQaFormsCreateRoute
   '/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
+  '/qa/forms': typeof AuthenticatedQaFormsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -155,15 +191,19 @@ export interface FileRoutesById {
   '/_authenticated/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/_auth/forbidden': typeof AuthForbiddenRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_authenticated/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
+  '/_authenticated/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/qa/categories': typeof AuthenticatedQaCategoriesRoute
-  '/_authenticated/qa/forms': typeof AuthenticatedQaFormsRoute
+  '/_authenticated/qa/forms': typeof AuthenticatedQaFormsRouteWithChildren
   '/_authenticated/qa/sessions': typeof AuthenticatedQaSessionsRoute
   '/_authenticated/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/_authenticated/student/profile': typeof AuthenticatedStudentProfileRoute
   '/_authenticated/student/teachers': typeof AuthenticatedStudentTeachersRoute
-  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/_authenticated/qa/questions/$catNo': typeof AuthenticatedQaQuestionsCatNoRoute
+  '/_authenticated/qa/forms/$formId': typeof AuthenticatedQaFormsFormIdRoute
+  '/_authenticated/qa/forms/create': typeof AuthenticatedQaFormsCreateRoute
   '/_authenticated/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
+  '/_authenticated/qa/forms/': typeof AuthenticatedQaFormsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,31 +214,39 @@ export interface FileRouteTypes {
     | '/student'
     | '/forbidden'
     | '/login'
+    | '/admin/evaluation-types'
+    | '/admin/facilities'
+    | '/admin/users'
     | '/qa/categories'
     | '/qa/forms'
     | '/qa/sessions'
     | '/student/facilities'
     | '/student/profile'
     | '/student/teachers'
-    | '/admin/'
-    | '/qa/questions/$catNo'
+    | '/qa/forms/$formId'
+    | '/qa/forms/create'
     | '/student/evaluate/$evaluateId'
+    | '/qa/forms/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/qa'
     | '/student'
     | '/forbidden'
     | '/login'
+    | '/admin/evaluation-types'
+    | '/admin/facilities'
+    | '/admin/users'
     | '/qa/categories'
-    | '/qa/forms'
     | '/qa/sessions'
     | '/student/facilities'
     | '/student/profile'
     | '/student/teachers'
-    | '/admin'
-    | '/qa/questions/$catNo'
+    | '/qa/forms/$formId'
+    | '/qa/forms/create'
     | '/student/evaluate/$evaluateId'
+    | '/qa/forms'
   id:
     | '__root__'
     | '/'
@@ -208,15 +256,19 @@ export interface FileRouteTypes {
     | '/_authenticated/student'
     | '/_auth/forbidden'
     | '/_auth/login'
+    | '/_authenticated/admin/evaluation-types'
+    | '/_authenticated/admin/facilities'
+    | '/_authenticated/admin/users'
     | '/_authenticated/qa/categories'
     | '/_authenticated/qa/forms'
     | '/_authenticated/qa/sessions'
     | '/_authenticated/student/facilities'
     | '/_authenticated/student/profile'
     | '/_authenticated/student/teachers'
-    | '/_authenticated/admin/'
-    | '/_authenticated/qa/questions/$catNo'
+    | '/_authenticated/qa/forms/$formId'
+    | '/_authenticated/qa/forms/create'
     | '/_authenticated/student/evaluate/$evaluateId'
+    | '/_authenticated/qa/forms/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -277,11 +329,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/': {
-      id: '/_authenticated/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+    '/_authenticated/admin/evaluation-types': {
+      id: '/_authenticated/admin/evaluation-types'
+      path: '/evaluation-types'
+      fullPath: '/admin/evaluation-types'
+      preLoaderRoute: typeof AuthenticatedAdminEvaluationTypesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/facilities': {
+      id: '/_authenticated/admin/facilities'
+      path: '/facilities'
+      fullPath: '/admin/facilities'
+      preLoaderRoute: typeof AuthenticatedAdminFacilitiesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/qa/categories': {
@@ -326,12 +392,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentTeachersRouteImport
       parentRoute: typeof AuthenticatedStudentRouteRoute
     }
-    '/_authenticated/qa/questions/$catNo': {
-      id: '/_authenticated/qa/questions/$catNo'
-      path: '/questions/$catNo'
-      fullPath: '/qa/questions/$catNo'
-      preLoaderRoute: typeof AuthenticatedQaQuestionsCatNoRouteImport
-      parentRoute: typeof AuthenticatedQaRouteRoute
+    '/_authenticated/qa/forms/': {
+      id: '/_authenticated/qa/forms/'
+      path: '/'
+      fullPath: '/qa/forms/'
+      preLoaderRoute: typeof AuthenticatedQaFormsIndexRouteImport
+      parentRoute: typeof AuthenticatedQaFormsRoute
+    }
+    '/_authenticated/qa/forms/$formId': {
+      id: '/_authenticated/qa/forms/$formId'
+      path: '/$formId'
+      fullPath: '/qa/forms/$formId'
+      preLoaderRoute: typeof AuthenticatedQaFormsFormIdRouteImport
+      parentRoute: typeof AuthenticatedQaFormsRoute
+    }
+    '/_authenticated/qa/forms/create': {
+      id: '/_authenticated/qa/forms/create'
+      path: '/create'
+      fullPath: '/qa/forms/create'
+      preLoaderRoute: typeof AuthenticatedQaFormsCreateRouteImport
+      parentRoute: typeof AuthenticatedQaFormsRoute
     }
     '/_authenticated/student/evaluate/$evaluateId': {
       id: '/_authenticated/student/evaluate/$evaluateId'
@@ -344,12 +424,17 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
-  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminEvaluationTypesRoute: typeof AuthenticatedAdminEvaluationTypesRoute
+  AuthenticatedAdminFacilitiesRoute: typeof AuthenticatedAdminFacilitiesRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
-    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+    AuthenticatedAdminEvaluationTypesRoute:
+      AuthenticatedAdminEvaluationTypesRoute,
+    AuthenticatedAdminFacilitiesRoute: AuthenticatedAdminFacilitiesRoute,
+    AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   }
 
 const AuthenticatedAdminRouteRouteWithChildren =
@@ -357,18 +442,31 @@ const AuthenticatedAdminRouteRouteWithChildren =
     AuthenticatedAdminRouteRouteChildren,
   )
 
+interface AuthenticatedQaFormsRouteChildren {
+  AuthenticatedQaFormsFormIdRoute: typeof AuthenticatedQaFormsFormIdRoute
+  AuthenticatedQaFormsCreateRoute: typeof AuthenticatedQaFormsCreateRoute
+  AuthenticatedQaFormsIndexRoute: typeof AuthenticatedQaFormsIndexRoute
+}
+
+const AuthenticatedQaFormsRouteChildren: AuthenticatedQaFormsRouteChildren = {
+  AuthenticatedQaFormsFormIdRoute: AuthenticatedQaFormsFormIdRoute,
+  AuthenticatedQaFormsCreateRoute: AuthenticatedQaFormsCreateRoute,
+  AuthenticatedQaFormsIndexRoute: AuthenticatedQaFormsIndexRoute,
+}
+
+const AuthenticatedQaFormsRouteWithChildren =
+  AuthenticatedQaFormsRoute._addFileChildren(AuthenticatedQaFormsRouteChildren)
+
 interface AuthenticatedQaRouteRouteChildren {
   AuthenticatedQaCategoriesRoute: typeof AuthenticatedQaCategoriesRoute
-  AuthenticatedQaFormsRoute: typeof AuthenticatedQaFormsRoute
+  AuthenticatedQaFormsRoute: typeof AuthenticatedQaFormsRouteWithChildren
   AuthenticatedQaSessionsRoute: typeof AuthenticatedQaSessionsRoute
-  AuthenticatedQaQuestionsCatNoRoute: typeof AuthenticatedQaQuestionsCatNoRoute
 }
 
 const AuthenticatedQaRouteRouteChildren: AuthenticatedQaRouteRouteChildren = {
   AuthenticatedQaCategoriesRoute: AuthenticatedQaCategoriesRoute,
-  AuthenticatedQaFormsRoute: AuthenticatedQaFormsRoute,
+  AuthenticatedQaFormsRoute: AuthenticatedQaFormsRouteWithChildren,
   AuthenticatedQaSessionsRoute: AuthenticatedQaSessionsRoute,
-  AuthenticatedQaQuestionsCatNoRoute: AuthenticatedQaQuestionsCatNoRoute,
 }
 
 const AuthenticatedQaRouteRouteWithChildren =
