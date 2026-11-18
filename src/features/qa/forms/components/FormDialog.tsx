@@ -26,7 +26,6 @@ import {
 import {
   useCategoriesByType,
   useEvaluationTypes,
-  useQuestionsFor,
 } from "../hooks/useForms";
 import type { CategoryOption, Form, CreateFormInput } from "../types";
 import { PROGRAM_OPTIONS, TARGET_TYPES } from "../types";
@@ -62,8 +61,6 @@ function CategoryPreviewRow({
   onToggle: () => void;
   disabled: boolean;
 }) {
-  const { data: questions = [] } = useQuestionsFor(category.categoryId);
-  const noQuestions = questions.length === 0;
   return (
     <label
       className="flex items-start gap-2.5 rounded-md border border-hairline px-3 py-2 text-sm"
@@ -80,13 +77,8 @@ function CategoryPreviewRow({
           {category.categoryName ?? `Category ${category.categoryId}`}
         </span>
         <span className="text-xs text-muted-foreground">
-          {questions.length} question{questions.length === 1 ? "" : "s"}
+          Shared category — questions are added per form after creation.
         </span>
-        {noQuestions ? (
-          <span className="text-xs font-medium text-destructive">
-            Has no questions — forms with empty categories are rejected.
-          </span>
-        ) : null}
       </span>
     </label>
   );
@@ -252,7 +244,13 @@ export function FormDialog({
                     disabled={isPending}
                   >
                     <SelectTrigger id="form-evaluation-type" className="w-full">
-                      <SelectValue placeholder="Select evaluation type" />
+                      <SelectValue placeholder="Select evaluation type">
+                        {(value) =>
+                          evaluationTypes.find(
+                            (t) => String(t.evaluationTypeId) === String(value),
+                          )?.evaluationTypeName ?? "Select evaluation type"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {evaluationTypes.map((t) => (

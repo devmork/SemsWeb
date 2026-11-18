@@ -124,7 +124,13 @@ export function CategoryDialog({
                     onValueChange={field.onChange}
                     disabled={isPending}>
                     <SelectTrigger id="category-type" className="w-full">
-                      <SelectValue placeholder="Select evaluation type" />
+                      <SelectValue placeholder="Select evaluation type">
+                        {(value) =>
+                          evaluationTypes.find(
+                            (t) => String(t.evaluationTypeId) === String(value),
+                          )?.evaluationTypeName ?? "Select evaluation type"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {evaluationTypes.map((t) => (
