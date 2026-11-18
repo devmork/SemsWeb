@@ -11,8 +11,22 @@ export const evaluationKeys = {
   all: ["student", "evaluations"] as const,
   teachers: () => [...evaluationKeys.all, "teachers"] as const,
   facilities: () => [...evaluationKeys.all, "facilities"] as const,
-  form: (formId: number) =>
-    [...evaluationKeys.all, "form", formId] as const,
+  teacherForm: (
+    subjectOfferingId: number,
+    formId: number | null,
+    schoolYear: string,
+    term: number,
+    gradeLevel: number,
+  ) =>
+    [
+      ...evaluationKeys.all,
+      "teacher-form",
+      subjectOfferingId,
+      formId ?? "none",
+      schoolYear,
+      term,
+      gradeLevel,
+    ] as const,
   session: (sessionId: number) =>
     [...evaluationKeys.all, "session", sessionId] as const,
 };
@@ -34,9 +48,9 @@ export function useFacilityEvaluations(enabled = true) {
 }
 
 /**
- * Composes an assignment with its form content. Teacher assignments resolve the
- * form through `/api/evaluation/form?evaluationTypeId=`; facility assignments
- * carry a session, so the form comes from `/api/evaluation/sessions/{id}`.
+ * Composes an assignment with its form content.
+ * Teacher assignments resolve form content via the matching open evaluation session
+ * (students can access session detail); facility assignments carry a session id.
  */
 export function useEvaluationDetail(id: number, type: EvaluationKind) {
   const teacherAssignments = useTeacherEvaluations(type === "teacher");
@@ -53,10 +67,27 @@ export function useEvaluationDetail(id: number, type: EvaluationKind) {
       : undefined;
 
   const teacherForm = useQuery({
-    queryKey: evaluationKeys.form(teacher?.formId ?? 0),
+    queryKey: evaluationKeys.teacherForm(
+      teacher?.subjectOfferingId ?? 0,
+      teacher?.formId ?? null,
+      teacher?.schoolYear ?? "",
+      teacher?.term ?? 0,
+      teacher?.gradeLevel ?? -1,
+    ),
     queryFn: () =>
-      evaluationService.getFormCategories(teacher!.formId!),
-    enabled: type === "teacher" && teacher?.formId != null,
+      evaluationService.getTeacherFormContent({
+        formId: teacher!.formId,
+        evaluationTypeId: teacher!.evaluationTypeId,
+        schoolYear: teacher!.schoolYear,
+        term: teacher!.term,
+        gradeLevel: teacher!.gradeLevel,
+      }),
+    enabled:
+      type === "teacher" &&
+      teacher != null &&
+      teacher.schoolYear.length > 0 &&
+      teacher.term > 0 &&
+      (teacher.formId != null || teacher.evaluationTypeId != null),
   });
 
   const facilitySession = useQuery({
@@ -81,13 +112,13 @@ export function useEvaluationDetail(id: number, type: EvaluationKind) {
         ]
           .filter(Boolean)
           .join(" · "),
-        dueDate: null,
+        dueDate: teacherForm.data?.closesAtUtc ?? null,
         schoolYear: teacher.schoolYear,
         term: teacher.term,
         evaluationTypeId: teacher.evaluationTypeId,
         formId: teacher.formId,
-        evaluationSessionId: null,
-        categories: teacherForm.data ?? [],
+        evaluationSessionId: teacherForm.data?.evaluationSessionId ?? null,
+        categories: teacherForm.data?.categories ?? [],
       };
     }
 
@@ -119,7 +150,11 @@ export function useEvaluationDetail(id: number, type: EvaluationKind) {
   const isPending =
     type === "teacher"
       ? teacherAssignments.isPending ||
-        (teacher?.formId != null && teacherForm.isPending)
+        (teacher != null &&
+          teacher.schoolYear.length > 0 &&
+          teacher.term > 0 &&
+          (teacher.formId != null || teacher.evaluationTypeId != null) &&
+          teacherForm.isPending)
       : facilityAssignments.isPending ||
         (facility != null && facilitySession.isPending);
 

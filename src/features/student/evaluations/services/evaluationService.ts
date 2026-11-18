@@ -26,6 +26,20 @@ type TeacherAssignmentDto = {
   submittedAtUtc: string | null;
 };
 
+/** Mirrors `SemsApi.DTO.EvaluationSessions.EvaluationSessionDto` (subset). */
+type SessionSummaryDto = {
+  evaluationSessionId: number;
+  formId: number;
+  evaluationTypeId: number;
+  schoolYear: string;
+  term: number;
+  gradeLevelFrom: number | null;
+  gradeLevelTo: number | null;
+  status: string;
+  isAvailableNow: boolean;
+  closesAtUtc: string | null;
+};
+
 /** Mirrors `SemsApi.DTO.Facility.FacilityEvaluationAssignmentDto`. */
 type FacilityAssignmentDto = {
   facilityId: number;
@@ -47,10 +61,19 @@ type FormCategoryDto = {
   questions: { questionId: number; questionName: string | null }[];
 };
 
-/** Subset of `EvaluationSessionDetailDto` needed by the facility flow. */
+/** Subset of `EvaluationSessionDetailDto` needed by student evaluation flows. */
 type SessionDetailDto = {
+  evaluationSessionId: number;
+  formId: number;
+  evaluationTypeId: number;
   closesAtUtc: string | null;
   evaluationForm: { categories: FormCategoryDto[] } | null;
+};
+
+export type TeacherFormContent = {
+  evaluationSessionId: number | null;
+  closesAtUtc: string | null;
+  categories: EvaluationCategory[];
 };
 
 function toCategories(dtos: FormCategoryDto[] | null | undefined): EvaluationCategory[] {
@@ -116,15 +139,7 @@ export const evaluationService = {
 
   // ---- form content ------------------------------------------------------
 
-  /** `GET /api/evaluation/form?formId=` — categories + questions for a form. */
-  async getFormCategories(formId: number): Promise<EvaluationCategory[]> {
-    const { data } = await api.get<FormCategoryDto[]>("/api/evaluation/form", {
-      params: { formId },
-    });
-    return toCategories(data);
-  },
-
-  /** `GET /api/evaluation/sessions/{id}` — facility evaluations carry a session. */
+  /** `GET /api/evaluation/sessions/{id}` — student-accessible session detail with form content. */
   async getSessionCategories(sessionId: number): Promise<{
     closesAtUtc: string | null;
     categories: EvaluationCategory[];
@@ -135,6 +150,61 @@ export const evaluationService = {
     return {
       closesAtUtc: data.closesAtUtc,
       categories: toCategories(data.evaluationForm?.categories),
+    };
+  },
+
+  /**
+   * Resolve form content for a teacher assignment.
+   * Teacher assignments do not include a session id; find the matching open
+   * session visible to the student, then load its detail for categories/questions.
+   */
+  async getTeacherFormContent(params: {
+    formId: number | null;
+    evaluationTypeId: number | null;
+    schoolYear: string;
+    term: number;
+    gradeLevel: number;
+  }): Promise<TeacherFormContent> {
+    const { formId, evaluationTypeId, schoolYear, term, gradeLevel } = params;
+
+    const { data: sessions } = await api.get<SessionSummaryDto[]>(
+      "/api/evaluation/sessions",
+      {
+        params: {
+          ...(formId != null ? { formId } : {}),
+          schoolYear,
+          term,
+          onlyOpen: true,
+        },
+      },
+    );
+
+    const isGradeMatch = (s: SessionSummaryDto) => {
+      if (s.gradeLevelFrom != null && gradeLevel < s.gradeLevelFrom) return false;
+      if (s.gradeLevelTo != null && gradeLevel > s.gradeLevelTo) return false;
+      return true;
+    };
+
+    const candidates = sessions.filter((s) => {
+      if (formId != null && s.formId !== formId) return false;
+      if (evaluationTypeId != null && s.evaluationTypeId !== evaluationTypeId) {
+        return false;
+      }
+      return isGradeMatch(s);
+    });
+
+    // Prefer sessions currently available to the student when the API returns more than one.
+    const session =
+      candidates.find((s) => s.isAvailableNow) ?? candidates[0] ?? null;
+
+    if (!session) {
+      return { evaluationSessionId: null, closesAtUtc: null, categories: [] };
+    }
+
+    const detail = await this.getSessionCategories(session.evaluationSessionId);
+    return {
+      evaluationSessionId: session.evaluationSessionId,
+      ...detail,
     };
   },
 
