@@ -15,7 +15,7 @@ import { QuestionTable } from "./QuestionTable";
 import { DeleteQuestionDialog } from "./DeleteQuestionDialog";
 
 interface QuestionManagementProps {
-  catNo?: number;
+  categoryId?: number;
   categoryName?: string;
 }
 
@@ -42,28 +42,28 @@ function QuestionTableSkeleton() {
 }
 
 export function QuestionManagement({
-  catNo,
+  categoryId,
   categoryName,
 }: QuestionManagementProps) {
-  const { catNo: paramCatNo } = useParams({
-    from: "/_authenticated/qa/questions/$catNo",
+  const { categoryId: paramCategoryId } = useParams({
+    from: "/_authenticated/qa/questions/$categoryId",
   });
-  const resolvedCatNo = Number(paramCatNo) || catNo || 0;
-  const { data: questions = [], isLoading, error } = useQuestions(resolvedCatNo);
+  const resolvedCategoryId = Number(paramCategoryId) || categoryId || 0;
+  const { data: questions = [], isLoading, error } = useQuestions(resolvedCategoryId);
   const {
     mutate: createQuestion,
     isPending: isCreating,
     error: createError,
     reset: resetCreateError,
-  } = useCreateQuestion(resolvedCatNo);
+  } = useCreateQuestion(resolvedCategoryId);
   const {
     mutate: updateQuestion,
     isPending: isUpdating,
     error: updateError,
     reset: resetUpdateError,
-  } = useUpdateQuestion(resolvedCatNo);
+  } = useUpdateQuestion(resolvedCategoryId);
   const { mutate: deleteQuestion, isPending: isDeleting } =
-    useDeleteQuestion(resolvedCatNo);
+    useDeleteQuestion(resolvedCategoryId);
 
   const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
@@ -92,7 +92,7 @@ export function QuestionManagement({
     };
     if (editingQuestion) {
       updateQuestion(
-        { qnNo: editingQuestion.id, input },
+        { questionId: editingQuestion.id, input },
         { onSuccess },
       );
     } else {
@@ -100,8 +100,8 @@ export function QuestionManagement({
     }
   };
 
-  const handleDeleteConfirm = (qnNo: number) => {
-    deleteQuestion(qnNo, {
+  const handleDeleteConfirm = (questionId: number) => {
+    deleteQuestion(questionId, {
       onSuccess: () => {
         setDeleteDialogOpen(false);
         setDeletingQuestion(null);
@@ -114,7 +114,7 @@ export function QuestionManagement({
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-lg font-semibold">
-            Questions — {categoryName ?? resolvedCatNo}
+            Questions — {categoryName ?? resolvedCategoryId}
           </h1>
           <p className="text-sm text-muted-foreground">
             Manage the evaluation questions in this category.

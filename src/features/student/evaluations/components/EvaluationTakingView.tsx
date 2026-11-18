@@ -31,7 +31,7 @@ export function EvaluationTakingView() {
     type,
   );
 
-  // keyed by qnNo — question ids are unique across categories.
+  // keyed by questionId — question ids are unique across categories.
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
 
@@ -93,8 +93,8 @@ export function EvaluationTakingView() {
   const isLastCategory =
     currentCategoryIndex === evaluation.categories.length - 1;
 
-  const handleRatingChange = (qnNo: number, rating: number) => {
-    setAnswers((prev) => ({ ...prev, [qnNo]: rating }));
+  const handleRatingChange = (questionId: number, rating: number) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: rating }));
   };
 
   const handleNext = () => {
@@ -114,9 +114,9 @@ export function EvaluationTakingView() {
   const handleSubmit = () => {
     const payloadAnswers = evaluation.categories.flatMap((category) =>
       category.questions.map((question) => ({
-        catNo: category.catNo,
-        qnNo: question.qnNo,
-        rateVal: answers[question.qnNo] ?? 0,
+        categoryId: category.categoryId,
+        questionId: question.questionId,
+        rateVal: answers[question.questionId] ?? 0,
       })),
     );
 
@@ -267,7 +267,7 @@ export function EvaluationTakingView() {
           <div className="grid gap-4">
             {activeCategory.questions.map((question, index) => (
               <Card
-                key={question.qnNo}
+                key={question.questionId}
                 className="shadow-sm border-hairline bg-card">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-start gap-6">
@@ -283,9 +283,9 @@ export function EvaluationTakingView() {
                     <div className="shrink-0 flex justify-center md:justify-end">
                       <Rating
                         disabled={isSubmitting}
-                        value={answers[question.qnNo] || 0}
+                        value={answers[question.questionId] || 0}
                         onChange={(rating) =>
-                          handleRatingChange(question.qnNo, rating)
+                          handleRatingChange(question.questionId, rating)
                         }
                       />
                     </div>

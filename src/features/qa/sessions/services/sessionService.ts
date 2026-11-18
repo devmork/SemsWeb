@@ -50,11 +50,10 @@ type FormDetailDto = {
   isActive: number;
   createdAt: string;
   categories: {
-    catNo: number;
-    catRn: string | null;
-    catName: string | null;
-    catRate: number | null;
-    questions: { qnNo: number; qnName: string | null }[];
+    categoryId: number;
+    categoryName: string | null;
+    categoryRate: number | null;
+    questions: { questionId: number; questionName: string | null }[];
   }[];
 };
 
@@ -114,13 +113,12 @@ function toSessionDetail(dto: SessionDetailDto): SessionDetail {
           isActive: dto.form.isActive === 1 ? 1 : 0,
           createdAt: dto.form.createdAt,
           categories: (dto.form.categories ?? []).map((category) => ({
-            catNo: category.catNo,
-            catRn: category.catRn,
-            catName: category.catName,
-            catRate: category.catRate,
+            categoryId: category.categoryId,
+            categoryName: category.categoryName,
+            categoryRate: category.categoryRate,
             questions: (category.questions ?? []).map((question) => ({
-              qnNo: question.qnNo,
-              qnName: question.qnName,
+              questionId: question.questionId,
+              questionName: question.questionName,
             })),
           })),
         }

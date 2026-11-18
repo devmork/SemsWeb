@@ -25,7 +25,7 @@ import { Route as AuthenticatedQaSessionsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedStudentFacilitiesRouteImport } from './routes/_authenticated/student/facilities'
 import { Route as AuthenticatedStudentProfileRouteImport } from './routes/_authenticated/student/profile'
 import { Route as AuthenticatedStudentTeachersRouteImport } from './routes/_authenticated/student/teachers'
-import { Route as AuthenticatedQaQuestionsCatNoRouteImport } from './routes/_authenticated/qa/questions.$catNo'
+import { Route as AuthenticatedQaQuestionsCategoryIdRouteImport } from './routes/_authenticated/qa/questions.$categoryId'
 import { Route as AuthenticatedStudentEvaluateEvaluateIdRouteImport } from './routes/_authenticated/student/evaluate.$evaluateId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -114,10 +114,10 @@ const AuthenticatedStudentTeachersRoute =
     path: '/teachers',
     getParentRoute: () => AuthenticatedStudentRouteRoute,
   } as any)
-const AuthenticatedQaQuestionsCatNoRoute =
-  AuthenticatedQaQuestionsCatNoRouteImport.update({
-    id: '/questions/$catNo',
-    path: '/questions/$catNo',
+const AuthenticatedQaQuestionsCategoryIdRoute =
+  AuthenticatedQaQuestionsCategoryIdRouteImport.update({
+    id: '/questions/$categoryId',
+    path: '/questions/$categoryId',
     getParentRoute: () => AuthenticatedQaRouteRoute,
   } as any)
 const AuthenticatedStudentEvaluateEvaluateIdRoute =
@@ -143,7 +143,7 @@ export interface FileRoutesByFullPath {
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
-  '/qa/questions/$catNo': typeof AuthenticatedQaQuestionsCatNoRoute
+  '/qa/questions/$categoryId': typeof AuthenticatedQaQuestionsCategoryIdRoute
   '/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
 }
 export interface FileRoutesByTo {
@@ -162,7 +162,7 @@ export interface FileRoutesByTo {
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
-  '/qa/questions/$catNo': typeof AuthenticatedQaQuestionsCatNoRoute
+  '/qa/questions/$categoryId': typeof AuthenticatedQaQuestionsCategoryIdRoute
   '/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
 }
 export interface FileRoutesById {
@@ -183,7 +183,7 @@ export interface FileRoutesById {
   '/_authenticated/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/_authenticated/student/profile': typeof AuthenticatedStudentProfileRoute
   '/_authenticated/student/teachers': typeof AuthenticatedStudentTeachersRoute
-  '/_authenticated/qa/questions/$catNo': typeof AuthenticatedQaQuestionsCatNoRoute
+  '/_authenticated/qa/questions/$categoryId': typeof AuthenticatedQaQuestionsCategoryIdRoute
   '/_authenticated/student/evaluate/$evaluateId': typeof AuthenticatedStudentEvaluateEvaluateIdRoute
 }
 export interface FileRouteTypes {
@@ -204,7 +204,7 @@ export interface FileRouteTypes {
     | '/student/facilities'
     | '/student/profile'
     | '/student/teachers'
-    | '/qa/questions/$catNo'
+    | '/qa/questions/$categoryId'
     | '/student/evaluate/$evaluateId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -223,7 +223,7 @@ export interface FileRouteTypes {
     | '/student/facilities'
     | '/student/profile'
     | '/student/teachers'
-    | '/qa/questions/$catNo'
+    | '/qa/questions/$categoryId'
     | '/student/evaluate/$evaluateId'
   id:
     | '__root__'
@@ -243,7 +243,7 @@ export interface FileRouteTypes {
     | '/_authenticated/student/facilities'
     | '/_authenticated/student/profile'
     | '/_authenticated/student/teachers'
-    | '/_authenticated/qa/questions/$catNo'
+    | '/_authenticated/qa/questions/$categoryId'
     | '/_authenticated/student/evaluate/$evaluateId'
   fileRoutesById: FileRoutesById
 }
@@ -368,11 +368,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentTeachersRouteImport
       parentRoute: typeof AuthenticatedStudentRouteRoute
     }
-    '/_authenticated/qa/questions/$catNo': {
-      id: '/_authenticated/qa/questions/$catNo'
-      path: '/questions/$catNo'
-      fullPath: '/qa/questions/$catNo'
-      preLoaderRoute: typeof AuthenticatedQaQuestionsCatNoRouteImport
+    '/_authenticated/qa/questions/$categoryId': {
+      id: '/_authenticated/qa/questions/$categoryId'
+      path: '/questions/$categoryId'
+      fullPath: '/qa/questions/$categoryId'
+      preLoaderRoute: typeof AuthenticatedQaQuestionsCategoryIdRouteImport
       parentRoute: typeof AuthenticatedQaRouteRoute
     }
     '/_authenticated/student/evaluate/$evaluateId': {
@@ -408,14 +408,15 @@ interface AuthenticatedQaRouteRouteChildren {
   AuthenticatedQaCategoriesRoute: typeof AuthenticatedQaCategoriesRoute
   AuthenticatedQaFormsRoute: typeof AuthenticatedQaFormsRoute
   AuthenticatedQaSessionsRoute: typeof AuthenticatedQaSessionsRoute
-  AuthenticatedQaQuestionsCatNoRoute: typeof AuthenticatedQaQuestionsCatNoRoute
+  AuthenticatedQaQuestionsCategoryIdRoute: typeof AuthenticatedQaQuestionsCategoryIdRoute
 }
 
 const AuthenticatedQaRouteRouteChildren: AuthenticatedQaRouteRouteChildren = {
   AuthenticatedQaCategoriesRoute: AuthenticatedQaCategoriesRoute,
   AuthenticatedQaFormsRoute: AuthenticatedQaFormsRoute,
   AuthenticatedQaSessionsRoute: AuthenticatedQaSessionsRoute,
-  AuthenticatedQaQuestionsCatNoRoute: AuthenticatedQaQuestionsCatNoRoute,
+  AuthenticatedQaQuestionsCategoryIdRoute:
+    AuthenticatedQaQuestionsCategoryIdRoute,
 }
 
 const AuthenticatedQaRouteRouteWithChildren =

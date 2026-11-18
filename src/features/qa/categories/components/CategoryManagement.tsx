@@ -52,21 +52,21 @@ function CategoryCardSkeleton() {
 }
 
 function CategoryQuestionPanel({ category }: { category: Category }) {
-  const { data: questions = [], isLoading, error } = useQuestions(category.catNo);
+  const { data: questions = [], isLoading, error } = useQuestions(category.categoryId);
   const {
     mutate: createQuestion,
     isPending: isCreating,
     error: createError,
     reset: resetCreateError,
-  } = useCreateQuestion(category.catNo);
+  } = useCreateQuestion(category.categoryId);
   const {
     mutate: updateQuestion,
     isPending: isUpdating,
     error: updateError,
     reset: resetUpdateError,
-  } = useUpdateQuestion(category.catNo);
+  } = useUpdateQuestion(category.categoryId);
   const { mutate: deleteQuestion, isPending: isDeleting } = useDeleteQuestion(
-    category.catNo,
+    category.categoryId,
   );
 
   const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
@@ -95,14 +95,14 @@ function CategoryQuestionPanel({ category }: { category: Category }) {
       setEditingQuestion(null);
     };
     if (editingQuestion) {
-      updateQuestion({ qnNo: editingQuestion.id, input }, { onSuccess });
+      updateQuestion({ questionId: editingQuestion.id, input }, { onSuccess });
     } else {
       createQuestion(input, { onSuccess });
     }
   };
 
-  const handleDeleteConfirm = (qnNo: number) => {
-    deleteQuestion(qnNo, {
+  const handleDeleteConfirm = (questionId: number) => {
+    deleteQuestion(questionId, {
       onSuccess: () => {
         setDeleteDialogOpen(false);
         setDeletingQuestion(null);
@@ -274,7 +274,7 @@ export function CategoryManagement() {
   const filteredCategories = useMemo(
     () =>
       trimmedQuery
-        ? categories.filter((c) => (c.catName ?? "").toLowerCase().includes(trimmedQuery))
+        ? categories.filter((c) => (c.categoryName ?? "").toLowerCase().includes(trimmedQuery))
         : categories,
     [categories, trimmedQuery],
   );
@@ -288,14 +288,14 @@ export function CategoryManagement() {
       setEditingCategory(null);
     };
     if (editingCategory) {
-      updateCategory({ catNo: editingCategory.catNo, input }, { onSuccess });
+      updateCategory({ categoryId: editingCategory.categoryId, input }, { onSuccess });
     } else {
       createCategory(input, { onSuccess });
     }
   };
 
-  const handleDeleteConfirm = (catNo: number) => {
-    deleteCategory(catNo, {
+  const handleDeleteConfirm = (categoryId: number) => {
+    deleteCategory(categoryId, {
       onSuccess: () => {
         setDeleteDialogOpen(false);
         setDeletingCategory(null);
@@ -360,18 +360,18 @@ export function CategoryManagement() {
           onValueChange={setOpenValues}
           className="flex flex-col gap-4">
           {filteredCategories.map((category) => (
-            <Card key={category.catNo}>
+            <Card key={category.categoryId}>
               <AccordionItem
-                value={String(category.catNo)}
+                value={String(category.categoryId)}
                 className="border-none">
                 <CardHeader className="pb-0">
                   <div className="flex items-center justify-between gap-4">
-                    <CardTitle>{category.catName}</CardTitle>
+                    <CardTitle>{category.categoryName}</CardTitle>
                     <div className="flex items-center gap-1">
                       <Button
                         variant="ghost"
                         size="icon-sm"
-                        aria-label={`Edit ${category.catName}`}
+                        aria-label={`Edit ${category.categoryName}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           setEditingCategory(category);
@@ -384,7 +384,7 @@ export function CategoryManagement() {
                       <Button
                         variant="ghost"
                         size="icon-sm"
-                        aria-label={`Delete ${category.catName}`}
+                        aria-label={`Delete ${category.categoryName}`}
                         className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                         onClick={(e) => {
                           e.stopPropagation();

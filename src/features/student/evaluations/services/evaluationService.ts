@@ -41,11 +41,10 @@ type FacilityAssignmentDto = {
 
 /** Mirrors `SemsApi.DTO.Evaluation.EvaluationCategoryDto`. */
 type FormCategoryDto = {
-  catNo: number;
-  catRn: string | null;
-  catName: string | null;
-  catRate: number | null;
-  questions: { qnNo: number; qnName: string | null }[];
+  categoryId: number;
+  categoryName: string | null;
+  categoryRate: number | null;
+  questions: { questionId: number; questionName: string | null }[];
 };
 
 /** Subset of `EvaluationSessionDetailDto` needed by the facility flow. */
@@ -56,12 +55,12 @@ type SessionDetailDto = {
 
 function toCategories(dtos: FormCategoryDto[] | null | undefined): EvaluationCategory[] {
   return (dtos ?? []).map((category) => ({
-    catNo: category.catNo,
-    title: category.catName ?? `Category ${category.catNo}`,
-    weightPercentage: category.catRate,
+    categoryId: category.categoryId,
+    title: category.categoryName ?? `Category ${category.categoryId}`,
+    weightPercentage: category.categoryRate,
     questions: (category.questions ?? []).map((question) => ({
-      qnNo: question.qnNo,
-      text: question.qnName ?? "",
+      questionId: question.questionId,
+      text: question.questionName ?? "",
     })),
   }));
 }

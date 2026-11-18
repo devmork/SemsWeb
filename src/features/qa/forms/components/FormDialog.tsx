@@ -62,7 +62,7 @@ function CategoryPreviewRow({
   onToggle: () => void;
   disabled: boolean;
 }) {
-  const { data: questions = [] } = useQuestionsFor(category.catNo);
+  const { data: questions = [] } = useQuestionsFor(category.categoryId);
   const noQuestions = questions.length === 0;
   return (
     <label
@@ -77,7 +77,7 @@ function CategoryPreviewRow({
       />
       <span className="flex flex-1 flex-col">
         <span className="font-medium">
-          {category.catName ?? `Category ${category.catNo}`}
+          {category.categoryName ?? `Category ${category.categoryId}`}
         </span>
         <span className="text-xs text-muted-foreground">
           {questions.length} question{questions.length === 1 ? "" : "s"}
@@ -129,7 +129,7 @@ export function FormDialog({
   const [uncheckedCats, setUncheckedCats] = useState<Set<number>>(new Set());
 
   const selectedCount = useMemo(
-    () => categories.filter((c) => !uncheckedCats.has(c.catNo)).length,
+    () => categories.filter((c) => !uncheckedCats.has(c.categoryId)).length,
     [categories, uncheckedCats],
   );
 
@@ -282,15 +282,15 @@ export function FormDialog({
                 <div className="flex max-h-56 flex-col gap-2 overflow-y-auto">
                   {categories.map((cat) => (
                     <CategoryPreviewRow
-                      key={cat.catNo}
+                      key={cat.categoryId}
                       category={cat}
-                      checked={!uncheckedCats.has(cat.catNo)}
+                      checked={!uncheckedCats.has(cat.categoryId)}
                       disabled={isPending}
                       onToggle={() =>
                         setUncheckedCats((prev) => {
                           const next = new Set(prev);
-                          if (next.has(cat.catNo)) next.delete(cat.catNo);
-                          else next.add(cat.catNo);
+                          if (next.has(cat.categoryId)) next.delete(cat.categoryId);
+                          else next.add(cat.categoryId);
                           return next;
                         })
                       }

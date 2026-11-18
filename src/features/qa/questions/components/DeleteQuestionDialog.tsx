@@ -13,7 +13,7 @@ interface DeleteQuestionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   question?: Question | null;
-  onConfirm: (qnNo: number) => void;
+  onConfirm: (questionId: number) => void;
   isPending?: boolean;
 }
 

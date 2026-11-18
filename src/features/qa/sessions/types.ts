@@ -63,11 +63,10 @@ export interface SessionDetailForm {
   isActive: 0 | 1;
   createdAt: string;
   categories: {
-    catNo: number;
-    catRn: string | null;
-    catName: string | null;
-    catRate: number | null;
-    questions: { qnNo: number; qnName: string | null }[];
+    categoryId: number;
+    categoryName: string | null;
+    categoryRate: number | null;
+    questions: { questionId: number; questionName: string | null }[];
   }[];
 }
 

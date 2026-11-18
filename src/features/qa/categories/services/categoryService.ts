@@ -7,14 +7,13 @@ import type {
 
 /**
  * Mirrors `SemsApi.DTO.CategoryResponseDto`.
- * The API serializes camelCase, so `catNo`/`catName`/... arrive as-is.
+ * The API serializes camelCase, so `categoryId`/`categoryName`/... arrive as-is.
  */
 type CategoryDto = {
-  catNo: number;
+  categoryId: number;
   evaluationTypeId: number;
-  catRn: string | null;
-  catName: string | null;
-  catRate: number | null;
+  categoryName: string | null;
+  categoryRate: number | null;
 };
 
 /** `POST`/`PUT /api/evaluation/categories` wrap the payload in `{ message, data }`. */
@@ -22,11 +21,10 @@ type CategoryEnvelope = { message: string; data: CategoryDto };
 
 function toCategory(dto: CategoryDto): Category {
   return {
-    catNo: dto.catNo,
+    categoryId: dto.categoryId,
     evaluationTypeId: dto.evaluationTypeId,
-    catRn: dto.catRn,
-    catName: dto.catName,
-    catRate: dto.catRate,
+    categoryName: dto.categoryName,
+    categoryRate: dto.categoryRate,
   };
 }
 
@@ -38,9 +36,9 @@ export const categoryService = {
     return data.map(toCategory);
   },
 
-  async getCategory(catNo: number): Promise<Category> {
+  async getCategory(categoryId: number): Promise<Category> {
     const { data } = await api.get<CategoryDto>(
-      `/api/evaluation/categories/${catNo}`,
+      `/api/evaluation/categories/${categoryId}`,
     );
     return toCategory(data);
   },
@@ -54,17 +52,17 @@ export const categoryService = {
   },
 
   async updateCategory(
-    catNo: number,
+    categoryId: number,
     input: UpdateCategoryInput,
   ): Promise<Category> {
     const { data } = await api.put<CategoryEnvelope>(
-      `/api/evaluation/categories/${catNo}`,
+      `/api/evaluation/categories/${categoryId}`,
       input,
     );
     return toCategory(data.data);
   },
 
-  async deleteCategory(catNo: number): Promise<void> {
-    await api.delete(`/api/evaluation/categories/${catNo}`);
+  async deleteCategory(categoryId: number): Promise<void> {
+    await api.delete(`/api/evaluation/categories/${categoryId}`);
   },
 };

@@ -1,6 +1,6 @@
 export interface Question {
   id: number;
-  catNo: number;
+  categoryId: number;
   text: string;
 }
 

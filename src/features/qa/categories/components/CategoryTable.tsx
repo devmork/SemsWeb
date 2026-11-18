@@ -46,20 +46,20 @@ export function CategoryTable({
         <tbody>
           {categories.map((category) => (
             <tr
-              key={category.catNo}
+              key={category.categoryId}
               className="border-t border-hairline hover:bg-muted/40"
             >
               <td className="px-4 py-3 text-sm font-medium">
-                {category.catName}
+                {category.categoryName}
               </td>
               <td className="px-4 py-3">
                 <div className="flex min-w-32 items-center gap-2">
                   <Progress
-                    value={Math.min(100, Math.max(0, category.catRate ?? 0))}
+                    value={Math.min(100, Math.max(0, category.categoryRate ?? 0))}
                     className="w-20"
                   />
                   <span className="text-sm tabular-nums">
-                    {category.catRate ?? "—"}%
+                    {category.categoryRate ?? "—"}%
                   </span>
                 </div>
               </td>
@@ -68,7 +68,7 @@ export function CategoryTable({
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    aria-label={`Edit ${category.catName}`}
+                    aria-label={`Edit ${category.categoryName}`}
                     onClick={() => onEdit?.(category)}
                   >
                     <IconEdit />
@@ -76,7 +76,7 @@ export function CategoryTable({
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    aria-label={`Delete ${category.catName}`}
+                    aria-label={`Delete ${category.categoryName}`}
                     className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     onClick={() => onDelete?.(category)}
                   >

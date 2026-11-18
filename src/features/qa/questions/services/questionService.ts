@@ -7,49 +7,49 @@ import type {
 
 /**
  * Mirrors `SemsApi.DTO.EvaluationQuestionDto`.
- * The API serializes camelCase (`qnNo`, `qnName`).
+ * The API serializes camelCase (`questionId`, `questionName`).
  */
-type QuestionDto = { qnNo: number; qnName: string | null };
+type QuestionDto = { questionId: number; questionName: string | null };
 
 /** `POST`/`PUT .../questions` wrap the payload in `{ message, data }`. */
 type QuestionEnvelope = { message: string; data: QuestionDto };
 
-function toQuestion(catNo: number, dto: QuestionDto): Question {
-  return { id: dto.qnNo, catNo, text: dto.qnName ?? "" };
+function toQuestion(categoryId: number, dto: QuestionDto): Question {
+  return { id: dto.questionId, categoryId, text: dto.questionName ?? "" };
 }
 
 export const questionService = {
-  async getQuestions(catNo: number): Promise<Question[]> {
+  async getQuestions(categoryId: number): Promise<Question[]> {
     const { data } = await api.get<QuestionDto[]>(
-      `/api/evaluation/categories/${catNo}/questions`,
+      `/api/evaluation/categories/${categoryId}/questions`,
     );
-    return data.map((q) => toQuestion(catNo, q));
+    return data.map((q) => toQuestion(categoryId, q));
   },
 
   async createQuestion(
-    catNo: number,
+    categoryId: number,
     input: CreateQuestionInput,
   ): Promise<Question> {
     const { data } = await api.post<QuestionEnvelope>(
-      `/api/evaluation/categories/${catNo}/questions`,
-      { qnName: input.text },
+      `/api/evaluation/categories/${categoryId}/questions`,
+      { questionName: input.text },
     );
-    return toQuestion(catNo, data.data);
+    return toQuestion(categoryId, data.data);
   },
 
   async updateQuestion(
-    catNo: number,
-    qnNo: number,
+    categoryId: number,
+    questionId: number,
     input: UpdateQuestionInput,
   ): Promise<Question> {
     const { data } = await api.put<QuestionEnvelope>(
-      `/api/evaluation/categories/${catNo}/questions/${qnNo}`,
-      { qnName: input.text },
+      `/api/evaluation/categories/${categoryId}/questions/${questionId}`,
+      { questionName: input.text },
     );
-    return toQuestion(catNo, data.data);
+    return toQuestion(categoryId, data.data);
   },
 
-  async deleteQuestion(catNo: number, qnNo: number): Promise<void> {
-    await api.delete(`/api/evaluation/categories/${catNo}/questions/${qnNo}`);
+  async deleteQuestion(categoryId: number, questionId: number): Promise<void> {
+    await api.delete(`/api/evaluation/categories/${categoryId}/questions/${questionId}`);
   },
 };

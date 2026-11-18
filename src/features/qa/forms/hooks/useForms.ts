@@ -9,7 +9,7 @@ export const formKeys = {
   evaluationTypes: () => [...formKeys.all, "evaluationTypes"] as const,
   categoriesByType: (evaluationTypeId: number) =>
     [...formKeys.all, "categoriesByType", evaluationTypeId] as const,
-  questions: (catNo: number) => [...formKeys.all, "questions", catNo] as const,
+  questions: (categoryId: number) => [...formKeys.all, "questions", categoryId] as const,
 };
 
 export function useForms() {
@@ -42,11 +42,11 @@ export function useCategoriesByType(evaluationTypeId: number) {
   });
 }
 
-export function useQuestionsFor(catNo: number) {
+export function useQuestionsFor(categoryId: number) {
   return useQuery({
-    queryKey: formKeys.questions(catNo),
-    queryFn: () => formService.getQuestions(catNo),
-    enabled: catNo > 0,
+    queryKey: formKeys.questions(categoryId),
+    queryFn: () => formService.getQuestions(categoryId),
+    enabled: categoryId > 0,
   });
 }
 

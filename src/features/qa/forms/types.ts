@@ -15,11 +15,10 @@ export interface Form {
 
 export interface FormDetail extends Form {
   categories: {
-    catNo: number;
-    catRn: string | null;
-    catName: string | null;
-    catRate: number | null;
-    questions: { qnNo: number; qnName: string | null }[];
+    categoryId: number;
+    categoryName: string | null;
+    categoryRate: number | null;
+    questions: { questionId: number; questionName: string | null }[];
   }[];
 }
 
@@ -51,16 +50,15 @@ export interface EvaluationType {
 }
 
 export interface CategoryOption {
-  catNo: number;
+  categoryId: number;
   evaluationTypeId: number;
-  catRn: string | null;
-  catName: string | null;
-  catRate: number | null;
+  categoryName: string | null;
+  categoryRate: number | null;
 }
 
 export interface QuestionOption {
-  qnNo: number;
-  qnName: string | null;
+  questionId: number;
+  questionName: string | null;
 }
 
 export const TARGET_TYPES = [

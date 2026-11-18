@@ -57,9 +57,9 @@ export const formService = {
     return data;
   },
 
-  async getQuestions(catNo: number): Promise<QuestionOption[]> {
+  async getQuestions(categoryId: number): Promise<QuestionOption[]> {
     const { data } = await api.get<QuestionOption[]>(
-      `/api/evaluation/categories/${catNo}/questions`,
+      `/api/evaluation/categories/${categoryId}/questions`,
     );
     return data;
   },

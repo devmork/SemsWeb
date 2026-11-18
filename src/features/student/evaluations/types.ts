@@ -51,12 +51,12 @@ export interface FacilityEvaluation {
 export type StudentEvaluation = TeacherEvaluation | FacilityEvaluation;
 
 export interface EvaluationQuestion {
-  qnNo: number;
+  questionId: number;
   text: string;
 }
 
 export interface EvaluationCategory {
-  catNo: number;
+  categoryId: number;
   title: string;
   weightPercentage: number | null;
   questions: EvaluationQuestion[];
@@ -80,8 +80,8 @@ export interface EvaluationDetail {
 
 /** Mirrors `SemsApi.DTO.EvaluationAssignments.EvaluationAnswerDto`. */
 export interface EvaluationAnswer {
-  catNo: number;
-  qnNo: number;
+  categoryId: number;
+  questionId: number;
   rateVal: number;
 }
 
