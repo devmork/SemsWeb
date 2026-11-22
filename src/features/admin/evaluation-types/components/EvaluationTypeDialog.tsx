@@ -29,6 +29,7 @@ interface EvaluationTypeDialogProps {
 
 interface FormValues {
   evaluationTypeName: string;
+  isFacility: boolean;
 }
 
 export function EvaluationTypeDialog({
@@ -47,19 +48,23 @@ export function EvaluationTypeDialog({
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: { evaluationTypeName: "" },
+    defaultValues: { evaluationTypeName: "", isFacility: false },
   });
 
   useEffect(() => {
     if (open) {
       reset({
         evaluationTypeName: evaluationType?.evaluationTypeName ?? "",
+        isFacility: evaluationType?.isFacility ?? false,
       });
     }
   }, [open, evaluationType, reset]);
 
   const onFormSubmit = (values: FormValues) => {
-    onSubmit({ evaluationTypeName: values.evaluationTypeName.trim() });
+    onSubmit({
+      evaluationTypeName: values.evaluationTypeName.trim(),
+      isFacility: values.isFacility,
+    });
   };
 
   return (
@@ -95,6 +100,25 @@ export function EvaluationTypeDialog({
                 })}
               />
               <FieldError errors={[errors.evaluationTypeName]} />
+            </Field>
+            <Field>
+              <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/40">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 size-4 accent-primary"
+                  disabled={isPending}
+                  {...register("isFacility")}
+                />
+                <span className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium text-foreground">
+                    Facility evaluation
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    Students evaluate a facility instead of a subject and
+                    teacher.
+                  </span>
+                </span>
+              </label>
             </Field>
           </FieldGroup>
           {submitError ? (
