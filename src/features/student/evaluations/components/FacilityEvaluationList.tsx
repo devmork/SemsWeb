@@ -11,7 +11,7 @@ import {
 import { FacilityEvaluationCard } from "./FacilityEvaluationCard";
 
 export function FacilityEvaluationList() {
-  const { data, isPending, isError } = useFacilityEvaluations();
+  const { data, isPending, isError, error } = useFacilityEvaluations();
   const [statusFilter, setStatusFilter] = useState("all");
 
   const filteredData = useMemo(() => {
@@ -25,6 +25,7 @@ export function FacilityEvaluationList() {
       title="Facility Evaluations"
       isLoading={isPending}
       isError={isError}
+      error={error}
       count={filteredData.length}
       total={data?.length || 0}
       filters={
@@ -47,7 +48,12 @@ export function FacilityEvaluationList() {
         </div>
       }>
       {filteredData.map((evaluation) => (
-        <FacilityEvaluationCard key={evaluation.id} evaluation={evaluation} />
+        <FacilityEvaluationCard
+          // A facility appears once per open session, so facilityId alone is
+          // not unique — key on the session + facility pair.
+          key={`${evaluation.evaluationSessionId}-${evaluation.facilityId}`}
+          evaluation={evaluation}
+        />
       ))}
     </EvaluationPageLayout>
   );

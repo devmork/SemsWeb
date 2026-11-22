@@ -11,7 +11,7 @@ import {
 import { TeacherEvaluationCard } from "./TeacherEvaluationCard";
 
 export function TeacherEvaluationList() {
-  const { data, isPending, isError } = useTeacherEvaluations();
+  const { data, isPending, isError, error } = useTeacherEvaluations();
   const [statusFilter, setStatusFilter] = useState("all");
 
   const filteredData = useMemo(() => {
@@ -25,6 +25,7 @@ export function TeacherEvaluationList() {
       title="Teacher Evaluations"
       isLoading={isPending}
       isError={isError}
+      error={error}
       count={filteredData.length}
       total={data?.length || 0}
       filters={
