@@ -204,6 +204,9 @@ export function EvaluationTypeManagement() {
                 <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Name
                 </th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Applies To
+                </th>
                 <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Actions
                 </th>
@@ -219,6 +222,16 @@ export function EvaluationTypeManagement() {
                   </td>
                   <td className="px-5 py-3 text-sm font-medium text-foreground">
                     {type.evaluationTypeName}
+                  </td>
+                  <td className="px-5 py-3">
+                    <span
+                      className={
+                        type.isFacility
+                          ? "inline-flex items-center rounded-full bg-brand-accent/10 px-2.5 py-0.5 text-xs font-medium text-brand-accent"
+                          : "inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                      }>
+                      {type.isFacility ? "Facility" : "Subject / Teacher"}
+                    </span>
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-1">

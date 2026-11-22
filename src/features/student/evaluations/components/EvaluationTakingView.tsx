@@ -20,7 +20,7 @@ export function EvaluationTakingView() {
   const { evaluateId } = useParams({
     from: "/_authenticated/student/evaluate/$evaluateId",
   });
-  const { type } = useSearch({
+  const { type, sessionId } = useSearch({
     from: "/_authenticated/student/evaluate/$evaluateId",
   });
   const navigate = useNavigate();
@@ -29,6 +29,7 @@ export function EvaluationTakingView() {
   const { data: evaluation, isPending } = useEvaluationDetail(
     Number(evaluateId),
     type,
+    sessionId,
   );
 
   // keyed by questionId — question ids are unique across categories.
@@ -50,7 +51,7 @@ export function EvaluationTakingView() {
     );
     return {
       totalQuestions: total,
-      answeredCount: Object.keys(answers).length,
+      answeredCount: Object.values(answers).filter((v) => v >= 1).length,
     };
   }, [evaluation, answers]);
 

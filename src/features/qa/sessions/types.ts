@@ -73,16 +73,42 @@ export interface SessionDetail extends Session {
   evaluationForm: SessionDetailForm | null;
 }
 
+export const MIN_GRADE_LEVEL = 0;
+export const MAX_GRADE_LEVEL = 14;
+
+/**
+ * Mirrors `SemsApi/Utilities/GradeLevelHelper`: 0 = Nursery, 1 = Kinder 1,
+ * 2 = Kinder 2, 3 = Grade 1 … 14 = Grade 12. The API stores this internal
+ * number, so QA must enter (and read) the same scale.
+ */
+export function formatGradeLevel(value: number): string {
+  if (value === 0) return "Nursery";
+  if (value === 1) return "Kinder 1";
+  if (value === 2) return "Kinder 2";
+  if (value >= 3 && value <= 14) return `Grade ${value - 2}`;
+  return `Level ${value}`;
+}
+
+export const GRADE_LEVEL_OPTIONS: { value: number; label: string }[] = Array.from(
+  { length: MAX_GRADE_LEVEL - MIN_GRADE_LEVEL + 1 },
+  (_, index) => {
+    const value = MIN_GRADE_LEVEL + index;
+    return { value, label: formatGradeLevel(value) };
+  },
+);
+
 export function formatGradeRange(
   from: number | null,
   to: number | null,
 ): string {
   if (from == null && to == null) return "All grades";
   if (from != null && to != null) {
-    return from === to ? `Grade ${from}` : `Grades ${from}–${to}`;
+    return from === to
+      ? formatGradeLevel(from)
+      : `${formatGradeLevel(from)} – ${formatGradeLevel(to)}`;
   }
-  if (from != null) return `Grade ${from}+`;
-  return `Up to Grade ${to}`;
+  if (from != null) return `${formatGradeLevel(from)} and up`;
+  return `Up to ${formatGradeLevel(to!)}`;
 }
 
 export const SESSION_STATUSES: { value: SessionStatus; label: string }[] = [

@@ -6,10 +6,33 @@ interface EvaluationPageLayoutProps {
   description?: string;
   isLoading: boolean;
   isError: boolean;
+  /** The query error, so the message can say what actually failed. */
+  error?: unknown;
   count: number;
   total: number;
   filters: ReactNode;
   children: ReactNode;
+}
+
+/** Pull a useful message out of an axios error, or fall back to a generic one. */
+function toErrorMessage(error: unknown): string {
+  if (error && typeof error === "object" && "response" in error) {
+    const response = (
+      error as {
+        response?: { status?: number; data?: { message?: string; title?: string } };
+      }
+    ).response;
+
+    const detail = response?.data?.message ?? response?.data?.title;
+    if (detail) {
+      return response?.status ? `${detail} (HTTP ${response.status})` : detail;
+    }
+    if (response?.status) {
+      return `Request failed with HTTP ${response.status}.`;
+    }
+  }
+
+  return "Check your connection and try again.";
 }
 
 export function EvaluationPageLayout({
@@ -17,6 +40,7 @@ export function EvaluationPageLayout({
   description,
   isLoading,
   isError,
+  error,
   count,
   total,
   filters,
@@ -37,7 +61,12 @@ export function EvaluationPageLayout({
 
   if (isError) {
     return (
-      <div className="p-8 text-destructive">Failed to load evaluations.</div>
+      <div
+        role="alert"
+        className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive"
+      >
+        Failed to load evaluations. {toErrorMessage(error)}
+      </div>
     );
   }
 

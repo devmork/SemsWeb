@@ -52,7 +52,7 @@ export function useFacilityEvaluations(enabled = true) {
  * Teacher assignments resolve form content via the matching open evaluation session
  * (students can access session detail); facility assignments carry a session id.
  */
-export function useEvaluationDetail(id: number, type: EvaluationKind) {
+export function useEvaluationDetail(id: number, type: EvaluationKind, sessionId?: number) {
   const teacherAssignments = useTeacherEvaluations(type === "teacher");
   const facilityAssignments = useFacilityEvaluations(type === "facility");
 
@@ -63,7 +63,9 @@ export function useEvaluationDetail(id: number, type: EvaluationKind) {
 
   const facility =
     type === "facility"
-      ? facilityAssignments.data?.find((e) => e.facilityId === id)
+      ? facilityAssignments.data?.find((e) =>
+          sessionId ? e.facilityId === id && e.evaluationSessionId === sessionId : e.facilityId === id,
+        )
       : undefined;
 
   const teacherForm = useQuery({

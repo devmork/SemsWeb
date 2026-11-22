@@ -19,6 +19,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useForms } from "@/features/qa/forms";
+import {
+  GRADE_LEVEL_OPTIONS,
+  MAX_GRADE_LEVEL,
+  MIN_GRADE_LEVEL,
+} from "../types";
+import { localInputToUtcIso, utcIsoToLocalInput } from "../utils/datetime";
 import type {
   CreateSessionInput,
   Session,
@@ -68,6 +74,8 @@ export function SessionDialog({
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
@@ -93,35 +101,49 @@ export function SessionDialog({
         session.gradeLevelFrom != null ? String(session.gradeLevelFrom) : "",
       gradeLevelTo:
         session.gradeLevelTo != null ? String(session.gradeLevelTo) : "",
-      opensAt: session.opensAtUtc
-        ? new Date(session.opensAtUtc).toISOString().slice(0, 16)
-        : "",
-      closesAt: session.closesAtUtc
-        ? new Date(session.closesAtUtc).toISOString().slice(0, 16)
-        : "",
+      opensAt: utcIsoToLocalInput(session.opensAtUtc),
+      closesAt: utcIsoToLocalInput(session.closesAtUtc),
       notes: session.notes ?? "",
       status: session.status,
     });
   }
 
-  const parseGrade = (value: string): number | null => {
-    const trimmed = value.trim();
-    if (trimmed === "") return null;
-    const n = Number(trimmed);
-    return Number.isFinite(n) ? n : null;
-  };
-
   const onFormSubmit = (values: FormValues) => {
-    const gradeLevelFrom = parseGrade(values.gradeLevelFrom);
-    const gradeLevelTo = parseGrade(values.gradeLevelTo);
+    const toGradeLevel = (value: string): number | null => {
+      const trimmed = value.trim();
+      if (trimmed === "") return null;
+      const n = Number(trimmed);
+      return Number.isInteger(n) &&
+        n >= MIN_GRADE_LEVEL &&
+        n <= MAX_GRADE_LEVEL
+        ? n
+        : null;
+    };
+
+    const gradeLevelFrom = toGradeLevel(values.gradeLevelFrom);
+    const gradeLevelTo = toGradeLevel(values.gradeLevelTo);
+
+    if (
+      gradeLevelFrom != null &&
+      gradeLevelTo != null &&
+      gradeLevelFrom > gradeLevelTo
+    ) {
+      // Mirror EvaluationSessionHelper.ValidateGradeRange.
+      setError("gradeLevelFrom", {
+        type: "range",
+        message: "Must not be greater than the upper bound.",
+      });
+      return;
+    }
+    clearErrors("gradeLevelFrom");
 
     const input: CreateSessionInput | UpdateSessionInput = isEdit
       ? {
           status: values.status as SessionStatus,
           gradeLevelFrom,
           gradeLevelTo,
-          opensAtUtc: values.opensAt || null,
-          closesAtUtc: values.closesAt || null,
+          opensAtUtc: localInputToUtcIso(values.opensAt),
+          closesAtUtc: localInputToUtcIso(values.closesAt),
           notes: values.notes.trim() || undefined,
         }
       : {
@@ -130,8 +152,8 @@ export function SessionDialog({
           term: Number(values.term),
           gradeLevelFrom,
           gradeLevelTo,
-          opensAtUtc: values.opensAt || null,
-          closesAtUtc: values.closesAt || null,
+          opensAtUtc: localInputToUtcIso(values.opensAt),
+          closesAtUtc: localInputToUtcIso(values.closesAt),
           notes: values.notes.trim() || undefined,
         };
     onSubmit(input);
@@ -265,53 +287,67 @@ export function SessionDialog({
                 <FieldLabel htmlFor="session-grade-from">
                   Grade level from
                 </FieldLabel>
-                <Input
-                  id="session-grade-from"
-                  type="number"
-                  min={0}
-                  max={12}
-                  placeholder="e.g. 4"
-                  disabled={isPending}
-                  {...register("gradeLevelFrom", {
-                    validate: (value) => {
-                      if (!value) return true;
-                      const n = Number(value);
-                      if (!Number.isInteger(n) || n < 0 || n > 12) {
-                        return "Grade must be between 0 and 12.";
-                      }
-                      return true;
-                    },
-                  })}
+                <Controller
+                  control={control}
+                  name="gradeLevelFrom"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || null}
+                      onValueChange={(value) => field.onChange(value ?? "")}
+                      disabled={isPending}
+                    >
+                      <SelectTrigger id="session-grade-from" className="w-full">
+                        <SelectValue placeholder="No lower bound" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {GRADE_LEVEL_OPTIONS.map((grade) => (
+                          <SelectItem
+                            key={grade.value}
+                            value={String(grade.value)}
+                          >
+                            {grade.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
                 <FieldError errors={[errors.gradeLevelFrom]} />
               </Field>
 
               <Field data-invalid={!!errors.gradeLevelTo}>
-                <FieldLabel htmlFor="session-grade-to">
-                  Grade level to
-                </FieldLabel>
-                <Input
-                  id="session-grade-to"
-                  type="number"
-                  min={0}
-                  max={12}
-                  placeholder="e.g. 6"
-                  disabled={isPending}
-                  {...register("gradeLevelTo", {
-                    validate: (value) => {
-                      if (!value) return true;
-                      const n = Number(value);
-                      if (!Number.isInteger(n) || n < 0 || n > 12) {
-                        return "Grade must be between 0 and 12.";
-                      }
-                      return true;
-                    },
-                  })}
+                <FieldLabel htmlFor="session-grade-to">Grade level to</FieldLabel>
+                <Controller
+                  control={control}
+                  name="gradeLevelTo"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || null}
+                      onValueChange={(value) => field.onChange(value ?? "")}
+                      disabled={isPending}
+                    >
+                      <SelectTrigger id="session-grade-to" className="w-full">
+                        <SelectValue placeholder="No upper bound" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {GRADE_LEVEL_OPTIONS.map((grade) => (
+                          <SelectItem
+                            key={grade.value}
+                            value={String(grade.value)}
+                          >
+                            {grade.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
                 <FieldError errors={[errors.gradeLevelTo]} />
               </Field>
               <p className="text-xs text-muted-foreground sm:col-span-2">
-                Optional audience scope (0–12). Leave both blank for all grades.
+                Optional audience scope ({MIN_GRADE_LEVEL}–{MAX_GRADE_LEVEL},
+                where {MIN_GRADE_LEVEL} = Nursery and {MAX_GRADE_LEVEL} = Grade
+                12). Leave both blank for all grades.
               </p>
             </div>
 
@@ -324,8 +360,8 @@ export function SessionDialog({
                 {...register("opensAt")}
               />
               <p className="text-xs text-muted-foreground">
-                When the session becomes available to students. Leave empty to
-                open manually.
+                Local date and time — stored as UTC. Leave empty to open
+                manually.
               </p>
               <FieldError errors={[errors.opensAt]} />
             </Field>
@@ -339,8 +375,8 @@ export function SessionDialog({
                 {...register("closesAt")}
               />
               <p className="text-xs text-muted-foreground">
-                When the session stops accepting submissions. Leave empty to
-                close manually.
+                Local date and time — stored as UTC. Leave empty to keep the
+                session open.
               </p>
               <FieldError errors={[errors.closesAt]} />
             </Field>

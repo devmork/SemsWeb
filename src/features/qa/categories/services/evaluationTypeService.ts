@@ -5,6 +5,7 @@ import type { EvaluationTypeOption } from "../types";
 type EvaluationTypeDto = {
   evaluationTypeId: number;
   evaluationTypeName: string;
+  isFacility: boolean;
 };
 
 export const evaluationTypeService = {
@@ -13,6 +14,7 @@ export const evaluationTypeService = {
     return data.map((t) => ({
       evaluationTypeId: t.evaluationTypeId,
       evaluationTypeName: t.evaluationTypeName,
+      isFacility: t.isFacility ?? false,
     }));
   },
 };

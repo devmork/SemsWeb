@@ -1,4 +1,4 @@
-import { Calendar, FolderOpen, LayoutTemplate } from "lucide-react";
+import { BarChart3, Calendar, FolderOpen, LayoutTemplate } from "lucide-react";
 import type { NavSection } from "./types";
 
 export const qaNav: NavSection[] = [
@@ -12,6 +12,12 @@ export const qaNav: NavSection[] = [
   },
   {
     label: "Reports",
-    items: [],
+    items: [
+      {
+        label: "Facility Results",
+        href: "/qa/reports/facility",
+        icon: BarChart3,
+      },
+    ],
   },
 ];
