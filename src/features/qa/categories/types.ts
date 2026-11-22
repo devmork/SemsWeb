@@ -17,4 +17,6 @@ export type UpdateCategoryInput = CreateCategoryInput;
 export interface EvaluationTypeOption {
   evaluationTypeId: number;
   evaluationTypeName: string;
+  /** Facility evaluations are taken by students without a subject/teacher. */
+  isFacility: boolean;
 }

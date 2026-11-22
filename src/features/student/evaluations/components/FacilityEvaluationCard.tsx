@@ -56,7 +56,7 @@ export function FacilityEvaluationCard({
               <Link
                 to="/student/evaluate/$evaluateId"
                 params={{ evaluateId: evaluation.facilityId.toString() }}
-                search={{ type: "facility" }}
+                search={{ type: "facility", sessionId: evaluation.evaluationSessionId }}
               />
             ) : undefined
           }>
