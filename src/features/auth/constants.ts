@@ -9,4 +9,6 @@ export const LOGIN_ERROR_MESSAGES: Record<string, string> = {
   account_inactive: "Your account is inactive. Contact the administrator.",
   google_auth_failed:
     "Google sign-in was cancelled or failed. Please try again.",
+  signin_expired:
+    "Your sign-in link expired or was already used. Please sign in again.",
 };

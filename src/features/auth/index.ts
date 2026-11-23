@@ -6,6 +6,8 @@ export {
   startGoogleSignIn,
   logout,
   fetchCurrentUser,
+  acceptAuthRedirect,
+  exchangeSignInCode,
 } from "./services/authService";
 
 export {

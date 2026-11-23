@@ -1,4 +1,4 @@
-import { api, API_BASE_URL } from "@/shared/api/client";
+import { api, API_BASE_URL, tokenStore } from "@/shared/api/client";
 import { useAuthStore } from "../stores/auth.store";
 import type {
   StudentProfile,
@@ -125,10 +125,63 @@ export function startGoogleSignIn(returnUrl = "/") {
   window.location.assign(url.toString());
 }
 
-export async function logout(): Promise<void> {
+type TokenPayload = {
+  accessToken: string;
+  refreshToken: string;
+  accessExpiresAtUtc: string;
+  refreshExpiresAtUtc: string;
+};
+
+/** Redeems the one-time code the callback appended to the URL for a token pair. */
+export async function exchangeSignInCode(code: string): Promise<boolean> {
   try {
-    await api.post("/api/auth/logout", undefined, { skipAuthRedirect: true });
+    const { data } = await api.post<TokenPayload>(
+      "/api/auth/exchange",
+      { code },
+      { skipAuthRedirect: true },
+    );
+    tokenStore.set({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Handles the post-Google-login redirect: exchanges `?code=...`, stores the
+ * tokens, and strips the code from the URL so it cannot be replayed or shared.
+ *
+ * Returns "none" when there is nothing to accept, "ok" on success, and
+ * "failed" when a code was present but could not be redeemed.
+ */
+export async function acceptAuthRedirect(): Promise<"none" | "ok" | "failed"> {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+  if (!code) return "none";
+
+  const ok = await exchangeSignInCode(code);
+
+  params.delete("code");
+  const query = params.toString();
+  window.history.replaceState(
+    null,
+    "",
+    window.location.pathname +
+      (query ? `?${query}` : "") +
+      window.location.hash,
+  );
+
+  return ok ? "ok" : "failed";
+}
+
+export async function logout(): Promise<void> {
+  const refreshToken = tokenStore.getRefreshToken();
+  try {
+    if (refreshToken) {
+      await api.post("/api/auth/logout", { refreshToken }, { skipAuthRedirect: true });
+    }
   } finally {
+    tokenStore.clear();
     useAuthStore.getState().clearUser();
   }
 }
