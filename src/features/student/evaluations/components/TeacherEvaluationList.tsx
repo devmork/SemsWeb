@@ -30,13 +30,15 @@ export function TeacherEvaluationList() {
       total={data?.length || 0}
       filters={
         <div className="flex flex-col gap-1.5 w-full sm:w-[180px]">
-          <span className="text-xs font-medium text-muted-foreground">
+          <label
+            htmlFor="status-filter"
+            className="text-xs font-medium text-muted-foreground">
             Status
-          </span>
+          </label>
           <Select
             value={statusFilter}
             onValueChange={(value) => setStatusFilter(value ?? "all")}>
-            <SelectTrigger>
+            <SelectTrigger id="status-filter">
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>

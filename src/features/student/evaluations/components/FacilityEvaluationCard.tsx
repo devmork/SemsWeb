@@ -23,10 +23,10 @@ export function FacilityEvaluationCard({
     <Card className="gap-4 shadow-sm flex flex-col justify-between">
       <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
         <Badge className="bg-success/10 text-success hover:bg-success/20 border-none">
-          <Building2 className="mr-1 size-3" /> Facility
+          <Building2 className="mr-1 size-3" aria-hidden="true" /> Facility
         </Badge>
         <Badge variant="outline" className="text-muted-foreground">
-          <CalendarIcon className="mr-1 size-3" />
+          <CalendarIcon className="mr-1 size-3" aria-hidden="true" />
           {evaluation.schoolYear} · Term {evaluation.term}
         </Badge>
       </CardHeader>
@@ -45,7 +45,7 @@ export function FacilityEvaluationCard({
       <CardFooter className="flex items-center justify-between gap-3 border-t pt-4 mt-auto">
         <p className="text-xs text-muted-foreground">
           {isCompleted && evaluation.submittedAtUtc
-            ? `Submitted ${new Date(evaluation.submittedAtUtc).toLocaleDateString()}`
+            ? `Submitted ${new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).format(new Date(evaluation.submittedAtUtc))}`
             : "Pending"}
         </p>
         <Button
@@ -62,11 +62,11 @@ export function FacilityEvaluationCard({
           }>
           {isCompleted ? (
             <>
-              <CheckCircle2 className="mr-2 size-4" /> Submitted
+              <CheckCircle2 className="mr-2 size-4" aria-hidden="true" /> Submitted
             </>
           ) : (
             <>
-              Start Evaluation <ArrowRight className="ml-2 size-4" />
+              Start Evaluation <ArrowRight className="ml-2 size-4" aria-hidden="true" />
             </>
           )}
         </Button>

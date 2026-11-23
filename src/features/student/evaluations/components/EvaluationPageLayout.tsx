@@ -48,7 +48,11 @@ export function EvaluationPageLayout({
 }: EvaluationPageLayoutProps) {
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6 w-full p-4 md:p-8 animate-pulse">
+      <div
+        className="flex flex-col gap-6 w-full p-4 md:p-8 animate-pulse motion-reduce:animate-none"
+        role="status"
+        aria-live="polite"
+        aria-label="Loading evaluations">
         <div className="h-10 w-48 bg-muted rounded-md" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -63,9 +67,9 @@ export function EvaluationPageLayout({
     return (
       <div
         role="alert"
-        className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive"
-      >
-        Failed to load evaluations. {toErrorMessage(error)}
+        className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">
+        Failed to load evaluations. {toErrorMessage(error)} Try refreshing the
+        page or check your connection.
       </div>
     );
   }

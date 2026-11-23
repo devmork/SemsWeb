@@ -35,6 +35,8 @@ export function EvaluationTakingView() {
   // keyed by questionId — question ids are unique across categories.
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const { mutate: submitEvaluation, isPending: isSubmitting } =
     useSubmitEvaluation();
@@ -118,18 +120,29 @@ export function EvaluationTakingView() {
   const handleNext = () => {
     if (!isLastCategory) {
       setCurrentCategoryIndex((prev) => prev + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0 });
+      }
     }
   };
 
   const handlePrev = () => {
     if (currentCategoryIndex > 0) {
       setCurrentCategoryIndex((prev) => prev - 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0 });
+      }
     }
   };
 
   const handleSubmit = () => {
+    setSubmitError(null);
+    setSubmitSuccess(false);
+
     const payloadAnswers = categories.flatMap((category) =>
       category.questions.map((question) => ({
         categoryId: category.categoryId,
@@ -139,17 +152,17 @@ export function EvaluationTakingView() {
     );
 
     if (payloadAnswers.length === 0) {
-      alert("This evaluation has no questions to submit.");
+      setSubmitError("This evaluation has no questions to submit.");
       return;
     }
 
     if (evaluation.evaluationTypeId == null) {
-      alert("Evaluation type is missing. Please contact QA.");
+      setSubmitError("Evaluation type is missing. Please contact QA.");
       return;
     }
 
     if (evaluation.type === "facility" && evaluation.evaluationSessionId == null) {
-      alert("Evaluation session is missing for this facility evaluation.");
+      setSubmitError("Evaluation session is missing for this facility evaluation.");
       return;
     }
 
@@ -178,8 +191,8 @@ export function EvaluationTakingView() {
 
     submitEvaluation(input, {
       onSuccess: () => {
-        alert("Evaluation submitted successfully!");
-        navigate({ to: listPath });
+        setSubmitSuccess(true);
+        window.setTimeout(() => navigate({ to: listPath }), 1200);
       },
       onError: (error) => {
         console.error("Submission failed", error);
@@ -192,7 +205,7 @@ export function EvaluationTakingView() {
             ? (error as { response?: { data?: { message?: string } } }).response!
                 .data!.message!
             : "Failed to submit evaluation. Please try again.";
-        alert(message);
+        setSubmitError(message);
       },
     });
   };
@@ -204,7 +217,7 @@ export function EvaluationTakingView() {
         <Link
           to={listPath}
           className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="mr-2 size-4" /> Exit Evaluation
+          <ArrowLeft className="mr-2 size-4" aria-hidden="true" /> Exit Evaluation
         </Link>
 
         <div className="flex items-center gap-4">
@@ -223,15 +236,16 @@ export function EvaluationTakingView() {
         <div className="bg-card rounded-xl border border-hairline shadow-sm overflow-hidden">
           <div className="p-6 md:p-8 space-y-4">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground scroll-mt-16">
                 {evaluation.title}
               </h1>
               <div className="bg-muted text-foreground px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap self-start">
                 {evaluation.dueDate
-                  ? `Due: ${new Date(evaluation.dueDate).toLocaleDateString(
-                      "en-US",
-                      { month: "short", day: "numeric", year: "numeric" },
-                    )}`
+                  ? `Due: ${new Intl.DateTimeFormat(undefined, {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    }).format(new Date(evaluation.dueDate))}`
                   : `${evaluation.schoolYear} · Term ${evaluation.term}`}
               </div>
             </div>
@@ -273,7 +287,7 @@ export function EvaluationTakingView() {
                 Category {safeCategoryIndex + 1} of{" "}
                 {categories.length}
               </span>
-              <h2 className="text-xl font-bold text-foreground mt-1">
+              <h2 className="text-xl font-bold text-foreground mt-1 scroll-mt-16">
                 {activeCategory.title}
               </h2>
             </div>
@@ -322,7 +336,9 @@ export function EvaluationTakingView() {
                           {index + 1}.
                         </span>
                         {question.text}{" "}
-                        <span className="text-destructive ml-1">*</span>
+                        <span className="text-destructive ml-1" aria-hidden="true">
+                          *
+                        </span>
                       </p>
                     </div>
                     <div className="shrink-0 flex justify-center md:justify-end">
@@ -340,6 +356,21 @@ export function EvaluationTakingView() {
             ))}
           </div>
         </div>
+
+        {/* Submit status (inline, announced to assistive tech) */}
+        {(submitError || submitSuccess) && (
+          <div
+            role={submitError ? "alert" : "status"}
+            aria-live="polite"
+            className={`rounded-lg border px-4 py-3 text-sm ${
+              submitError
+                ? "border-destructive/30 bg-destructive/5 text-destructive"
+                : "border-success/30 bg-success/5 text-success"
+            }`}>
+            {submitError ??
+              "Evaluation submitted successfully! Redirecting…"}
+          </div>
+        )}
 
         {/* Footer Navigation */}
         <div className="flex items-center justify-between pt-6 border-t border-hairline mt-8">

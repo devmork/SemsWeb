@@ -3,7 +3,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function EvaluationCardSkeleton() {
   return (
-    <Card className="gap-4 px-6 shadow-sm">
+    <Card
+      className="gap-4 px-6 shadow-sm"
+      aria-hidden="true">
       <div className="flex items-center justify-between">
         <Skeleton className="h-5 w-32 rounded-full" />
         <Skeleton className="h-5 w-20 rounded-full" />

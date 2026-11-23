@@ -18,24 +18,27 @@ export function Rating({ value, onChange, disabled }: StarRatingProps) {
             disabled={disabled}
             onClick={() => onChange(star)}
             className={cn(
-              "transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-full p-1",
+              "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-full p-1",
               disabled
                 ? "cursor-not-allowed opacity-50"
-                : "cursor-pointer hover:scale-110",
+                : "cursor-pointer hover:scale-110 motion-reduce:hover:scale-100",
             )}
             aria-label={`Rate ${star} out of 5`}>
             <Star
               className={cn(
-                "size-8 transition-all",
+                "size-8 transition-transform",
                 star <= value
-                  ? "fill-brand-accent text-brand-accent" // Using your brand accent instead of amber
+                  ? "fill-brand-accent text-brand-accent"
                   : "text-muted-foreground/30",
               )}
+              aria-hidden="true"
             />
           </button>
         ))}
       </div>
-      <div className="flex w-full justify-between px-3 text-[10px] font-medium text-muted-foreground uppercase mt-1">
+      <div
+        className="flex w-full justify-between px-3 text-[10px] font-medium text-muted-foreground uppercase mt-1"
+        aria-hidden="true">
         <span>1</span>
         <span>2</span>
         <span>3</span>
