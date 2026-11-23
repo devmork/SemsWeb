@@ -5,12 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/shared/lib/utils";
 import {
   IconArrowLeft,
   IconCheck,
+  IconPencil,
   IconPlus,
   IconTrash,
+  IconX,
 } from "@tabler/icons-react";
 import { useForm as useRHF, useWatch } from "react-hook-form";
 import {
@@ -29,6 +32,7 @@ import {
 import {
   useFormQuestions,
   useCreateFormQuestion,
+  useUpdateFormQuestion,
   useDeleteFormQuestion,
 } from "../hooks/useFormQuestions";
 import type {
@@ -731,6 +735,162 @@ function CategoryCard({
   );
 }
 
+/**
+ * One question row. Kept at module scope so editing one row never remounts the
+ * others (and the input keeps focus while typing).
+ */
+function QuestionRow({
+  formId,
+  categoryId,
+  question,
+  onError,
+}: {
+  formId: number;
+  categoryId: number;
+  question: FormQuestion;
+  onError: (message: string) => void;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState(question.questionName ?? "");
+  const [fieldError, setFieldError] = useState<string | null>(null);
+  const updateQ = useUpdateFormQuestion();
+  const deleteQ = useDeleteFormQuestion();
+  const inputId = `question-${question.formQuestionId}`;
+
+  const startEditing = () => {
+    setDraft(question.questionName ?? "");
+    setFieldError(null);
+    setIsEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setDraft(question.questionName ?? "");
+    setFieldError(null);
+    setIsEditing(false);
+  };
+
+  const save = () => {
+    const text = draft.trim();
+    if (!text) {
+      setFieldError("Question text is required.");
+      return;
+    }
+    setFieldError(null);
+    updateQ.mutate(
+      {
+        formId,
+        categoryId,
+        questionId: question.formQuestionId,
+        input: {
+          formQuestionId: question.formQuestionId,
+          questionName: text,
+          displayOrder: question.displayOrder,
+          ...(question.points !== null ? { points: question.points } : {}),
+        },
+      },
+      {
+        onSuccess: () => setIsEditing(false),
+        onError: (error) => {
+          const message = mutationErrorMessage(error);
+          setFieldError(message);
+          onError(message);
+        },
+      },
+    );
+  };
+
+  if (isEditing) {
+    return (
+      <li className="rounded-md border border-brand-accent bg-card p-3">
+        <Field data-invalid={!!fieldError}>
+          <FieldLabel htmlFor={inputId} className="sr-only">
+            Edit question text
+          </FieldLabel>
+          <Input
+            id={inputId}
+            value={draft}
+            autoFocus
+            aria-invalid={fieldError ? true : undefined}
+            aria-describedby={fieldError ? `${inputId}-error` : undefined}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                save();
+              }
+              if (event.key === "Escape") {
+                event.preventDefault();
+                cancelEditing();
+              }
+            }}
+            className="min-w-0"
+          />
+          {fieldError ? (
+            <FieldError id={`${inputId}-error`}>{fieldError}</FieldError>
+          ) : null}
+        </Field>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="min-h-11 sm:min-h-8"
+            onClick={cancelEditing}
+            disabled={updateQ.isPending}>
+            <IconX data-icon="inline-start" aria-hidden="true" /> Cancel
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            className="min-h-11 sm:min-h-8"
+            onClick={save}
+            disabled={updateQ.isPending}>
+            <IconCheck data-icon="inline-start" aria-hidden="true" /> Save
+            question
+          </Button>
+        </div>
+      </li>
+    );
+  }
+
+  return (
+    <li className="flex flex-col items-start gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
+      <span className="min-w-0 break-words text-sm text-foreground">
+        {question.questionName}
+      </span>
+      <span className="flex w-full shrink-0 items-center justify-end gap-1 sm:w-auto">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="min-h-11 min-w-11 text-brand-accent hover:bg-brand-accent/10 hover:text-brand-accent sm:min-h-8 sm:min-w-8"
+          aria-label={`Edit ${question.questionName}`}
+          onClick={startEditing}>
+          <IconPencil aria-hidden="true" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="min-h-11 min-w-11 text-destructive hover:bg-destructive/10 hover:text-destructive sm:min-h-8 sm:min-w-8"
+          aria-label={`Delete ${question.questionName}`}
+          onClick={() =>
+            deleteQ.mutate(
+              {
+                formId,
+                categoryId,
+                questionId: question.formQuestionId,
+              },
+              {
+                onError: (error) => onError(mutationErrorMessage(error)),
+              },
+            )
+          }>
+          <IconTrash aria-hidden="true" />
+        </Button>
+      </span>
+    </li>
+  );
+}
+
 function CategoryQuestionsBlock({
   formId,
   formCategory,
@@ -745,7 +905,6 @@ function CategoryQuestionsBlock({
     formCategory.categoryId,
   );
   const createQ = useCreateFormQuestion();
-  const deleteQ = useDeleteFormQuestion();
   const [newQuestion, setNewQuestion] = useState("");
   const [questionError, setQuestionError] = useState<string | null>(null);
 
@@ -807,37 +966,17 @@ function CategoryQuestionsBlock({
             No questions yet — add the first one below.
           </p>
         ) : (
-          questions.map((q: FormQuestion) => (
-            <div
-              key={q.formQuestionId}
-              className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-3 py-2"
-            >
-              <span className="min-w-0 break-words text-sm text-foreground">
-                {q.questionName}
-              </span>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                aria-label="Delete question"
-                onClick={() =>
-                  deleteQ.mutate(
-                    {
-                      formId,
-                      categoryId: formCategory.categoryId,
-                      questionId: q.formQuestionId,
-                    },
-                    {
-                      onError: (error) =>
-                        setQuestionError(mutationErrorMessage(error)),
-                    },
-                  )
-                }
-              >
-                <IconTrash />
-              </Button>
-            </div>
-          ))
+          <ul className="flex flex-col gap-2">
+            {questions.map((question: FormQuestion) => (
+              <QuestionRow
+                key={question.formQuestionId}
+                formId={formId}
+                categoryId={formCategory.categoryId}
+                question={question}
+                onError={setQuestionError}
+              />
+            ))}
+          </ul>
         )}
 
         {questionError && (
