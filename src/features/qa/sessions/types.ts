@@ -6,6 +6,8 @@ export interface Session {
   formTitle: string;
   evaluationTypeId: number;
   evaluationTypeName: string;
+  facilityId: number | null;
+  facilityName: string | null;
   schoolYear: string;
   term: number;
   gradeLevelFrom: number | null;
@@ -23,6 +25,8 @@ export interface Session {
 
 export interface CreateSessionInput {
   formId: number;
+  /** Required when the selected form's evaluation type is a facility evaluation. */
+  facilityId?: number | null | undefined;
   schoolYear: string;
   term: number;
   gradeLevelFrom?: number | null | undefined;
@@ -30,6 +34,12 @@ export interface CreateSessionInput {
   opensAtUtc: string | null;
   closesAtUtc: string | null;
   notes: string | undefined;
+}
+
+/** Minimal active-facility shape needed by the session picker. */
+export interface FacilityOption {
+  facilityId: number;
+  facilityName: string;
 }
 
 export interface UpdateSessionInput {

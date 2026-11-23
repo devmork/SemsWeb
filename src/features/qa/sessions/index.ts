@@ -5,6 +5,7 @@ export { DeleteSessionDialog } from "./components/DeleteSessionDialog";
 export {
   useSessions,
   useSession,
+  useSessionFacilities,
   useSubmissions,
   useCreateSession,
   useUpdateSession,
@@ -28,6 +29,7 @@ export type {
   Session,
   SessionDetail,
   SessionDetailForm,
+  FacilityOption,
   CreateSessionInput,
   UpdateSessionInput,
   SessionSubmission,

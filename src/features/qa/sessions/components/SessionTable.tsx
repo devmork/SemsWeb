@@ -28,7 +28,7 @@ export function SessionTable({
   return (
     <ResponsiveTable
       ariaLabel="Evaluation sessions"
-      minWidth="960px"
+      minWidth="1080px"
       items={sessions}
       rowKey={(session) => session.id}
       columns={[
@@ -40,6 +40,17 @@ export function SessionTable({
               {session.formTitle}
             </span>
           ),
+        },
+        {
+          header: "Facility",
+          cell: (session) =>
+            session.facilityName ? (
+              <span className="text-muted-foreground">
+                {session.facilityName}
+              </span>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            ),
         },
         {
           header: "School year",

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,7 +19,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SEMESTERS } from "@/shared/lib/semester";
+import { useEvaluationTypes } from "@/features/qa/categories";
 import { useForms } from "@/features/qa/forms";
+import { useSessionFacilities } from "../hooks/useSessions";
 import {
   GRADE_LEVEL_OPTIONS,
   MAX_GRADE_LEVEL,
@@ -33,6 +35,9 @@ import type {
   UpdateSessionInput,
 } from "../types";
 
+const FACILITY_REQUIRED_MESSAGE =
+  "A facility is required for a facility evaluation";
+
 interface SessionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -44,6 +49,7 @@ interface SessionDialogProps {
 
 interface FormValues {
   formId: string;
+  facilityId: string;
   schoolYear: string;
   term: string;
   gradeLevelFrom: string;
@@ -65,6 +71,8 @@ export function SessionDialog({
   const isEdit = !!session;
 
   const { data: forms = [] } = useForms();
+  const { data: evaluationTypes = [] } = useEvaluationTypes();
+  const { data: facilities = [] } = useSessionFacilities();
   const activeForms = useMemo(
     () => forms.filter((f) => f.isActive === 1),
     [forms],
@@ -77,10 +85,12 @@ export function SessionDialog({
     reset,
     setError,
     clearErrors,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
       formId: "",
+      facilityId: "",
       schoolYear: "",
       term: "1",
       gradeLevelFrom: "",
@@ -92,6 +102,28 @@ export function SessionDialog({
     },
   });
 
+  const selectedFormId = useWatch({ control, name: "formId" });
+  const selectedFacilityId = useWatch({ control, name: "facilityId" });
+  const selectedForm = useMemo(
+    () => activeForms.find((f) => String(f.formId) === String(selectedFormId)),
+    [activeForms, selectedFormId],
+  );
+  const isFacilityForm = useMemo(
+    () =>
+      evaluationTypes.find(
+        (type) => type.evaluationTypeId === selectedForm?.evaluationTypeId,
+      )?.isFacility === true,
+    [evaluationTypes, selectedForm],
+  );
+
+  // A facility must be chosen only for facility forms. Clear any stale choice
+  // when the QA user switches to a teacher/subject form.
+  useEffect(() => {
+    if (!isFacilityForm && selectedFacilityId) {
+      setValue("facilityId", "");
+    }
+  }, [isFacilityForm, selectedFacilityId, setValue]);
+
   // Reset form fields whenever the dialog opens (create vs edit). This must run
   // in an effect: calling reset() during render updates form state on every
   // render and React aborts with "Too many re-renders" (#301).
@@ -101,6 +133,8 @@ export function SessionDialog({
       session
         ? {
             formId: String(session.formId),
+            facilityId:
+              session.facilityId != null ? String(session.facilityId) : "",
             schoolYear: session.schoolYear,
             term: String(session.term),
             gradeLevelFrom:
@@ -114,6 +148,7 @@ export function SessionDialog({
           }
         : {
             formId: "",
+            facilityId: "",
             schoolYear: "",
             term: "1",
             gradeLevelFrom: "",
@@ -155,6 +190,15 @@ export function SessionDialog({
     }
     clearErrors("gradeLevelFrom");
 
+    if (isFacilityForm && !values.facilityId) {
+      setError("facilityId", {
+        type: "required",
+        message: FACILITY_REQUIRED_MESSAGE,
+      });
+      return;
+    }
+    clearErrors("facilityId");
+
     const input: CreateSessionInput | UpdateSessionInput = isEdit
       ? {
           status: values.status as SessionStatus,
@@ -166,6 +210,7 @@ export function SessionDialog({
         }
       : {
           formId: Number(values.formId),
+          facilityId: isFacilityForm ? Number(values.facilityId) : null,
           schoolYear: values.schoolYear.trim(),
           term: Number(values.term),
           gradeLevelFrom,
@@ -259,6 +304,75 @@ export function SessionDialog({
                 </p>
               </Field>
             )}
+
+            {isFacilityForm && !isEdit ? (
+              <Field data-invalid={!!errors.facilityId}>
+                <FieldLabel htmlFor="session-facility">Facility</FieldLabel>
+                <Controller
+                  control={control}
+                  name="facilityId"
+                  rules={{
+                    required: isFacilityForm ? FACILITY_REQUIRED_MESSAGE : false,
+                  }}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || null}
+                      onValueChange={(value) => field.onChange(value ?? "")}
+                      disabled={isPending}
+                    >
+                      <SelectTrigger id="session-facility" className="w-full">
+                        <SelectValue placeholder="Select a facility">
+                          {(value) => {
+                            const selected = facilities.find(
+                              (f) => String(f.facilityId) === String(value),
+                            );
+                            return selected
+                              ? selected.facilityName
+                              : "Select a facility";
+                          }}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {facilities.length === 0 ? (
+                          <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                            No active facilities available
+                          </div>
+                        ) : (
+                          facilities.map((facility) => (
+                            <SelectItem
+                              key={facility.facilityId}
+                              value={String(facility.facilityId)}
+                            >
+                              {facility.facilityName}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <p className="text-xs text-muted-foreground">
+                  This facility evaluation is shown only to students evaluating
+                  the selected facility.
+                </p>
+                <FieldError errors={[errors.facilityId]} />
+              </Field>
+            ) : null}
+
+            {isEdit && session?.facilityName ? (
+              <Field>
+                <FieldLabel htmlFor="session-facility-edit">Facility</FieldLabel>
+                <Input
+                  id="session-facility-edit"
+                  defaultValue={session.facilityName}
+                  readOnly
+                  disabled={isPending}
+                />
+                <p className="text-xs text-muted-foreground">
+                  The facility is fixed once a facility session is created.
+                </p>
+              </Field>
+            ) : null}
 
             <Field data-invalid={!!errors.schoolYear}>
               <FieldLabel htmlFor="session-school-year">School Year</FieldLabel>

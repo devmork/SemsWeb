@@ -15,6 +15,7 @@ export const sessionKeys = {
     "submissions",
     id,
   ] as const,
+  facilities: () => [...sessionKeys.all, "facilities"] as const,
 };
 
 export function useSessions() {
@@ -29,6 +30,13 @@ export function useSession(id: number) {
     queryKey: sessionKeys.detail(id),
     queryFn: () => sessionService.getSession(id),
     enabled: id > 0,
+  });
+}
+
+export function useSessionFacilities() {
+  return useQuery({
+    queryKey: sessionKeys.facilities(),
+    queryFn: () => sessionService.getSessionFacilities(),
   });
 }
 
@@ -70,6 +78,8 @@ export function useCreateSession() {
         formTitle: "",
         evaluationTypeId: 0,
         evaluationTypeName: "",
+        facilityId: input.facilityId ?? null,
+        facilityName: null,
         schoolYear: input.schoolYear,
         term: input.term,
         gradeLevelFrom: input.gradeLevelFrom ?? null,

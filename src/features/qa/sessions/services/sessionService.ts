@@ -1,6 +1,7 @@
 import { api } from "@/shared/api/client";
 import type {
   CreateSessionInput,
+  FacilityOption,
   Session,
   SessionDetail,
   SessionStatus,
@@ -15,6 +16,8 @@ type SessionDto = {
   formTitle: string;
   evaluationTypeId: number;
   evaluationTypeName: string;
+  facilityId: number | null;
+  facilityName: string | null;
   schoolYear: string;
   term: number;
   gradeLevelFrom: number | null;
@@ -73,6 +76,8 @@ function toSession(dto: SessionDto): Session {
     formTitle: dto.formTitle,
     evaluationTypeId: dto.evaluationTypeId,
     evaluationTypeName: dto.evaluationTypeName,
+    facilityId: dto.facilityId ?? null,
+    facilityName: dto.facilityName ?? null,
     schoolYear: dto.schoolYear,
     term: dto.term,
     gradeLevelFrom: dto.gradeLevelFrom ?? null,
@@ -140,6 +145,18 @@ export const sessionService = {
       params,
     });
     return data.map(toSession);
+  },
+
+  /** Active facilities available as targets for a facility evaluation session. */
+  async getSessionFacilities(): Promise<FacilityOption[]> {
+    const { data } = await api.get<unknown>("/api/facilities", {
+      params: { isActive: true },
+    });
+    if (!Array.isArray(data)) return [];
+    return (data as { facilityId: number; facilityName: string }[]).map((f) => ({
+      facilityId: f.facilityId,
+      facilityName: f.facilityName,
+    }));
   },
 
   async getSession(id: number): Promise<SessionDetail> {
