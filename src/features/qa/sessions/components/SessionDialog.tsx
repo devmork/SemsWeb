@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -91,22 +91,39 @@ export function SessionDialog({
     },
   });
 
-  // Reset form fields whenever the dialog opens (create vs edit).
-  if (open && isEdit && session) {
-    reset({
-      formId: String(session.formId),
-      schoolYear: session.schoolYear,
-      term: String(session.term),
-      gradeLevelFrom:
-        session.gradeLevelFrom != null ? String(session.gradeLevelFrom) : "",
-      gradeLevelTo:
-        session.gradeLevelTo != null ? String(session.gradeLevelTo) : "",
-      opensAt: utcIsoToLocalInput(session.opensAtUtc),
-      closesAt: utcIsoToLocalInput(session.closesAtUtc),
-      notes: session.notes ?? "",
-      status: session.status,
-    });
-  }
+  // Reset form fields whenever the dialog opens (create vs edit). This must run
+  // in an effect: calling reset() during render updates form state on every
+  // render and React aborts with "Too many re-renders" (#301).
+  useEffect(() => {
+    if (!open) return;
+    reset(
+      session
+        ? {
+            formId: String(session.formId),
+            schoolYear: session.schoolYear,
+            term: String(session.term),
+            gradeLevelFrom:
+              session.gradeLevelFrom != null ? String(session.gradeLevelFrom) : "",
+            gradeLevelTo:
+              session.gradeLevelTo != null ? String(session.gradeLevelTo) : "",
+            opensAt: utcIsoToLocalInput(session.opensAtUtc),
+            closesAt: utcIsoToLocalInput(session.closesAtUtc),
+            notes: session.notes ?? "",
+            status: session.status,
+          }
+        : {
+            formId: "",
+            schoolYear: "",
+            term: "1",
+            gradeLevelFrom: "",
+            gradeLevelTo: "",
+            opensAt: "",
+            closesAt: "",
+            notes: "",
+            status: "Draft",
+          },
+    );
+  }, [open, session, reset]);
 
   const onFormSubmit = (values: FormValues) => {
     const toGradeLevel = (value: string): number | null => {
