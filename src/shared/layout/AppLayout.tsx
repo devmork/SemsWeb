@@ -45,9 +45,9 @@ export function AppLayout({ navSections, sidebarFooter }: AppLayoutProps) {
               className="mr-2 data-vertical:h-4 data-vertical:self-auto"
             />
           </header>
-          <main className="flex-1 p-6">
+          <div className="min-w-0 flex-1 p-4 md:p-6">
             <Outlet />
-          </main>
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </AnimateUIProvider>

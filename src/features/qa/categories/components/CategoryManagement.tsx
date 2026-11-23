@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResponsiveTable } from "@/shared/components/ResponsiveTable";
 import { IconEdit, IconTrash, IconPlus, IconFolderOpen } from "@tabler/icons-react";
 import {
   useCreateCategory,
@@ -164,7 +165,7 @@ const filteredCategories = useMemo(
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative w-full sm:w-64">
             <IconFolderOpen
-              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground max-[320px]:hidden"
               aria-hidden
             />
             <Input
@@ -173,7 +174,7 @@ const filteredCategories = useMemo(
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search categories…"
               aria-label="Search categories"
-              className="pl-9"
+              className="pl-9 max-[320px]:pl-3"
             />
           </div>
           <Button onClick={openCreate}>
@@ -206,69 +207,59 @@ const filteredCategories = useMemo(
           }
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-          <table className="w-full min-w-[560px] text-left">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Name
-                </th>
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Weight
-                </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCategories.map((category) => (
-                <tr
-                  key={category.categoryId}
-                  className="border-b border-border last:border-0 transition-colors hover:bg-muted/40">
-                  <td className="px-5 py-3 text-sm font-medium text-foreground">
-                    {category.categoryName}
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex min-w-32 items-center gap-2">
-                      <span className="text-sm tabular-nums text-muted-foreground">
-                        {category.categoryRate ?? "—"}%
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Edit ${category.categoryName}`}
-                        onClick={() => {
-                          setEditingCategory(category);
-                          resetCreateError();
-                          resetUpdateError();
-                          setCategoryDialogOpen(true);
-                        }}>
-                        <IconEdit />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Delete ${category.categoryName}`}
-                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => {
-                          resetDeleteError();
-                          setDeletingCategory(category);
-                          setDeleteDialogOpen(true);
-                        }}>
-                        <IconTrash />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ResponsiveTable
+          ariaLabel="Evaluation categories"
+          minWidth="560px"
+          items={filteredCategories}
+          rowKey={(category) => category.categoryId}
+          columns={[
+            {
+              header: "Name",
+              primary: true,
+              cell: (category) => (
+                <span className="font-medium text-foreground">
+                  {category.categoryName}
+                </span>
+              ),
+            },
+            {
+              header: "Weight",
+              cell: (category) => (
+                <span className="tabular-nums text-muted-foreground">
+                  {category.categoryRate ?? "—"}%
+                </span>
+              ),
+            },
+          ]}
+          actions={(category) => (
+            <>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`Edit ${category.categoryName}`}
+                onClick={() => {
+                  setEditingCategory(category);
+                  resetCreateError();
+                  resetUpdateError();
+                  setCategoryDialogOpen(true);
+                }}>
+                <IconEdit />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`Delete ${category.categoryName}`}
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => {
+                  resetDeleteError();
+                  setDeletingCategory(category);
+                  setDeleteDialogOpen(true);
+                }}>
+                <IconTrash />
+              </Button>
+            </>
+          )}
+        />
       )}
 
       <CategoryDialog

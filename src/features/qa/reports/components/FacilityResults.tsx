@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResponsiveTable } from "@/shared/components/ResponsiveTable";
 import {
   Dialog,
   DialogContent,
@@ -105,44 +106,37 @@ function SummaryTable({
   onSelect: (facilityId: number) => void;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-      <table className="w-full text-left">
-        <thead>
-          <tr className="border-b border-border bg-muted/50">
-            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Facility
-            </th>
-            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Responses
-            </th>
-            <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Average Rating
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {summary.map((row) => (
-            <tr
-              key={row.facilityId}
-              onClick={() => onSelect(row.facilityId)}
-              aria-selected={selectedFacilityId === row.facilityId}
-              className={`cursor-pointer border-b border-border last:border-0 transition-colors hover:bg-muted/40 ${
-                selectedFacilityId === row.facilityId ? "bg-muted/60" : ""
-              }`}>
-              <td className="px-5 py-3 text-sm font-medium text-foreground">
-                {row.facilityName}
-              </td>
-              <td className="px-5 py-3 text-sm tabular-nums text-muted-foreground">
-                {row.responseCount}
-              </td>
-              <td className="px-5 py-3">
-                <RatingBar value={row.averageRating} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ResponsiveTable
+      ariaLabel="Facility results summary"
+      minWidth="560px"
+      items={summary}
+      rowKey={(row) => row.facilityId}
+      onRowClick={(row) => onSelect(row.facilityId)}
+      isRowSelected={(row) => selectedFacilityId === row.facilityId}
+      columns={[
+        {
+          header: "Facility",
+          primary: true,
+          cell: (row) => (
+            <span className="font-medium text-foreground">
+              {row.facilityName}
+            </span>
+          ),
+        },
+        {
+          header: "Responses",
+          cell: (row) => (
+            <span className="tabular-nums text-muted-foreground">
+              {row.responseCount}
+            </span>
+          ),
+        },
+        {
+          header: "Average rating",
+          cell: (row) => <RatingBar value={row.averageRating} />,
+        },
+      ]}
+    />
   );
 }
 
@@ -205,49 +199,42 @@ function FacilityDetailPanel({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-border bg-muted/50">
-              <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Category
-              </th>
-              <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Weight
-              </th>
-              <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Responses
-              </th>
-              <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Average
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.categories.map((category) => (
-              <tr
-                key={category.categoryId}
-                className="border-b border-border last:border-0">
-                <td className="px-4 py-2.5 text-sm text-foreground">
-                  {category.categoryName ??
-                    `Category ${category.categoryId}`}
-                </td>
-                <td className="px-4 py-2.5 text-sm tabular-nums text-muted-foreground">
-                  {category.categoryRate === null
-                    ? "—"
-                    : `${category.categoryRate}%`}
-                </td>
-                <td className="px-4 py-2.5 text-sm tabular-nums text-muted-foreground">
-                  {category.responseCount}
-                </td>
-                <td className="px-4 py-2.5">
-                  <RatingBar value={category.averageRating} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ResponsiveTable
+        ariaLabel={`Category results for ${data.facilityName}`}
+        minWidth="560px"
+        items={data.categories}
+        rowKey={(category) => category.categoryId}
+        columns={[
+          {
+            header: "Category",
+            primary: true,
+            cell: (category) =>
+              category.categoryName ?? `Category ${category.categoryId}`,
+          },
+          {
+            header: "Weight",
+            cell: (category) => (
+              <span className="tabular-nums text-muted-foreground">
+                {category.categoryRate === null
+                  ? "—"
+                  : `${category.categoryRate}%`}
+              </span>
+            ),
+          },
+          {
+            header: "Responses",
+            cell: (category) => (
+              <span className="tabular-nums text-muted-foreground">
+                {category.responseCount}
+              </span>
+            ),
+          },
+          {
+            header: "Average",
+            cell: (category) => <RatingBar value={category.averageRating} />,
+          },
+        ]}
+      />
 
       <div className="flex flex-col gap-3">
         {data.categories.map((category) => {
@@ -264,12 +251,12 @@ function FacilityDetailPanel({
                 {questions.map((question) => (
                   <li
                     key={question.questionId}
-                    className="flex items-center justify-between gap-4 px-4 py-2.5">
-                    <span className="text-sm text-foreground">
+                    className="flex flex-col gap-1 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                    <span className="min-w-0 break-words text-sm text-foreground">
                       {question.questionName ??
                         `Question ${question.questionId}`}
                     </span>
-                    <span className="flex items-center gap-3 text-sm tabular-nums text-muted-foreground">
+                    <span className="flex shrink-0 items-center gap-3 text-sm tabular-nums text-muted-foreground">
                       <span>{question.responseCount} resp.</span>
                       <span className="font-medium text-foreground">
                         {formatRating(question.averageRating)}
@@ -344,60 +331,52 @@ function SubmissionsPanel({ sessionId }: { sessionId: number }) {
           description="Students haven't submitted a facility evaluation for this session."
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Student
-                </th>
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Facility
-                </th>
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Submitted
-                </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((submission) => (
-                <tr
-                  key={submission.submissionId}
-                  className="border-b border-border last:border-0 transition-colors hover:bg-muted/40">
-                  <td className="px-5 py-3">
-                    <p className="text-sm font-medium text-foreground">
-                      {submission.studentName}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {submission.studentNumber}
-                    </p>
-                  </td>
-                  <td className="px-5 py-3 text-sm text-foreground">
-                    {submission.facilityName}
-                  </td>
-                  <td className="px-5 py-3 text-sm text-muted-foreground">
-                    {new Date(submission.submittedAtUtc).toLocaleString()}
-                  </td>
-                  <td className="px-5 py-3 text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => {
-                        resetDeleteError();
-                        setPendingDelete(submission);
-                      }}>
-                      <IconTrash /> Reset
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ResponsiveTable
+          ariaLabel="Facility session submissions"
+          minWidth="720px"
+          items={data}
+          rowKey={(submission) => submission.submissionId}
+          columns={[
+            {
+              header: "Student",
+              primary: true,
+              cell: (submission) => (
+                <>
+                  <span className="block font-medium text-foreground">
+                    {submission.studentName}
+                  </span>
+                  <span className="block text-xs font-normal text-muted-foreground">
+                    {submission.studentNumber}
+                  </span>
+                </>
+              ),
+            },
+            {
+              header: "Facility",
+              cell: (submission) => submission.facilityName,
+            },
+            {
+              header: "Submitted",
+              cell: (submission) => (
+                <span className="text-muted-foreground">
+                  {new Date(submission.submittedAtUtc).toLocaleString()}
+                </span>
+              ),
+            },
+          ]}
+          actions={(submission) => (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => {
+                resetDeleteError();
+                setPendingDelete(submission);
+              }}>
+              <IconTrash /> Reset
+            </Button>
+          )}
+        />
       )}
 
       <Dialog
@@ -488,7 +467,14 @@ export function FacilityResults() {
             value={sessionFilter}
             onValueChange={handleSessionChange}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="All sessions" />
+              <SelectValue placeholder="All sessions">
+                {(value) =>
+                  value === "all"
+                    ? "All sessions"
+                    : (sessions ?? []).find((s) => String(s.id) === value)
+                        ?.formTitle ?? "All sessions"
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All sessions</SelectItem>

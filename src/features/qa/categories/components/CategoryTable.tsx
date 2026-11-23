@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { ResponsiveTable } from "@/shared/components/ResponsiveTable";
 import type { Category } from "../types";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
@@ -14,80 +15,56 @@ export function CategoryTable({
   onEdit,
   onDelete,
 }: CategoryTableProps) {
-  if (categories.length === 0) {
-    return (
-      <div className="overflow-hidden rounded-xl border border-hairline">
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-sm font-medium">No categories yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Create a category to start organizing questions.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="overflow-x-auto rounded-xl border border-hairline">
-      <table className="w-full min-w-[560px] text-left">
-        <thead>
-          <tr className="bg-canvas-soft">
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Name
-            </th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Weight
-            </th>
-            <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              <span className="sr-only">Actions</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((category) => (
-            <tr
-              key={category.categoryId}
-              className="border-t border-hairline hover:bg-muted/40"
-            >
-              <td className="px-4 py-3 text-sm font-medium">
-                {category.categoryName}
-              </td>
-              <td className="px-4 py-3">
-                <div className="flex min-w-32 items-center gap-2">
-                  <Progress
-                    value={Math.min(100, Math.max(0, category.categoryRate ?? 0))}
-                    className="w-20"
-                  />
-                  <span className="text-sm tabular-nums">
-                    {category.categoryRate ?? "—"}%
-                  </span>
-                </div>
-              </td>
-              <td className="px-4 py-3">
-                <div className="flex items-center justify-end gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={`Edit ${category.categoryName}`}
-                    onClick={() => onEdit?.(category)}
-                  >
-                    <IconEdit />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={`Delete ${category.categoryName}`}
-                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    onClick={() => onDelete?.(category)}
-                  >
-                    <IconTrash />
-                  </Button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ResponsiveTable
+      ariaLabel="Evaluation categories"
+      minWidth="560px"
+      items={categories}
+      rowKey={(category) => category.categoryId}
+      columns={[
+        {
+          header: "Name",
+          primary: true,
+          cell: (category) => (
+            <span className="font-medium text-foreground">
+              {category.categoryName}
+            </span>
+          ),
+        },
+        {
+          header: "Weight",
+          cell: (category) => (
+            <div className="flex items-center gap-2">
+              <Progress
+                value={Math.min(100, Math.max(0, category.categoryRate ?? 0))}
+                className="w-20"
+              />
+              <span className="tabular-nums text-muted-foreground">
+                {category.categoryRate ?? "—"}%
+              </span>
+            </div>
+          ),
+        },
+      ]}
+      actions={(category) => (
+        <>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Edit ${category.categoryName}`}
+            onClick={() => onEdit?.(category)}>
+            <IconEdit />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Delete ${category.categoryName}`}
+            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => onDelete?.(category)}>
+            <IconTrash />
+          </Button>
+        </>
+      )}
+    />
   );
 }

@@ -343,8 +343,8 @@ export function FormEditor({
   }
 
   return (
-    <div className="flex w-full flex-col gap-6">
-      <header className="flex items-center gap-3">
+    <div className="flex w-full min-w-0 flex-col gap-6">
+      <header className="flex flex-wrap items-start gap-3">
         <Button
           variant="ghost"
           size="icon-sm"
@@ -357,13 +357,15 @@ export function FormEditor({
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             {isEditRoute ? "Edit Form" : "New Form"}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm break-words text-muted-foreground">
             Set the form details, choose the categories for its evaluation type,
             then add questions under each category.
           </p>
         </div>
         {form && (
-          <Badge variant={form.isActive === 1 ? "default" : "outline"}>
+          <Badge
+            className="ml-auto shrink-0"
+            variant={form.isActive === 1 ? "default" : "outline"}>
             {form.isActive === 1 ? "Active" : "Draft"}
           </Badge>
         )}
@@ -391,8 +393,8 @@ export function FormEditor({
       ) : (
         <>
           {/* Step 1: Basic info */}
-          <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
-            <div className="mb-4 flex items-center justify-between gap-3">
+          <section className="min-w-0 rounded-xl border border-border bg-card p-5 shadow-sm">
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="text-base font-semibold text-foreground">
                   Evaluation Form Details
@@ -411,10 +413,10 @@ export function FormEditor({
 
             <form
               onSubmit={submitStep1}
-              className="grid gap-4 sm:grid-cols-2"
+              className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2"
               noValidate
             >
-              <div className="flex flex-col gap-1.5">
+              <div className="flex min-w-0 flex-col gap-1.5">
                 <label
                   className="text-xs font-medium text-muted-foreground"
                   htmlFor="form-title"
@@ -434,7 +436,7 @@ export function FormEditor({
                 )}
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex min-w-0 flex-col gap-1.5">
                 <label
                   className="text-xs font-medium text-muted-foreground"
                   htmlFor="form-eval-type"
@@ -443,7 +445,7 @@ export function FormEditor({
                 </label>
                 <select
                   id="form-eval-type"
-                  className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  className="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                   aria-invalid={errors.evaluationTypeId ? true : undefined}
                   {...register("evaluationTypeId", {
                     required: "Evaluation type is required",
@@ -463,7 +465,7 @@ export function FormEditor({
                 )}
               </div>
 
-              <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
                 <label
                   className="text-xs font-medium text-muted-foreground"
                   htmlFor="form-description"
@@ -504,9 +506,9 @@ export function FormEditor({
           </section>
 
           {/* Steps 2 & 3: categories + questions */}
-          <div className="grid gap-6 xl:grid-cols-[minmax(320px,420px)_1fr] xl:items-start">
+          <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(320px,420px)_1fr] xl:items-start">
             {/* Step 2: Categories */}
-            <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <section className="min-w-0 rounded-xl border border-border bg-card p-5 shadow-sm">
               <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="text-base font-semibold text-foreground">
@@ -588,7 +590,7 @@ export function FormEditor({
             </section>
 
             {/* Step 3: Questions */}
-            <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <section className="min-w-0 rounded-xl border border-border bg-card p-5 shadow-sm">
               <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="text-base font-semibold text-foreground">
@@ -707,8 +709,8 @@ function CategoryCard({
             checked={checked}
             onChange={onToggle}
           />
-          <span className="flex flex-col">
-            <span className="text-sm font-medium text-foreground">
+          <span className="flex min-w-0 flex-col">
+            <span className="text-sm font-medium break-words text-foreground">
               {category.categoryName ?? `Category ${category.categoryId}`}
             </span>
             <span className="text-xs text-muted-foreground">
@@ -716,7 +718,7 @@ function CategoryCard({
             </span>
           </span>
         </div>
-        <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+        <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
           {category.categoryRate ?? 0}%
         </span>
       </div>
@@ -810,12 +812,14 @@ function CategoryQuestionsBlock({
               key={q.formQuestionId}
               className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-3 py-2"
             >
-              <span className="text-sm text-foreground">{q.questionName}</span>
+              <span className="min-w-0 break-words text-sm text-foreground">
+                {q.questionName}
+              </span>
               <Button
                 variant="ghost"
                 size="icon-sm"
+                className="shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
                 aria-label="Delete question"
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                 onClick={() =>
                   deleteQ.mutate(
                     {
@@ -842,12 +846,12 @@ function CategoryQuestionsBlock({
           </p>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             value={newQuestion}
             onChange={(e) => setNewQuestion(e.target.value)}
             placeholder="Add a question…"
-            className="flex-1"
+            className="min-w-0 flex-1"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -857,6 +861,7 @@ function CategoryQuestionsBlock({
           />
           <Button
             size="sm"
+            className="w-full shrink-0 sm:w-auto"
             onClick={handleAdd}
             disabled={!newQuestion.trim() || createQ.isPending}
           >
