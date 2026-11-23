@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { UserResponse } from "@/shared/types/user";
 
 interface AuthState {
-  /** Profile only. The tokens are HttpOnly cookies and are never readable here. */
+  /** Profile only. Tokens live in the token store (localStorage) and are never duplicated here. */
   user: UserResponse | null;
   setUser: (user: UserResponse) => void;
   clearUser: () => void;

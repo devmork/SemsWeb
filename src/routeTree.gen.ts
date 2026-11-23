@@ -16,13 +16,16 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedQaRouteRouteImport } from './routes/_authenticated/qa/route'
 import { Route as AuthenticatedStudentRouteRouteImport } from './routes/_authenticated/student/route'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminEvaluationTypesRouteImport } from './routes/_authenticated/admin/evaluation-types'
 import { Route as AuthenticatedAdminFacilitiesRouteImport } from './routes/_authenticated/admin/facilities'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
+import { Route as AuthenticatedQaIndexRouteImport } from './routes/_authenticated/qa/index'
 import { Route as AuthenticatedQaCategoriesRouteImport } from './routes/_authenticated/qa/categories'
 import { Route as AuthenticatedQaFormsRouteImport } from './routes/_authenticated/qa/forms'
 import { Route as AuthenticatedQaReportsRouteImport } from './routes/_authenticated/qa/reports'
 import { Route as AuthenticatedQaSessionsRouteImport } from './routes/_authenticated/qa/sessions'
+import { Route as AuthenticatedStudentIndexRouteImport } from './routes/_authenticated/student/index'
 import { Route as AuthenticatedStudentFacilitiesRouteImport } from './routes/_authenticated/student/facilities'
 import { Route as AuthenticatedStudentProfileRouteImport } from './routes/_authenticated/student/profile'
 import { Route as AuthenticatedStudentTeachersRouteImport } from './routes/_authenticated/student/teachers'
@@ -68,6 +71,11 @@ const AuthenticatedStudentRouteRoute =
     path: '/student',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminEvaluationTypesRoute =
   AuthenticatedAdminEvaluationTypesRouteImport.update({
     id: '/evaluation-types',
@@ -84,6 +92,11 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedQaIndexRoute = AuthenticatedQaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedQaRouteRoute,
 } as any)
 const AuthenticatedQaCategoriesRoute =
   AuthenticatedQaCategoriesRouteImport.update({
@@ -106,6 +119,12 @@ const AuthenticatedQaSessionsRoute = AuthenticatedQaSessionsRouteImport.update({
   path: '/sessions',
   getParentRoute: () => AuthenticatedQaRouteRoute,
 } as any)
+const AuthenticatedStudentIndexRoute =
+  AuthenticatedStudentIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedStudentRouteRoute,
+  } as any)
 const AuthenticatedStudentFacilitiesRoute =
   AuthenticatedStudentFacilitiesRouteImport.update({
     id: '/facilities',
@@ -178,6 +197,9 @@ export interface FileRoutesByFullPath {
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/qa/': typeof AuthenticatedQaIndexRoute
+  '/student/': typeof AuthenticatedStudentIndexRoute
   '/qa/forms/$formId': typeof AuthenticatedQaFormsFormIdRoute
   '/qa/forms/create': typeof AuthenticatedQaFormsCreateRoute
   '/qa/reports/facility': typeof AuthenticatedQaReportsFacilityRoute
@@ -187,9 +209,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/qa': typeof AuthenticatedQaRouteRouteWithChildren
-  '/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
   '/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
@@ -200,6 +219,9 @@ export interface FileRoutesByTo {
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/profile': typeof AuthenticatedStudentProfileRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/qa': typeof AuthenticatedQaIndexRoute
+  '/student': typeof AuthenticatedStudentIndexRoute
   '/qa/forms/$formId': typeof AuthenticatedQaFormsFormIdRoute
   '/qa/forms/create': typeof AuthenticatedQaFormsCreateRoute
   '/qa/reports/facility': typeof AuthenticatedQaReportsFacilityRoute
@@ -226,6 +248,9 @@ export interface FileRoutesById {
   '/_authenticated/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/_authenticated/student/profile': typeof AuthenticatedStudentProfileRoute
   '/_authenticated/student/teachers': typeof AuthenticatedStudentTeachersRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/qa/': typeof AuthenticatedQaIndexRoute
+  '/_authenticated/student/': typeof AuthenticatedStudentIndexRoute
   '/_authenticated/qa/forms/$formId': typeof AuthenticatedQaFormsFormIdRoute
   '/_authenticated/qa/forms/create': typeof AuthenticatedQaFormsCreateRoute
   '/_authenticated/qa/reports/facility': typeof AuthenticatedQaReportsFacilityRoute
@@ -252,6 +277,9 @@ export interface FileRouteTypes {
     | '/student/facilities'
     | '/student/profile'
     | '/student/teachers'
+    | '/admin/'
+    | '/qa/'
+    | '/student/'
     | '/qa/forms/$formId'
     | '/qa/forms/create'
     | '/qa/reports/facility'
@@ -261,9 +289,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
-    | '/qa'
-    | '/student'
     | '/forbidden'
     | '/login'
     | '/admin/evaluation-types'
@@ -274,6 +299,9 @@ export interface FileRouteTypes {
     | '/student/facilities'
     | '/student/profile'
     | '/student/teachers'
+    | '/admin'
+    | '/qa'
+    | '/student'
     | '/qa/forms/$formId'
     | '/qa/forms/create'
     | '/qa/reports/facility'
@@ -299,6 +327,9 @@ export interface FileRouteTypes {
     | '/_authenticated/student/facilities'
     | '/_authenticated/student/profile'
     | '/_authenticated/student/teachers'
+    | '/_authenticated/admin/'
+    | '/_authenticated/qa/'
+    | '/_authenticated/student/'
     | '/_authenticated/qa/forms/$formId'
     | '/_authenticated/qa/forms/create'
     | '/_authenticated/qa/reports/facility'
@@ -365,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudentRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/evaluation-types': {
       id: '/_authenticated/admin/evaluation-types'
       path: '/evaluation-types'
@@ -385,6 +423,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/users'
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/qa/': {
+      id: '/_authenticated/qa/'
+      path: '/'
+      fullPath: '/qa/'
+      preLoaderRoute: typeof AuthenticatedQaIndexRouteImport
+      parentRoute: typeof AuthenticatedQaRouteRoute
     }
     '/_authenticated/qa/categories': {
       id: '/_authenticated/qa/categories'
@@ -413,6 +458,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/qa/sessions'
       preLoaderRoute: typeof AuthenticatedQaSessionsRouteImport
       parentRoute: typeof AuthenticatedQaRouteRoute
+    }
+    '/_authenticated/student/': {
+      id: '/_authenticated/student/'
+      path: '/'
+      fullPath: '/student/'
+      preLoaderRoute: typeof AuthenticatedStudentIndexRouteImport
+      parentRoute: typeof AuthenticatedStudentRouteRoute
     }
     '/_authenticated/student/facilities': {
       id: '/_authenticated/student/facilities'
@@ -484,6 +536,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminEvaluationTypesRoute: typeof AuthenticatedAdminEvaluationTypesRoute
   AuthenticatedAdminFacilitiesRoute: typeof AuthenticatedAdminFacilitiesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
@@ -492,6 +545,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
       AuthenticatedAdminEvaluationTypesRoute,
     AuthenticatedAdminFacilitiesRoute: AuthenticatedAdminFacilitiesRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 
 const AuthenticatedAdminRouteRouteWithChildren =
@@ -535,6 +589,7 @@ interface AuthenticatedQaRouteRouteChildren {
   AuthenticatedQaFormsRoute: typeof AuthenticatedQaFormsRouteWithChildren
   AuthenticatedQaReportsRoute: typeof AuthenticatedQaReportsRouteWithChildren
   AuthenticatedQaSessionsRoute: typeof AuthenticatedQaSessionsRoute
+  AuthenticatedQaIndexRoute: typeof AuthenticatedQaIndexRoute
 }
 
 const AuthenticatedQaRouteRouteChildren: AuthenticatedQaRouteRouteChildren = {
@@ -542,6 +597,7 @@ const AuthenticatedQaRouteRouteChildren: AuthenticatedQaRouteRouteChildren = {
   AuthenticatedQaFormsRoute: AuthenticatedQaFormsRouteWithChildren,
   AuthenticatedQaReportsRoute: AuthenticatedQaReportsRouteWithChildren,
   AuthenticatedQaSessionsRoute: AuthenticatedQaSessionsRoute,
+  AuthenticatedQaIndexRoute: AuthenticatedQaIndexRoute,
 }
 
 const AuthenticatedQaRouteRouteWithChildren =
@@ -551,6 +607,7 @@ interface AuthenticatedStudentRouteRouteChildren {
   AuthenticatedStudentFacilitiesRoute: typeof AuthenticatedStudentFacilitiesRoute
   AuthenticatedStudentProfileRoute: typeof AuthenticatedStudentProfileRoute
   AuthenticatedStudentTeachersRoute: typeof AuthenticatedStudentTeachersRoute
+  AuthenticatedStudentIndexRoute: typeof AuthenticatedStudentIndexRoute
   AuthenticatedStudentEvaluateEvaluateIdRoute: typeof AuthenticatedStudentEvaluateEvaluateIdRoute
 }
 
@@ -559,6 +616,7 @@ const AuthenticatedStudentRouteRouteChildren: AuthenticatedStudentRouteRouteChil
     AuthenticatedStudentFacilitiesRoute: AuthenticatedStudentFacilitiesRoute,
     AuthenticatedStudentProfileRoute: AuthenticatedStudentProfileRoute,
     AuthenticatedStudentTeachersRoute: AuthenticatedStudentTeachersRoute,
+    AuthenticatedStudentIndexRoute: AuthenticatedStudentIndexRoute,
     AuthenticatedStudentEvaluateEvaluateIdRoute:
       AuthenticatedStudentEvaluateEvaluateIdRoute,
   }
