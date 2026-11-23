@@ -287,7 +287,7 @@ export function SessionDialog({
                 })}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select term" />
+                  <SelectValue placeholder="Select semester" />
                 </SelectTrigger>
                 <SelectContent>
                   {SEMESTERS.map((semester) => (
