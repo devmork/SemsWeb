@@ -49,12 +49,12 @@ export function EvaluationPageLayout({
   if (isLoading) {
     return (
       <div
-        className="flex flex-col gap-6 w-full p-4 md:p-8 animate-pulse motion-reduce:animate-none"
+        className="flex min-w-0 flex-col gap-6 w-full py-2 md:py-4 animate-pulse motion-reduce:animate-none"
         role="status"
         aria-live="polite"
         aria-label="Loading evaluations">
         <div className="h-10 w-48 bg-muted rounded-md" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
             <EvaluationCardSkeleton key={i} />
           ))}
@@ -75,11 +75,11 @@ export function EvaluationPageLayout({
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full p-4 md:p-8">
+    <div className="flex min-w-0 flex-col gap-6 w-full py-2 md:py-4">
       {/* Header & Filters */}
-      <div className="flex flex-col xl:flex-row items-start xl:items-end justify-between gap-6">
-        <div className="shrink-0">
-          <h1 className="text-2xl font-bold tracking-tight capitalize">
+      <div className="flex flex-col xl:flex-row items-start xl:items-end justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold tracking-tight capitalize break-words">
             {title}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -91,7 +91,7 @@ export function EvaluationPageLayout({
       </div>
 
       {/* Content Area */}
-      <div className="rounded-xl border border-hairline bg-card shadow-sm p-4 md:p-6">
+      <div className="min-w-0 rounded-xl border border-hairline bg-card shadow-sm p-3 md:p-6">
         {count === 0 ? (
           <div className="flex flex-col items-center justify-center p-10 text-center">
             <p className="font-medium">No evaluations found</p>
@@ -100,7 +100,7 @@ export function EvaluationPageLayout({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
             {children}
           </div>
         )}

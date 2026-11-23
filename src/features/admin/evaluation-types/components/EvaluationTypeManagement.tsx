@@ -2,6 +2,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResponsiveTable } from "@/shared/components/ResponsiveTable";
 import { IconEdit, IconTrash, IconPlus, IconTags } from "@tabler/icons-react";
 import {
   useCreateEvaluationType,
@@ -162,7 +163,7 @@ export function EvaluationTypeManagement() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative w-full sm:w-64">
             <IconTags
-              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground max-[320px]:hidden"
               aria-hidden
             />
             <Input
@@ -171,7 +172,7 @@ export function EvaluationTypeManagement() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search types…"
               aria-label="Search evaluation types"
-              className="pl-9"
+              className="pl-9 max-[320px]:pl-3"
             />
           </div>
           <Button onClick={openCreate}>
@@ -194,78 +195,70 @@ export function EvaluationTypeManagement() {
           tone="error"
         />
       ) : types && types.length > 0 ? (
-        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  #
-                </th>
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Name
-                </th>
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Applies To
-                </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {types.map((type) => (
-                <tr
-                  key={type.evaluationTypeId}
-                  className="border-b border-border last:border-0 transition-colors hover:bg-muted/40">
-                  <td className="px-5 py-3 text-sm text-muted-foreground tabular-nums">
-                    {type.evaluationTypeId}
-                  </td>
-                  <td className="px-5 py-3 text-sm font-medium text-foreground">
-                    {type.evaluationTypeName}
-                  </td>
-                  <td className="px-5 py-3">
-                    <span
-                      className={
-                        type.isFacility
-                          ? "inline-flex items-center rounded-full bg-brand-accent/10 px-2.5 py-0.5 text-xs font-medium text-brand-accent"
-                          : "inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
-                      }>
-                      {type.isFacility ? "Facility" : "Subject / Teacher"}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Edit ${type.evaluationTypeName}`}
-                        onClick={() => {
-                          setEditing(type);
-                          resetCreateError();
-                          resetUpdateError();
-                          setDialogOpen(true);
-                        }}>
-                        <IconEdit />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Delete ${type.evaluationTypeName}`}
-                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => {
-                          resetDeleteError();
-                          setDeleting(type);
-                          setDeleteDialogOpen(true);
-                        }}>
-                        <IconTrash />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ResponsiveTable
+          ariaLabel="Evaluation types"
+          minWidth="560px"
+          items={types}
+          rowKey={(type) => type.evaluationTypeId}
+          columns={[
+            {
+              header: "ID",
+              mobileHidden: true,
+              className: "text-muted-foreground tabular-nums",
+              cell: (type) => type.evaluationTypeId,
+            },
+            {
+              header: "Name",
+              primary: true,
+              cell: (type) => (
+                <span className="font-medium text-foreground">
+                  {type.evaluationTypeName}
+                </span>
+              ),
+            },
+            {
+              header: "Applies to",
+              cell: (type) => (
+                <span
+                  className={
+                    type.isFacility
+                      ? "inline-flex items-center rounded-full bg-brand-accent/10 px-2.5 py-0.5 text-xs font-medium text-brand-accent"
+                      : "inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                  }>
+                  {type.isFacility ? "Facility" : "Subject / Teacher"}
+                </span>
+              ),
+            },
+          ]}
+          actions={(type) => (
+            <>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`Edit ${type.evaluationTypeName}`}
+                onClick={() => {
+                  setEditing(type);
+                  resetCreateError();
+                  resetUpdateError();
+                  setDialogOpen(true);
+                }}>
+                <IconEdit />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`Delete ${type.evaluationTypeName}`}
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => {
+                  resetDeleteError();
+                  setDeleting(type);
+                  setDeleteDialogOpen(true);
+                }}>
+                <IconTrash />
+              </Button>
+            </>
+          )}
+        />
       ) : (
         <StateCard
           icon={<IconTags className="size-5" />}

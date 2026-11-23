@@ -2,6 +2,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResponsiveTable } from "@/shared/components/ResponsiveTable";
 import {
   IconEdit,
   IconTrash,
@@ -177,7 +178,7 @@ export function FacilityManagement() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative w-full sm:w-64">
             <IconBuilding
-              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground max-[320px]:hidden"
               aria-hidden
             />
             <Input
@@ -186,7 +187,7 @@ export function FacilityManagement() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search facilities…"
               aria-label="Search facilities"
-              className="pl-9"
+              className="pl-9 max-[320px]:pl-3"
             />
           </div>
           <Button onClick={openCreate}>
@@ -209,80 +210,70 @@ export function FacilityManagement() {
           tone="error"
         />
       ) : facilities && facilities.length > 0 ? (
-        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Name
-                </th>
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Status
-                </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {facilities.map((facility) => (
-                <tr
-                  key={facility.facilityId}
-                  className="border-b border-border last:border-0 transition-colors hover:bg-muted/40">
-                  <td className="px-5 py-3 text-sm font-medium text-foreground">
-                    {facility.facilityName}
-                  </td>
-                  <td className="px-5 py-3">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        facility.isActive
-                          ? "bg-success/10 text-success"
-                          : "bg-muted text-muted-foreground"
-                      }`}>
-                      <span
-                        className={`size-1.5 rounded-full ${
-                          facility.isActive
-                            ? "bg-success"
-                            : "bg-muted-foreground"
-                        }`}
-                        aria-hidden
-                      />
-                      {facility.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Edit ${facility.facilityName}`}
-                        onClick={() => {
-                          setEditingFacility(facility);
-                          resetCreateError();
-                          resetUpdateError();
-                          setFacilityDialogOpen(true);
-                        }}>
-                        <IconEdit />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Delete ${facility.facilityName}`}
-                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => {
-                          resetDeleteError();
-                          setDeletingFacility(facility);
-                          setDeleteDialogOpen(true);
-                        }}>
-                        <IconTrash />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ResponsiveTable
+          ariaLabel="Campus facilities"
+          minWidth="560px"
+          items={facilities}
+          rowKey={(facility) => facility.facilityId}
+          columns={[
+            {
+              header: "Name",
+              primary: true,
+              cell: (facility) => (
+                <span className="font-medium text-foreground">
+                  {facility.facilityName}
+                </span>
+              ),
+            },
+            {
+              header: "Status",
+              cell: (facility) => (
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    facility.isActive
+                      ? "bg-success/10 text-success"
+                      : "bg-muted text-muted-foreground"
+                  }`}>
+                  <span
+                    className={`size-1.5 rounded-full ${
+                      facility.isActive ? "bg-success" : "bg-muted-foreground"
+                    }`}
+                    aria-hidden
+                  />
+                  {facility.isActive ? "Active" : "Inactive"}
+                </span>
+              ),
+            },
+          ]}
+          actions={(facility) => (
+            <>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`Edit ${facility.facilityName}`}
+                onClick={() => {
+                  setEditingFacility(facility);
+                  resetCreateError();
+                  resetUpdateError();
+                  setFacilityDialogOpen(true);
+                }}>
+                <IconEdit />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`Delete ${facility.facilityName}`}
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => {
+                  resetDeleteError();
+                  setDeletingFacility(facility);
+                  setDeleteDialogOpen(true);
+                }}>
+                <IconTrash />
+              </Button>
+            </>
+          )}
+        />
       ) : (
         <StateCard
           icon={<IconBuilding className="size-5" />}

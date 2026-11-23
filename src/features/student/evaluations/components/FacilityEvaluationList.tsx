@@ -39,10 +39,18 @@ export function FacilityEvaluationList() {
             value={statusFilter}
             onValueChange={(value) => setStatusFilter(value ?? "all")}>
             <SelectTrigger id="status-filter">
-              <SelectValue placeholder="All Status" />
+              <SelectValue placeholder="All Status">
+                {(value) =>
+                  value === "all"
+                    ? "All Status"
+                    : value === "pending"
+                      ? "Pending"
+                      : "Completed"
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>

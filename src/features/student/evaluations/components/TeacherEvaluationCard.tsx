@@ -1,11 +1,12 @@
 import { ArrowRight, CalendarIcon, CheckCircle2, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import type { TeacherEvaluation } from "../types";
 import { Link } from "@tanstack/react-router";
@@ -21,23 +22,25 @@ export function TeacherEvaluationCard({
   const isCompleted = evaluation.isCompleted;
 
   return (
-    <Card className="gap-4 shadow-sm flex flex-col justify-between">
-      <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-        <Badge className="bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/20 border-none">
+    <Card className="gap-4 shadow-sm flex min-w-0 flex-col justify-between">
+      <CardHeader className="flex flex-wrap items-start justify-between gap-2 pb-2">
+        <Badge className="border-none bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/20">
           <GraduationCap className="mr-1 size-3" aria-hidden="true" /> Teacher
         </Badge>
-        <Badge variant="outline" className="text-muted-foreground">
+        <Badge
+          variant="outline"
+          className="max-w-full break-words text-muted-foreground">
           <CalendarIcon className="mr-1 size-3" aria-hidden="true" />
           {evaluation.schoolYear} · {semesterLabel(evaluation.term)}
         </Badge>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4 flex-1">
-        <div className="flex flex-col gap-1">
-          <h3 className="text-lg font-bold leading-tight text-foreground">
+      <CardContent className="flex min-w-0 flex-1 flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <CardTitle className="text-lg font-bold leading-tight text-foreground break-words">
             {evaluation.teacherName}
-          </h3>
-          <div className="flex flex-col text-sm text-brand-accent">
+          </CardTitle>
+          <div className="flex flex-col text-sm break-words text-brand-accent">
             <span className="font-semibold">{evaluation.subjectCode}</span>
             <span className="text-muted-foreground text-xs">
               {evaluation.subjectDescription}
@@ -49,34 +52,33 @@ export function TeacherEvaluationCard({
         </div>
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between gap-3 border-t pt-4 mt-auto">
-        <p className="text-xs text-muted-foreground">
+      <CardFooter className="flex flex-wrap items-center justify-between gap-3 border-t pt-4 mt-auto">
+        <p className="min-w-0 break-words text-xs text-muted-foreground">
           {isCompleted && evaluation.submittedAtUtc
             ? `Submitted ${new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).format(new Date(evaluation.submittedAtUtc))}`
             : "Pending"}
         </p>
-        <Button
-          variant={isCompleted ? "outline" : "default"}
-          disabled={isCompleted}
-          render={
-            !isCompleted ? (
-              <Link
-                to="/student/evaluate/$evaluateId"
-                params={{ evaluateId: evaluation.subjectOfferingId.toString() }}
-                search={{ type: "teacher" }}
-              />
-            ) : undefined
-          }>
-          {isCompleted ? (
-            <>
-              <CheckCircle2 className="mr-2 size-4" aria-hidden="true" /> Submitted
-            </>
-          ) : (
-            <>
-              Start Evaluation <ArrowRight className="ml-2 size-4" aria-hidden="true" />
-            </>
-          )}
-        </Button>
+        {isCompleted ? (
+          <button
+            type="button"
+            disabled
+            className={buttonVariants({
+              variant: "outline",
+              className: "w-full sm:w-auto",
+            })}>
+            <CheckCircle2 data-icon="inline-start" aria-hidden="true" />
+            Submitted
+          </button>
+        ) : (
+          <Link
+            to="/student/evaluate/$evaluateId"
+            params={{ evaluateId: evaluation.subjectOfferingId.toString() }}
+            search={{ type: "teacher" }}
+            className={buttonVariants({ className: "w-full sm:w-auto" })}>
+            Start Evaluation
+            <ArrowRight data-icon="inline-end" aria-hidden="true" />
+          </Link>
+        )}
       </CardFooter>
     </Card>
   );

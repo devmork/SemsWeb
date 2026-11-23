@@ -65,7 +65,7 @@ export function EvaluationTakingView() {
 
   if (isPending) {
     return (
-      <div className="p-8 max-w-7xl mx-auto w-full space-y-6">
+      <div className="p-4 md:p-8 max-w-7xl mx-auto w-full min-w-0 space-y-6">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-40 w-full" />
         <Skeleton className="h-64 w-full" />
@@ -75,7 +75,7 @@ export function EvaluationTakingView() {
 
   if (!evaluation) {
     return (
-      <div className="p-8 max-w-7xl mx-auto w-full space-y-3">
+      <div className="p-4 md:p-8 max-w-7xl mx-auto w-full min-w-0 space-y-3">
         <h2 className="text-xl font-bold">Evaluation not found</h2>
         <p className="text-muted-foreground">
           This evaluation assignment could not be loaded. It may no longer be
@@ -93,7 +93,7 @@ export function EvaluationTakingView() {
     : [];
   if (categories.length === 0 || totalQuestions === 0) {
     return (
-      <div className="p-8 max-w-7xl mx-auto w-full space-y-3">
+      <div className="p-4 md:p-8 max-w-7xl mx-auto w-full min-w-0 space-y-3">
         <h2 className="text-xl font-bold">Evaluation form unavailable</h2>
         <p className="text-muted-foreground">
           {type === "teacher"
@@ -143,6 +143,14 @@ export function EvaluationTakingView() {
   const handleSubmit = () => {
     setSubmitError(null);
     setSubmitSuccess(false);
+
+    if (answeredCount < totalQuestions) {
+      const remaining = totalQuestions - answeredCount;
+      setSubmitError(
+        `Answer ${remaining} more question${remaining === 1 ? "" : "s"} before submitting.`,
+      );
+      return;
+    }
 
     const payloadAnswers = categories.flatMap((category) =>
       category.questions.map((question) => ({
@@ -212,35 +220,35 @@ export function EvaluationTakingView() {
   };
 
   return (
-    <div className="flex flex-col w-full bg-canvas-soft min-h-screen">
+    <div className="flex min-w-0 scroll-pt-20 flex-col w-full bg-canvas-soft min-h-screen">
       {/* Sticky Header for Progress & Navigation */}
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-hairline px-4 md:px-8 py-3 flex items-center justify-between">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 border-b border-hairline bg-background/80 px-4 py-3 backdrop-blur-md md:px-8">
         <Link
           to={listPath}
-          className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          className="flex shrink-0 items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="mr-2 size-4" aria-hidden="true" /> Exit Evaluation
         </Link>
 
-        <div className="flex items-center gap-4">
-          <span className="text-xs font-medium text-muted-foreground hidden sm:inline-block">
-            {answeredCount} of {totalQuestions} Answered
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium text-muted-foreground">
+            {answeredCount}/{totalQuestions}
           </span>
-          <div className="w-32">
+          <div className="w-20 sm:w-32">
             <Progress value={progressPercent} className="h-2" />
           </div>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-8">
+      <div className="min-w-0 flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-8 space-y-6 md:space-y-8">
         {/* Header Card */}
         <div className="bg-card rounded-xl border border-hairline shadow-sm overflow-hidden">
-          <div className="p-6 md:p-8 space-y-4">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground scroll-mt-16">
+          <div className="min-w-0 p-4 md:p-8 space-y-4">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground break-words scroll-mt-20">
                 {evaluation.title}
               </h1>
-              <div className="bg-muted text-foreground px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap self-start">
+              <div className="bg-muted text-foreground px-3 py-1.5 rounded-md text-sm font-medium break-words self-start">
                 {evaluation.dueDate
                   ? `Due: ${new Intl.DateTimeFormat(undefined, {
                       month: "short",
@@ -266,11 +274,13 @@ export function EvaluationTakingView() {
             </div>
           </div>
 
-          <div className="bg-surface-card px-6 py-4 border-t border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-foreground">{userEmail}</span>
-              <span className="text-success flex items-center text-xs font-medium">
-                <CheckCircle2 className="size-3.5 mr-1" /> Verified
+          <div className="bg-surface-card px-4 py-4 md:px-6 border-t border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <span className="min-w-0 break-all font-medium text-foreground">
+                {userEmail}
+              </span>
+              <span className="text-success flex shrink-0 items-center text-xs font-medium">
+                <CheckCircle2 className="size-3.5 mr-1" aria-hidden="true" /> Verified
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
@@ -288,7 +298,7 @@ export function EvaluationTakingView() {
                 Category {safeCategoryIndex + 1} of{" "}
                 {categories.length}
               </span>
-              <h2 className="text-xl font-bold text-foreground mt-1 scroll-mt-16">
+              <h2 className="text-xl font-bold text-foreground mt-1 scroll-mt-20">
                 {activeCategory.title}
               </h2>
             </div>
@@ -304,7 +314,7 @@ export function EvaluationTakingView() {
             <p className="mb-2">
               Please rate the following based on a five-scale rating:
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 font-medium">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 font-medium">
               <div>
                 <strong>5</strong> Outstanding
               </div>
@@ -329,10 +339,10 @@ export function EvaluationTakingView() {
               <Card
                 key={question.questionId}
                 className="shadow-sm border-hairline bg-card">
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-start gap-6">
-                    <div className="flex-1 space-y-2">
-                      <p className="font-medium text-base text-foreground leading-relaxed">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-6">
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <p className="font-medium text-base text-foreground leading-relaxed break-words">
                         <span className="text-muted-foreground mr-2">
                           {index + 1}.
                         </span>
@@ -342,7 +352,7 @@ export function EvaluationTakingView() {
                         </span>
                       </p>
                     </div>
-                    <div className="shrink-0 flex justify-center md:justify-end">
+                    <div className="flex w-full shrink-0 justify-center md:w-auto md:justify-end">
                       <Rating
                         disabled={isSubmitting}
                         value={answers[question.questionId] || 0}
@@ -374,24 +384,28 @@ export function EvaluationTakingView() {
         )}
 
         {/* Footer Navigation */}
-        <div className="flex items-center justify-between pt-6 border-t border-hairline mt-8">
+        <div className="flex flex-col items-stretch gap-3 border-t border-hairline pt-6 mt-8 sm:flex-row sm:items-center sm:justify-between">
           <Button
             variant="outline"
             onClick={handlePrev}
             disabled={safeCategoryIndex === 0 || isSubmitting}
-            className="w-32">
-            <ChevronLeft className="mr-2 size-4" /> Previous
+            className="w-full sm:w-32 sm:flex-none">
+            <ChevronLeft data-icon="inline-start" aria-hidden="true" /> Previous
           </Button>
 
-          <div className="text-sm text-muted-foreground hidden sm:block">
+          <div className="order-first w-full text-center text-sm text-muted-foreground sm:order-none sm:w-auto sm:text-left">
             {answeredCount < totalQuestions ? (
-              <span className="text-destructive font-medium flex items-center">
-                Please answer all required questions to submit.
+              <span>
+                {answeredCount} of {totalQuestions} answered
               </span>
             ) : (
-              <span className="text-success font-medium flex items-center">
-                <CheckCircle2 className="mr-1.5 size-4" /> All questions
-                answered
+              <span className="text-success flex items-center justify-center sm:justify-start">
+                <CheckCircle2
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                  className="text-success"
+                />{" "}
+                All questions answered
               </span>
             )}
           </div>
@@ -399,11 +413,16 @@ export function EvaluationTakingView() {
           {isLastCategory ? (
             <Button
               onClick={handleSubmit}
-              disabled={answeredCount < totalQuestions || isSubmitting}
-              className="w-40 bg-primary hover:bg-primary/90 text-primary-foreground">
+              disabled={isSubmitting}
+              className="w-full sm:w-40 sm:flex-none">
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 size-4 animate-spin" /> Submitting...
+                  <Loader2
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                    className="animate-spin"
+                  />{" "}
+                  Submitting…
                 </>
               ) : (
                 "Submit Evaluation"
@@ -412,8 +431,9 @@ export function EvaluationTakingView() {
           ) : (
             <Button
               onClick={handleNext}
-              className="w-32 bg-primary hover:bg-primary/90 text-primary-foreground">
-              Next <ChevronRight className="ml-2 size-4" />
+              className="w-full sm:w-32 sm:flex-none">
+              Next
+              <ChevronRight data-icon="inline-end" aria-hidden="true" />
             </Button>
           )}
         </div>

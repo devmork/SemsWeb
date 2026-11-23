@@ -82,7 +82,7 @@ export function UserManagement() {
         </div>
         <div className="relative w-full sm:max-w-xs">
           <Search
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground max-[320px]:hidden"
             aria-hidden
           />
           <Input
@@ -91,7 +91,7 @@ export function UserManagement() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name or email…"
             aria-label="Search users"
-            className="pl-9"
+            className="pl-9 max-[320px]:pl-3"
           />
         </div>
       </header>
