@@ -72,9 +72,12 @@ export default defineConfig([
   },
   {
     // Deliberate exception: the authenticated shell composes role navigation
-    // (auth) and the account menu (profile). It may import features, but still
+    // (auth) and the account menu (auth). It may import features, but still
     // must not reach into routes or the removed app layer.
-    files: ["src/shared/layout/AuthenticatedLayout.tsx"],
+    files: [
+      "src/shared/layout/AuthenticatedLayout.tsx",
+      "src/shared/layout/AppSidebarFooter.tsx",
+    ],
     rules: {
       "no-restricted-imports": restricted([
         APP_LAYER,

@@ -1,5 +1,5 @@
 import { AppLayout } from "./AppLayout";
-import { SidebarAccountMenu } from "@/features/profile";
+import { AppSidebarFooter } from "./AppSidebarFooter";
 import { useRoleNavigation } from "@/features/auth";
 
 /**
@@ -10,5 +10,7 @@ import { useRoleNavigation } from "@/features/auth";
 export function AuthenticatedLayout() {
   const { sections } = useRoleNavigation();
 
-  return <AppLayout navSections={sections} sidebarFooter={<SidebarAccountMenu />} />;
+  return (
+    <AppLayout navSections={sections} sidebarFooter={<AppSidebarFooter />} />
+  );
 }

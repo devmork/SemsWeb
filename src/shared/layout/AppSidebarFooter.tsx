@@ -27,7 +27,7 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-export function SidebarAccountMenu() {
+export function AppSidebarFooter() {
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
   const { isMobile } = useSidebar();
@@ -45,10 +45,7 @@ export function SidebarAccountMenu() {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton
-                size="lg"
-                className="aria-expanded:bg-muted"
-              />
+              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
             }>
             <Avatar>
               <AvatarFallback>{initials(user.name)}</AvatarFallback>
