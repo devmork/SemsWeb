@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SEMESTERS } from "@/shared/lib/semester";
 import { useForms } from "@/features/qa/forms";
 import {
   GRADE_LEVEL_OPTIONS,
@@ -186,7 +187,7 @@ export function SessionDialog({
           <DialogDescription>
             {isEdit
               ? "Update the session's window, status, and notes."
-              : "Bind a form to a school year and term so students can take it."}
+              : "Bind a form to a school year and semester so students can take it."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onFormSubmit)} noValidate>
@@ -277,21 +278,24 @@ export function SessionDialog({
             </Field>
 
             <Field data-invalid={!!errors.term}>
-              <FieldLabel htmlFor="session-term">Term</FieldLabel>
+              <FieldLabel htmlFor="session-term">Semester</FieldLabel>
               <Select
                 id="session-term"
                 disabled={isPending}
                 {...register("term", {
-                  required: "Term is required",
+                  required: "Semester is required",
                 })}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select term" />
                 </SelectTrigger>
                 <SelectContent>
-                  {[1, 2, 3, 4].map((t) => (
-                    <SelectItem key={t} value={String(t)}>
-                      Term {t}
+                  {SEMESTERS.map((semester) => (
+                    <SelectItem
+                      key={semester.value}
+                      value={String(semester.value)}
+                    >
+                      {semester.label}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -161,7 +161,7 @@ export function SessionManagement() {
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <p className="text-sm font-medium">No evaluation sessions yet</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Create a session to pair a form with a school year and term.
+            Create a session to pair a form with a school year and semester.
           </p>
         </div>
       ) : (

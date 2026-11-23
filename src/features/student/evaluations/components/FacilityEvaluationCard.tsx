@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import type { FacilityEvaluation } from "../types";
 import { Link } from "@tanstack/react-router";
+import { semesterLabel } from "@/shared/lib/semester";
 
 interface FacilityEvaluationCardProps {
   evaluation: FacilityEvaluation;
@@ -27,7 +28,7 @@ export function FacilityEvaluationCard({
         </Badge>
         <Badge variant="outline" className="text-muted-foreground">
           <CalendarIcon className="mr-1 size-3" aria-hidden="true" />
-          {evaluation.schoolYear} · Term {evaluation.term}
+          {evaluation.schoolYear} · {semesterLabel(evaluation.term)}
         </Badge>
       </CardHeader>
 
@@ -37,7 +38,7 @@ export function FacilityEvaluationCard({
             {evaluation.facilityName}
           </h3>
           <p className="text-sm text-brand-accent font-medium">
-            {evaluation.schoolYear} · Term {evaluation.term}
+            {evaluation.schoolYear} · {semesterLabel(evaluation.term)}
           </p>
         </div>
       </CardContent>

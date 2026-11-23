@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RefreshCw, User, Mail } from "lucide-react";
 import { MyProfileSkeleton } from "./MyProfileSkeleton";
 import { useProfile } from "../hooks/useProfile";
+import { semesterLabel } from "@/shared/lib/semester";
 
 export function MyProfile() {
   const { user, profile } = useProfile();
@@ -65,7 +66,7 @@ export function MyProfile() {
                 {profile.gradeLevel ?? "N/A"} — {profile.section ?? "N/A"}
               </span>
               <span className="inline-flex items-center rounded-md border border-hairline px-2 py-1 text-xs font-medium text-muted-foreground">
-                {profile.schoolYear ?? "N/A"} · Term {profile.term ?? "N/A"} ·{" "}
+                {profile.schoolYear ?? "N/A"} · {semesterLabel(profile.term)} ·{" "}
                 {profile.status ?? "N/A"}
               </span>
             </div>

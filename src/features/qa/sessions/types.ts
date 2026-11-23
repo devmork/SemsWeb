@@ -124,13 +124,6 @@ export function sessionStatusLabel(status: SessionStatus): string {
   );
 }
 
-export const TERM_OPTIONS: { value: number; label: string }[] = [
-  { value: 1, label: "Term 1" },
-  { value: 2, label: "Term 2" },
-  { value: 3, label: "Term 3" },
-  { value: 4, label: "Term 4" },
-];
-
 export function sessionStatusVariant(status: SessionStatus) {
   switch (status) {
     case "Open":

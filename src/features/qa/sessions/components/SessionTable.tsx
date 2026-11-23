@@ -6,6 +6,7 @@ import {
   sessionStatusLabel,
   sessionStatusVariant,
 } from "../types";
+import { semesterLabel } from "@/shared/lib/semester";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 
 interface SessionTableProps {
@@ -29,7 +30,7 @@ export function SessionTable({
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <p className="text-sm font-medium">No evaluation sessions yet</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Create a session to pair a form with a school year and term.
+            Create a session to pair a form with a school year and semester.
           </p>
         </div>
       </div>
@@ -48,7 +49,7 @@ export function SessionTable({
               School Year
             </th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Term
+              Semester
             </th>
             <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Grades
@@ -83,8 +84,8 @@ export function SessionTable({
                 {session.formTitle}
               </td>
               <td className="px-4 py-3 text-sm">{session.schoolYear}</td>
-              <td className="px-4 py-3 text-sm text-muted-foreground tabular-nums">
-                {session.term}
+              <td className="px-4 py-3 text-sm text-muted-foreground">
+                {semesterLabel(session.term)}
               </td>
               <td className="px-4 py-3 text-sm text-muted-foreground">
                 {formatGradeRange(session.gradeLevelFrom, session.gradeLevelTo)}

@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Rating } from "./Rating";
 import { useSubmitEvaluation, useEvaluationDetail } from "../hooks/useEvaluations";
 import { useAuthStore } from "@/features/auth";
+import { semesterLabel } from "@/shared/lib/semester";
 import { Progress } from "@/components/ui/progress";
 import type { SubmitEvaluationInput } from "../types";
 
@@ -246,7 +247,7 @@ export function EvaluationTakingView() {
                       day: "numeric",
                       year: "numeric",
                     }).format(new Date(evaluation.dueDate))}`
-                  : `${evaluation.schoolYear} · Term ${evaluation.term}`}
+                  : `${evaluation.schoolYear} · ${semesterLabel(evaluation.term)}`}
               </div>
             </div>
 
