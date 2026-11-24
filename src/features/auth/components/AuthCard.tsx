@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { GraduationCap } from "lucide-react";
 import { GoogleIcon } from "./GoogleIcon";
-import { LOGIN_ERROR_MESSAGES, SCHOOL_EMAIL_DOMAIN } from "../constants";
+import { LOGIN_ERROR_MESSAGES } from "../constants";
 import { startGoogleSignIn } from "../services/authService";
-import { Info } from "lucide-react";
 
 interface AuthCardProps {
   errorCode?: string | undefined;
@@ -29,8 +28,8 @@ export function AuthCard({ errorCode }: AuthCardProps) {
             Management System
           </h1>
           <p className="max-w-md text-lg text-primary-foreground/70">
-            Collect, manage, and analyze teacher and facility evaluations — all
-            in one place.
+            A centralized platform for managing school evaluations, tracking
+            performance, and gaining actionable insights.
           </p>
         </div>
         <p className="text-xs text-primary-foreground/50">
@@ -44,7 +43,7 @@ export function AuthCard({ errorCode }: AuthCardProps) {
           <div className="flex flex-col gap-2 text-center lg:text-left">
             <h2 className="text-2xl font-bold tracking-tight">Welcome back</h2>
             <p className="text-sm text-muted-foreground">
-              Sign in with your school account to continue.
+              Sign in to continue to your account.
             </p>
           </div>
 
@@ -55,18 +54,6 @@ export function AuthCard({ errorCode }: AuthCardProps) {
               {errorMessage}
             </p>
           )}
-
-          <div className="flex items-start gap-3 rounded-md border bg-muted/40 p-3">
-            <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Info className="size-3.5" aria-hidden="true" />
-            </span>
-            <div className="flex flex-col gap-0.5 text-sm">
-              <p className="font-medium">School Account Required</p>
-              <p className="text-muted-foreground">
-                Use your official school email (@{SCHOOL_EMAIL_DOMAIN}).
-              </p>
-            </div>
-          </div>
 
           <Button
             type="button"
