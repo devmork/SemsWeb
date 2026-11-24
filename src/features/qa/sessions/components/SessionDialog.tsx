@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SEMESTERS } from "@/shared/lib/semester";
-import { useEvaluationTypes } from "@/features/qa/categories";
+import { useEvaluationTypes } from "@/features/qa/forms";
 import { useForms } from "@/features/qa/forms";
 import { useSessionFacilities } from "../hooks/useSessions";
 import {

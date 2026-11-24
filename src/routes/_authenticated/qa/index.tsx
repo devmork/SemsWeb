@@ -2,6 +2,6 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/qa/")({
   beforeLoad: () => {
-    throw redirect({ to: "/qa/categories" });
+    throw redirect({ to: "/qa/forms" });
   },
 });

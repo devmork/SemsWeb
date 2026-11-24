@@ -2,7 +2,7 @@ import type { UserRole } from "@/shared/types/user";
 
 export type HomePath =
   | "/admin/users"
-  | "/qa/categories"
+  | "/qa/forms"
   | "/student/teachers"
   | "/forbidden";
 
@@ -11,7 +11,7 @@ export function homePathFor(role: UserRole | null): HomePath {
     case "admin":
       return "/admin/users";
     case "qa":
-      return "/qa/categories";
+      return "/qa/forms";
     case "student":
       return "/student/teachers";
     default:

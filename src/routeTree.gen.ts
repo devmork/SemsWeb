@@ -17,11 +17,11 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as AuthenticatedQaRouteRouteImport } from './routes/_authenticated/qa/route'
 import { Route as AuthenticatedStudentRouteRouteImport } from './routes/_authenticated/student/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin/categories'
 import { Route as AuthenticatedAdminEvaluationTypesRouteImport } from './routes/_authenticated/admin/evaluation-types'
 import { Route as AuthenticatedAdminFacilitiesRouteImport } from './routes/_authenticated/admin/facilities'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedQaIndexRouteImport } from './routes/_authenticated/qa/index'
-import { Route as AuthenticatedQaCategoriesRouteImport } from './routes/_authenticated/qa/categories'
 import { Route as AuthenticatedQaFormsRouteImport } from './routes/_authenticated/qa/forms'
 import { Route as AuthenticatedQaReportsRouteImport } from './routes/_authenticated/qa/reports'
 import { Route as AuthenticatedQaSessionsRouteImport } from './routes/_authenticated/qa/sessions'
@@ -75,6 +75,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminCategoriesRoute =
+  AuthenticatedAdminCategoriesRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminEvaluationTypesRoute =
   AuthenticatedAdminEvaluationTypesRouteImport.update({
     id: '/evaluation-types',
@@ -97,12 +103,6 @@ const AuthenticatedQaIndexRoute = AuthenticatedQaIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedQaRouteRoute,
 } as any)
-const AuthenticatedQaCategoriesRoute =
-  AuthenticatedQaCategoriesRouteImport.update({
-    id: '/categories',
-    path: '/categories',
-    getParentRoute: () => AuthenticatedQaRouteRoute,
-  } as any)
 const AuthenticatedQaFormsRoute = AuthenticatedQaFormsRouteImport.update({
   id: '/forms',
   path: '/forms',
@@ -180,10 +180,10 @@ export interface FileRoutesByFullPath {
   '/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
+  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
   '/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/qa/categories': typeof AuthenticatedQaCategoriesRoute
   '/qa/forms': typeof AuthenticatedQaFormsRouteWithChildren
   '/qa/reports': typeof AuthenticatedQaReportsRouteWithChildren
   '/qa/sessions': typeof AuthenticatedQaSessionsRoute
@@ -203,10 +203,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forbidden': typeof AuthForbiddenRoute
   '/login': typeof AuthLoginRoute
+  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
   '/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/qa/categories': typeof AuthenticatedQaCategoriesRoute
   '/qa/sessions': typeof AuthenticatedQaSessionsRoute
   '/student/facilities': typeof AuthenticatedStudentFacilitiesRoute
   '/student/teachers': typeof AuthenticatedStudentTeachersRoute
@@ -229,10 +229,10 @@ export interface FileRoutesById {
   '/_authenticated/student': typeof AuthenticatedStudentRouteRouteWithChildren
   '/_auth/forbidden': typeof AuthForbiddenRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/evaluation-types': typeof AuthenticatedAdminEvaluationTypesRoute
   '/_authenticated/admin/facilities': typeof AuthenticatedAdminFacilitiesRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/_authenticated/qa/categories': typeof AuthenticatedQaCategoriesRoute
   '/_authenticated/qa/forms': typeof AuthenticatedQaFormsRouteWithChildren
   '/_authenticated/qa/reports': typeof AuthenticatedQaReportsRouteWithChildren
   '/_authenticated/qa/sessions': typeof AuthenticatedQaSessionsRoute
@@ -257,10 +257,10 @@ export interface FileRouteTypes {
     | '/student'
     | '/forbidden'
     | '/login'
+    | '/admin/categories'
     | '/admin/evaluation-types'
     | '/admin/facilities'
     | '/admin/users'
-    | '/qa/categories'
     | '/qa/forms'
     | '/qa/reports'
     | '/qa/sessions'
@@ -280,10 +280,10 @@ export interface FileRouteTypes {
     | '/'
     | '/forbidden'
     | '/login'
+    | '/admin/categories'
     | '/admin/evaluation-types'
     | '/admin/facilities'
     | '/admin/users'
-    | '/qa/categories'
     | '/qa/sessions'
     | '/student/facilities'
     | '/student/teachers'
@@ -305,10 +305,10 @@ export interface FileRouteTypes {
     | '/_authenticated/student'
     | '/_auth/forbidden'
     | '/_auth/login'
+    | '/_authenticated/admin/categories'
     | '/_authenticated/admin/evaluation-types'
     | '/_authenticated/admin/facilities'
     | '/_authenticated/admin/users'
-    | '/_authenticated/qa/categories'
     | '/_authenticated/qa/forms'
     | '/_authenticated/qa/reports'
     | '/_authenticated/qa/sessions'
@@ -390,6 +390,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/categories': {
+      id: '/_authenticated/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/evaluation-types': {
       id: '/_authenticated/admin/evaluation-types'
       path: '/evaluation-types'
@@ -416,13 +423,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/qa/'
       preLoaderRoute: typeof AuthenticatedQaIndexRouteImport
-      parentRoute: typeof AuthenticatedQaRouteRoute
-    }
-    '/_authenticated/qa/categories': {
-      id: '/_authenticated/qa/categories'
-      path: '/categories'
-      fullPath: '/qa/categories'
-      preLoaderRoute: typeof AuthenticatedQaCategoriesRouteImport
       parentRoute: typeof AuthenticatedQaRouteRoute
     }
     '/_authenticated/qa/forms': {
@@ -513,6 +513,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminEvaluationTypesRoute: typeof AuthenticatedAdminEvaluationTypesRoute
   AuthenticatedAdminFacilitiesRoute: typeof AuthenticatedAdminFacilitiesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -521,6 +522,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
     AuthenticatedAdminEvaluationTypesRoute:
       AuthenticatedAdminEvaluationTypesRoute,
     AuthenticatedAdminFacilitiesRoute: AuthenticatedAdminFacilitiesRoute,
@@ -565,7 +567,6 @@ const AuthenticatedQaReportsRouteWithChildren =
   )
 
 interface AuthenticatedQaRouteRouteChildren {
-  AuthenticatedQaCategoriesRoute: typeof AuthenticatedQaCategoriesRoute
   AuthenticatedQaFormsRoute: typeof AuthenticatedQaFormsRouteWithChildren
   AuthenticatedQaReportsRoute: typeof AuthenticatedQaReportsRouteWithChildren
   AuthenticatedQaSessionsRoute: typeof AuthenticatedQaSessionsRoute
@@ -573,7 +574,6 @@ interface AuthenticatedQaRouteRouteChildren {
 }
 
 const AuthenticatedQaRouteRouteChildren: AuthenticatedQaRouteRouteChildren = {
-  AuthenticatedQaCategoriesRoute: AuthenticatedQaCategoriesRoute,
   AuthenticatedQaFormsRoute: AuthenticatedQaFormsRouteWithChildren,
   AuthenticatedQaReportsRoute: AuthenticatedQaReportsRouteWithChildren,
   AuthenticatedQaSessionsRoute: AuthenticatedQaSessionsRoute,

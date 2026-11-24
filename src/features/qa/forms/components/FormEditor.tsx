@@ -567,15 +567,9 @@ export function FormEditor({
               ) : allCategories.length === 0 ? (
                 <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border px-4 py-8 text-center">
                   <p className="text-sm text-muted-foreground">
-                    No shared categories exist for this evaluation type yet.
+                    No shared categories exist for this evaluation type yet. An
+                    administrator can add them.
                   </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate({ to: "/qa/categories" })}
-                  >
-                    Manage categories
-                  </Button>
                 </div>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
