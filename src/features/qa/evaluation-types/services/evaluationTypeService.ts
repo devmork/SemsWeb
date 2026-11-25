@@ -5,11 +5,10 @@ import type {
   UpdateEvaluationTypeInput,
 } from "../types";
 
-/** Mirrors `SemsApi.DTO.EvaluationType.EvaluationTypeResponseDto`. */
+/** Mirrors `SemsApi.DTO.EvaluationType.GetEvaluationTypeDto`. */
 type EvaluationTypeDto = {
   evaluationTypeId: number;
   evaluationTypeName: string;
-  isFacility: boolean;
 };
 
 /** `POST`/`PUT /api/evaluation/types` wrap the payload in `{ message, data }`. */
@@ -19,7 +18,6 @@ function toEvaluationType(dto: EvaluationTypeDto): EvaluationType {
   return {
     evaluationTypeId: dto.evaluationTypeId,
     evaluationTypeName: dto.evaluationTypeName,
-    isFacility: dto.isFacility ?? false,
   };
 }
 
@@ -33,7 +31,7 @@ export interface GetEvaluationTypesParams {
 }
 
 export const evaluationTypeAdminService = {
-  /** `GET /api/evaluation/types` — optional `search` (QA + Admin). */
+  /** `GET /api/evaluation/types` — optional `search`. */
   async getEvaluationTypes(
     params?: GetEvaluationTypesParams,
   ): Promise<EvaluationType[]> {

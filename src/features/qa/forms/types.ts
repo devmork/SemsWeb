@@ -35,7 +35,6 @@ export interface UpdateFormInput {
 export interface EvaluationType {
   evaluationTypeId: number;
   evaluationTypeName: string;
-  isFacility?: boolean | undefined;
 }
 
 export interface CategoryOption {

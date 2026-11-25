@@ -216,19 +216,6 @@ export function EvaluationTypeManagement() {
                 </span>
               ),
             },
-            {
-              header: "Applies to",
-              cell: (type) => (
-                <span
-                  className={
-                    type.isFacility
-                      ? "inline-flex items-center rounded-full bg-brand-accent/10 px-2.5 py-0.5 text-xs font-medium text-brand-accent"
-                      : "inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
-                  }>
-                  {type.isFacility ? "Facility" : "Subject / Teacher"}
-                </span>
-              ),
-            },
           ]}
           actions={(type) => (
             <>

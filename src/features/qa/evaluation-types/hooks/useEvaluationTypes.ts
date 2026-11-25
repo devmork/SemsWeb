@@ -41,7 +41,6 @@ export function useCreateEvaluationType() {
       const optimistic: EvaluationType = {
         evaluationTypeId: -Date.now(),
         evaluationTypeName: input.evaluationTypeName,
-        isFacility: input.isFacility ?? false,
       };
       queryClient.setQueriesData<EvaluationType[]>(
         { queryKey: evaluationTypeKeys.lists() },
@@ -74,7 +73,6 @@ export function useUpdateEvaluationType() {
               ? {
                   ...t,
                   evaluationTypeName: input.evaluationTypeName,
-                  isFacility: input.isFacility ?? t.isFacility,
                 }
               : t,
           ),

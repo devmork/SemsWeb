@@ -108,13 +108,17 @@ export function SessionDialog({
     () => activeForms.find((f) => String(f.formId) === String(selectedFormId)),
     [activeForms, selectedFormId],
   );
-  const isFacilityForm = useMemo(
-    () =>
+  const isFacilityForm = useMemo(() => {
+    if (session) {
+      if (session.facilityId != null) return true;
+      if (session.evaluationTypeName?.toLowerCase() === "facility") return true;
+    }
+    return (
       evaluationTypes.find(
         (type) => type.evaluationTypeId === selectedForm?.evaluationTypeId,
-      )?.isFacility === true,
-    [evaluationTypes, selectedForm],
-  );
+      )?.evaluationTypeName?.toLowerCase() === "facility"
+    );
+  }, [evaluationTypes, selectedForm, session]);
 
   // A facility must be chosen only for facility forms. Clear any stale choice
   // when the QA user switches to a teacher/subject form.
@@ -417,7 +421,8 @@ export function SessionDialog({
               <FieldError errors={[errors.term]} />
             </Field>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            {!isFacilityForm && (
+              <div className="grid gap-4 sm:grid-cols-2">
               <Field data-invalid={!!errors.gradeLevelFrom}>
                 <FieldLabel htmlFor="session-grade-from">
                   Grade level from
@@ -485,6 +490,7 @@ export function SessionDialog({
                 12). Leave both blank for all grades.
               </p>
             </div>
+            )}
 
             <Field>
               <FieldLabel htmlFor="session-opens-at">Opens At</FieldLabel>

@@ -1,11 +1,10 @@
 import { api } from "@/shared/api/client";
 import type { EvaluationTypeOption } from "../types";
 
-/** Mirrors `SemsApi.DTO.EvaluationType.EvaluationTypeResponseDto`. */
+/** Mirrors `SemsApi.DTO.EvaluationType.GetEvaluationTypeDto`. */
 type EvaluationTypeDto = {
   evaluationTypeId: number;
   evaluationTypeName: string;
-  isFacility: boolean;
 };
 
 export const evaluationTypeService = {
@@ -14,7 +13,6 @@ export const evaluationTypeService = {
     return data.map((t) => ({
       evaluationTypeId: t.evaluationTypeId,
       evaluationTypeName: t.evaluationTypeName,
-      isFacility: t.isFacility ?? false,
     }));
   },
 };

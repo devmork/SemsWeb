@@ -1,10 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthCard, type LoginSearch, redirectIfAuthenticated } from "@/features/auth";
+import { LoginCard, type LoginSearch, redirectIfAuthenticated } from "@/features/auth";
 
 function LoginComponent() {
   const { error } = Route.useSearch();
-  return <AuthCard errorCode={error ?? undefined} />;
+  return <LoginCard errorCode={error ?? undefined} />;
 }
 
 export const Route = createFileRoute("/_auth/login")({

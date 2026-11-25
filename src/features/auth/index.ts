@@ -1,5 +1,6 @@
-export { AuthCard } from "./components/AuthCard";
 export { AuthLayout } from "./components/AuthLayout";
+export { LoginCard } from "./components/LoginCard";
+export { SignupCard } from "./components/SignupCard";
 export { GoogleIcon } from "./components/GoogleIcon";
 
 export {

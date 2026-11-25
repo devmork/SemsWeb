@@ -2,9 +2,18 @@ import { redirect } from "@tanstack/react-router";
 import { fetchCurrentUser } from "./services/authService";
 import { homePathFor } from "@/shared/lib/home";
 import { useAuthStore } from "./stores/auth.store";
+import { tokenStore } from "@/shared/api/client";
 import type { UserResponse, UserRole } from "@/shared/types/user";
 
-let sessionPromise: Promise<UserResponse | null> | null = null;
+/**
+ * Session lookup is keyed by the access token so a signed-out (or failed)
+ * check is resolved once per token instead of on every route guard run.
+ * Token rotation produces a new key, so a refreshed session is re-checked.
+ */
+let sessionCheck: {
+  token: string | null;
+  result: Promise<UserResponse | null>;
+} | null = null;
 
 // const isDev = import.meta.env.DEV;
 
@@ -35,17 +44,21 @@ export function restoreSession(): Promise<UserResponse | null> {
   const cached = useAuthStore.getState().user;
   if (cached) return Promise.resolve(cached);
 
-  if (!sessionPromise) {
-    sessionPromise = fetchCurrentUser()
-      .then((user) => {
-        if (user) useAuthStore.getState().setUser(user);
-        return user;
-      })
-      .finally(() => {
-        sessionPromise = null;
-      });
-  }
-  return sessionPromise;
+  const token = tokenStore.getAccessToken();
+  // No token means there is no session to check: avoid a doomed request that
+  // blocks navigation until CORS/network fails.
+  if (!token) return Promise.resolve(null);
+
+  if (sessionCheck?.token === token) return sessionCheck.result;
+
+  sessionCheck = {
+    token,
+    result: fetchCurrentUser().then((user) => {
+      if (user) useAuthStore.getState().setUser(user);
+      return user;
+    }),
+  };
+  return sessionCheck.result;
 }
 
 export async function requireAuth(): Promise<UserResponse> {
